@@ -83,9 +83,9 @@ BEGIN
 END;
 /
 
-	----RUN:
-/
-BEGIN
-    CREATE_APP_3B_TABLE(202408);
-END;
-/
+											----RUN:
+										/
+										BEGIN
+										    CREATE_APP_3B_TABLE(202408);
+										END;
+										/
