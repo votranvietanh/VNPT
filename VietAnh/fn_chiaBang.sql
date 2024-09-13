@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE create_kpi_summary (
     v_sql VARCHAR2(32767);
 BEGIN
     -- Tạo bảng mới với các cột KPI
-    v_sql := 'CREATE TABLE kpi_summary__' || p_mdhd || '' || p_thang || ' AS ' || 
+    v_sql := 'CREATE TABLE kpi_summary__' || p_mdhd || '_' || p_thang || ' AS ' || 
              'SELECT ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ';
 
     -- Thêm các cột KPI vào câu lệnh SQL
@@ -43,4 +43,10 @@ BEGIN
     EXECUTE IMMEDIATE v_sql;
 END;
 /
-
+--=========================================================================================================================================
+                drop table kpi_summary__MDHT202408;
+                drop table kpi_summary__giao202408;
+                drop table kpi_summary__THUCHIEN202408;
+                drop table kpi_summary__dlth202408;
+                drop table kpi_summary__diem_cong202408;
+                drop table kpi_summary__diem_tru202408;
