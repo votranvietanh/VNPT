@@ -1,12 +1,12 @@
-                        BEGIN
-                            create_kpi_summary('MDHT', TO_NUMBER(TO_CHAR(SYSDATE, 'YYYYMM')), 'MUCDO_HOANTHANH');
-                            create_kpi_summary('giao', TO_NUMBER(TO_CHAR(SYSDATE, 'YYYYMM')), 'giao');
-                            create_kpi_summary('THUCHIEN', TO_NUMBER(TO_CHAR(SYSDATE, 'YYYYMM')), 'THUCHIEN');
-                            create_kpi_summary('TLTH', TO_NUMBER(TO_CHAR(SYSDATE, 'YYYYMM')), 'TYLE_THUCHIEN');
-                            create_kpi_summary('DIEM_CONG', TO_NUMBER(TO_CHAR(SYSDATE, 'YYYYMM')), 'DIEM_CONG');
-                            create_kpi_summary('DIEM_TRU', TO_NUMBER(TO_CHAR(SYSDATE, 'YYYYMM')), 'DIEM_TRU');
-                        END;
-                        /
+                 BEGIN
+                    create_kpi_summary('MDHT',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'MUCDO_HOANTHANH');
+                    create_kpi_summary('giao',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'giao');
+                    create_kpi_summary('THUCHIEN',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'THUCHIEN');
+                    create_kpi_summary('TLTH',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'TYLE_THUCHIEN');
+                    create_kpi_summary('DIEM_CONG',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'DIEM_CONG');
+                    create_kpi_summary('DIEM_TRU',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'DIEM_TRU');
+                END;
+                /
 
 --===================================================================================================================================================
 
