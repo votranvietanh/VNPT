@@ -1,16 +1,3 @@
-                 BEGIN
-                    create_kpi_summary('MDHT',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'MUCDO_HOANTHANH');
-                    create_kpi_summary('giao',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'giao');
-                    create_kpi_summary('THUCHIEN',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'THUCHIEN');
-                    create_kpi_summary('TLTH',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'TYLE_THUCHIEN');
-                    create_kpi_summary('DIEM_CONG',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'DIEM_CONG');
-                    create_kpi_summary('DIEM_TRU',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')), 'DIEM_TRU');
-                END;
-                /
-
---===================================================================================================================================================
-
-
 CREATE OR REPLACE PROCEDURE create_kpi_summary (
     p_mdhd     IN VARCHAR2,  -- tên phân biệt (MDHD, giao, thuchien, cong, tru)
     p_thang    IN NUMBER,    -- Tháng 
@@ -19,7 +6,7 @@ CREATE OR REPLACE PROCEDURE create_kpi_summary (
     v_sql VARCHAR2(32767);
 BEGIN
     -- Tạo bảng mới với các cột KPI
-    v_sql := 'CREATE TABLE kpi_summary__' || p_mdhd || '_' || p_thang || ' AS ' || 
+    v_sql := 'CREATE TABLE kpi_summary__' || p_thang || '_' || p_mdhd || ' AS ' || 
              'SELECT ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ';
 
     -- Thêm các cột KPI vào câu lệnh SQL
@@ -43,10 +30,20 @@ BEGIN
     EXECUTE IMMEDIATE v_sql;
 END;
 /
---=========================================================================================================================================
-                drop table kpi_summary__MDHT202408;
-                drop table kpi_summary__giao202408;
-                drop table kpi_summary__THUCHIEN202408;
-                drop table kpi_summary__dlth202408;
-                drop table kpi_summary__diem_cong202408;
-                drop table kpi_summary__diem_tru202408;
+
+BEGIN
+    create_kpi_summary('MDHT',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0), 'YYYYMM')), 'MUCDO_HOANTHANH');
+    create_kpi_summary('giao',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0), 'YYYYMM')), 'giao');
+    create_kpi_summary('THUCHIEN',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0), 'YYYYMM')), 'THUCHIEN');
+    create_kpi_summary('TLTH',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0), 'YYYYMM')), 'TYLE_THUCHIEN');
+    create_kpi_summary('DIEM_CONG',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0), 'YYYYMM')), 'DIEM_CONG');
+    create_kpi_summary('DIEM_TRU',  TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, 0), 'YYYYMM')), 'DIEM_TRU');
+END;
+/
+
+drop table kpi_summary__202409_MDHT;
+drop table kpi_summary__202409_giao;
+drop table kpi_summary__202409_THUCHIEN ;
+drop table kpi_summary__202408_tlth ;
+drop table kpi_summary__202409_diem_cong ;
+drop table kpi_summary__202409_diem_tru ;
