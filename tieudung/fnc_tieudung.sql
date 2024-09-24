@@ -1,4 +1,4 @@
-                --runnn:
+               --NOT YET --runnn:
                                     BEGIN
                                         CREATE_TIEUDUNG_BTS_PBH_TABLES('202407');
                                     END;
