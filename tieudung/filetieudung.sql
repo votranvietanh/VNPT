@@ -130,7 +130,9 @@ CREATE TABLE TIEUDUNG_BTS_202408_kieumoi_T AS
         
         SUBSCRIBER_ID_84,												
         nvl(pbhkv,'_KXD') as pbhkv	,											
-        ma_pb
+        ma_pb,
+        MAX(BTS_NAME) KEEP (DENSE_RANK LAST ORDER BY TOTAL_TKC, TOTAL_DATA) AS BTS_NAME,
+        MAX(ma_bts) KEEP (DENSE_RANK LAST ORDER BY TOTAL_TKC, TOTAL_DATA) AS ma_bts
         FROM 
             TIEUDUNG_BTS_202408_KIEUMOI_T a --<<<========== edit it
         GROUP BY 
@@ -139,7 +141,7 @@ CREATE TABLE TIEUDUNG_BTS_202408_kieumoi_T AS
 
 create table tieudung_bts_202408 as 
 with mapSub as (select * from (
-    select  SUBSCRIBER_ID,PBHKV,ma_pb,ma_bts,TOTAL_TKC,
+    select  SUBSCRIBER_ID,PBHKV,ma_pb,ma_bts,BTS_NAME,TOTAL_TKC,
     row_number () over (partition by SUBSCRIBER_ID order by TOTAL_TKC desc,DATA_USG desc ) rn
     from TIEUDUNG_BTS_202408_KIEUMOI_T a --<<<========== edit it
 ) 
@@ -198,12 +200,13 @@ MAX(PAYMENT_FREE_CYCLE) AS PAYMENT_FREE_CYCLE,
 MAX(CHU_KY_KMCB_DANG_SU_DUNG) AS CHU_KY_KMCB_DANG_SU_DUNG,												
 MAX(NGAY_KMCB_GH_TIEP_THEO) AS NGAY_KMCB_GH_TIEP_THEO,
 MAX(DT_OF_BRTH) as DT_OF_BRTH,
-    SUBSCRIBER_ID_84
+    SUBSCRIBER_ID_84,
+    
 FROM 
     TIEUDUNG_BTS_202408_KIEUMOI_T a --<<<========== edit it 
 GROUP BY 
     SUBSCRIBER_ID,SUBSCRIBER_ID_84)
-     select a.*,b.ma_pb, nvl(b.pbhkv,'_KXD') as pbhkv 
+     select a.*,b.ma_pb, nvl(b.pbhkv,'_KXD') as pbhkv , b.ma_bts, b.bts_name
      from t4 a
      join mapSub  b on a.SUBSCRIBER_ID=b.SUBSCRIBER_ID  
     
