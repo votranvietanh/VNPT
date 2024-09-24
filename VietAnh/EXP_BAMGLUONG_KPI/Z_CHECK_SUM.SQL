@@ -7,3 +7,5 @@
 
 select *  from  ttkd_bsc.blkpi_danhmuc_kpi where thang = 202408 ;
 select * from ttkd_bsc.bangluong_kpi where thang = 202408 and ma_kpi ='HCM_TB_MCUOC_001';
+
+select * from ttkd_bsc.bangluong_kpi where thang = 202408 and ma_kpi ='HCM_DT_PTMOI_021' and ma_nv = 'VNP017014'
