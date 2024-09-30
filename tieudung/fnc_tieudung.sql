@@ -150,7 +150,9 @@ BEGIN
         
         SUBSCRIBER_ID_84,												
         nvl(pbhkv,''_KXD'') as pbhkv	,											
-        ma_pb
+        ma_pb,
+        MAX(BTS_NAME) KEEP (DENSE_RANK LAST ORDER BY TOTAL_TKC, TOTAL_DATA) AS BTS_NAME,
+        MAX(ma_bts) KEEP (DENSE_RANK LAST ORDER BY TOTAL_TKC, TOTAL_DATA) AS ma_bts
         FROM 
             '||table_name3||' a --<<<========== edit it
         GROUP BY 
@@ -159,7 +161,7 @@ BEGIN
         
        execute immediate 'create table '||table_name2||' as 
             with mapSub as (select * from (
-                select  SUBSCRIBER_ID,PBHKV,ma_pb,ma_bts,TOTAL_TKC,
+                select  SUBSCRIBER_ID,PBHKV,ma_pb,ma_bts,BTS_NAME,TOTAL_TKC,
                 row_number () over (partition by SUBSCRIBER_ID order by TOTAL_TKC desc,DATA_USG desc ) rn
                 from '||table_name3||' a --<<<========== edit it
             ) 
@@ -223,7 +225,7 @@ BEGIN
                 '||table_name3||' a --<<<========== edit it 
             GROUP BY 
                 SUBSCRIBER_ID,SUBSCRIBER_ID_84)
-                 select a.*,b.ma_pb, nvl(b.pbhkv,''_KXD'') as pbhkv 
+                 select a.*,b.ma_pb, nvl(b.pbhkv,''_KXD'') as pbhkv , b.ma_bts, b.bts_name
                  from t4 a
                  join mapSub  b on a.SUBSCRIBER_ID=b.SUBSCRIBER_ID';
                        -- tao index o bang  4tr
