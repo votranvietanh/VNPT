@@ -16,12 +16,12 @@ BEGIN
 
     -- ??? đang lỗi hình như lấy từ view ko được thử lấy từ v$sql ?
     SELECT sql_fulltext INTO v_sql_text
-    FROM v$sql--ttkd_bsc.v_sql
-    WHERE sql_id = (SELECT sql_id FROM v$session  WHERE audsid = v_session_id); --ttkd_bsc.v_session
+    FROM ttkd_bsc.v_sql--ttkd_bsc.v_sql
+    WHERE sql_id = (SELECT sql_id FROM ttkd_bsc.v_session  WHERE audsid = v_session_id); --ttkd_bsc.v_session
 
    
 
-   
+    -- Kiểm tra sự thay đổi của từng cột
     IF :OLD.GIAO != :NEW.GIAO OR :OLD.THUCHIEN != :NEW.THUCHIEN OR :OLD.TYLE_THUCHIEN != :NEW.TYLE_THUCHIEN OR
        :OLD.MUCDO_HOANTHANH != :NEW.MUCDO_HOANTHANH OR :OLD.DIEM_CONG != :NEW.DIEM_CONG OR :OLD.DIEM_TRU != :NEW.DIEM_TRU THEN
        
