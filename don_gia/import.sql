@@ -1,3 +1,13 @@
+
+_ https://smrs.vnpt.vn/Dashboard/Table/Simple?report_code=analyze%2Ftb_ptm_tinh_dangky
+_ http://bris.vnpt.vn/Report/Kri/Report/Analyze?report_type=hqkd_ct_ddtt
+_ https://digishop.vnpt.vn/digitalShop/stats/statsMobileDetail  didongdonle
+_ https://digishop.vnpt.vn/digitalShop/stats/statsSimDetail chọn ngày đặt đơn,ngày...,trạng thái: "thành công"-- BSCC_DIGI bỏ 2 cột trạng thái THANH TOÁN và trạng thái shop
+_ https://smrs.vnpt.vn/Dashboard/Table/Simple?report_code=analyze/dt_bundle_chitiet
+_ https://smrs.vnpt.vn/Dashboard/Table/Simple?report_code=analyze%2Ftb_ptm_tinh_dangky_bundle
+_ http://bris.vnpt.vn/Report/Kri/Report/Analyze?report_type=hqkd_kenh_bangoi
+
+_ https://smcs.vnpt.com.vn/client/reportAgentHCM
 ----insert PTM:
     insert into SSS_dgia_202408(nguon,ma_tb,username_kh,tenkieu_ld,thang_ptm,ngay_kh)
     select 'smrs','84' || SUBSCRIBER_ID, ACCOUNT_DK, 'ptm', THANG, to_date(NGAY_KH, 'yyyy-mm-dd')
