@@ -32,3 +32,52 @@
                             
         WHERE b.thang = TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'yyyymm')) AND b.manv_hrm is NULL;
 
+
+
+        --======
+        update SSS_dgia_202408 b
+        set TIEN_GOI = ( select a.GIAGOI_SAUCK_COVAT from MANPN.BSCC_INSERT_DM_KIT_BUNDLE a where a.ten_goi = b.ten_goi)
+        where tien_goi is null and (nguon = 'bundle_xuatkho' or nguon = 'bundle')
+        ;
+        update SSS_dgia_202408
+        set TIEN_THULAO_DNHM = 20000
+        where tenkieu_ld = 'ptm'
+        ;
+        update SSS_dgia_202408 a
+        set MANV_PTM = (select b.ma_nv from ttkd_bsc.nhanvien b where b.thang = 202408 and b.USER_CCBS = a.username_kh)
+        where manv_ptm is null
+        ;
+        update SSS_dgia_202408 a
+        set MANV_PTM = (select b.ma_nv from ttkd_bsc.nhanvien b where b.thang = 202408 and b.USER_CCOS = a.username_kh)
+        where manv_ptm is null
+        ;
+        update SSS_dgia_202408 a
+        set MANV_PTM = (select b.ma_nv from SSS_kenh_noi_bo b where b.thang = 202408 and b.SO_ELOAD = a.username_kh)
+        where manv_ptm is null
+        ;
+        MERGE INTO SSS_dgia_202408 a
+        USING ttkd_bsc.ds_diemban_31import d
+        ON (a.username_kh = d.ma_diem_ban AND d.thang = 202408)
+        WHEN MATCHED THEN
+            UPDATE SET a.manv_ptm = d.manv_hrm
+            WHERE a.manv_ptm IS NULL;
+            
+            MERGE INTO SSS_dgia_202408 a
+        USING ttkd_bsc.ds_diemban_31import d
+        ON (a.username_kh = to_char(d.so_eload) AND d.thang = 202408)
+        WHEN MATCHED THEN
+            UPDATE SET a.manv_ptm = d.manv_hrm
+            WHERE a.manv_ptm IS NULL;
+            
+        UPDATE SSS_dgia_202408 a
+        SET MANV_PTM = (
+            SELECT b.ma_nv 
+            FROM ttkd_bsc.nhanvien b
+            WHERE username_kh = b.ma_nv and thang = 202408
+        )
+        WHERE a.manv_ptm IS NULL;
+        update SSS_dgia_202408
+        set TENNV_PTM = (select b.ten_nv from ttkd_bsc.nhanvien b where b.thang = 202408 and manv_Ptm = b.ma_nv)
+        ;
+
+
