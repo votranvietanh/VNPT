@@ -34,7 +34,7 @@
 
 
 
-        --======
+        --======update manv_ptm
         update SSS_dgia_202408 b
         set TIEN_GOI = ( select a.GIAGOI_SAUCK_COVAT from MANPN.BSCC_INSERT_DM_KIT_BUNDLE a where a.ten_goi = b.ten_goi)
         where tien_goi is null and (nguon = 'bundle_xuatkho' or nguon = 'bundle')
@@ -79,5 +79,24 @@
         update SSS_dgia_202408
         set TENNV_PTM = (select b.ten_nv from ttkd_bsc.nhanvien b where b.thang = 202408 and manv_Ptm = b.ma_nv)
         ;
+
+        --=====checkNoiBo --> UPDATE cột kenh_trong? 
+
+                  UPDATE SSS_dgia_202408 a
+        SET KENH_TRONG = 1
+        WHERE EXISTS (
+            SELECT 1 
+            FROM ttkd_bct.va_dm_loaikenh_bh b
+            WHERE b.ma_nd = a.username_kh 
+            AND b.thang = 202408 
+            AND b.LOAIKENH = 'Nội bộ'
+        );
+        --==
+         merge into SSS_dgia_202408 a
+        using ttkd_bct.va_dm_loaikenh_bh x
+        on (a.username_kh = x.ma_nd and x.thang = 202408)
+        when matched then 
+            update set a.phan_loai_kenh = x.phanloai_kenh
+            where a.phan_loai_kenh is null
 
 
