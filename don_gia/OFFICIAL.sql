@@ -344,10 +344,6 @@ END
 END
 ;
 
-
-
-
-
 --#vde: các trường hợp when case loại trừ ko tính  
    UPDATE SSS_dgia_202408
         SET TIEN_THULAO_GOI = 0,
@@ -361,6 +357,7 @@ END
         WHERE BUNDLE_XK = 1 
            OR ma_pb = 'VNP0700800' 
            OR PHAN_LOAI_KENH = 'CTVXHH'
-           OR ten_goi in (select ten_goi from dm_goi_loai_tru );
-        
+           OR ten_goi in (select ten_goi from dm_goi_loai_tru);
+
+select * from dual;
 
