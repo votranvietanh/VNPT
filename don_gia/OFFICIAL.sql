@@ -1,7 +1,11 @@
+--Pending:  tối ưu lại hằng số --> biến
+-- #vde: có 3 cột CK_goi_dm( cột này được update từ 2 bảng danh mục gói),CK_GOI(được imp chung khi imp thuê bao từ các report),CK_GOI_TLDG( sẽ chọn max từ 2 cột trước), ngx: gói VD90 chu kỳ 1 tháng nhưng KH mua 6 tháng ở report sẽ có CK = 6 còn CK_DM = 1 để tính đúng thì lấy 6 tháng mà sau này còn thu hồi)
+
 ----insert PTM:
+          --Import BRIS_PL1 trước SMRS(nv BH ONLINE và đại lý PTTT ?)
      insert into SSS_dgia_202408(nguon,ma_tb,username_kh,tenkieu_ld,thang_ptm,ngay_kh)
-    select 'bris',ma_tb,case when USER_DKTT not in (select USER_LD from nhuy.userld_202408_goc)
-                        and (CONGCU_DKTT = ' Web-App MyVNPT' or CONGCU_DKTT = 'App DigiShop TNTTTB KIT')
+    select 'bris',ma_tb,case when USER_DKTT not in (select USER_LD from nhuy.userld_202408_goc) --userld_202408_goc: bảng user CCBS có đủ username của tháng, chứ username nv bán hàng đặt tùm lum thêm số 1 số 2 vô chịu ko map được manv
+                        and (CONGCU_DKTT = ' Web-App MyVNPT' or CONGCU_DKTT = 'App DigiShop TNTTTB KIT') --#vde: when case vì kênh ngoài những TH này user kh là ở PBH ONL hoặc PTTT sẽ tính cho nv tiếp thị (trươc đó khi nv tiếp thị đem KH về rồi gọi cho PBHONL gọi video call thì nó kích cho PBHOL? )
             then MA_USER_TIEPTHI else USER_DKTT end,'ptm',thang, NGAY_KICH_HOAT
         from PL1_2024
             where thang = 202408
@@ -248,7 +252,98 @@
         set thang_kt = to_number(to_char(add_months(ngay_kh, CK_GOI_TLDG),'yyyymm'))
         ;
         
-        UPDATE SSS_dgia_202408
+  --==UPDATE tính tiền thù lao gói:      
+        update SSS_dgia_202408
+        set TIEN_THULAO_GOI = DTHU_DONGIA_GOI*HESO_HHBG 
+        where CK_GOI_TLDG >= 1
+        ;
+--===== #vde LOẠI TRỪ các trường hợp
+--PBH ONL: (các TB ptm có mua gói kích hoạt bởi nv PBHOL) OR (kích PTM GÓI) thì sẽ tính đơn giá. 
+--          chỉ kích TB PTM --> 0 tính.
+
+UPDATE SSS_dgia_202408_clone a
+SET TIEN_THULAO_GOI = CASE
+    -- Trường hợp 1: Cả hai dòng có cùng ma_pb = 'VNP0703000'
+    WHEN EXISTS (
+        SELECT 1 
+        FROM SSS_dgia_202408 b
+        WHERE a.ma_tb = b.ma_tb
+          AND a.tenkieu_ld = 'ptm'
+          AND b.tenkieu_ld = 'ptm-goi'
+          AND a.ma_pb = 'VNP0703000'
+          AND b.ma_pb = 'VNP0703000'
+    ) THEN a.DTHU_DONGIA_GOI * a.HESO_HHBG
+
+    -- Trường hợp 2: ptm-goi có ma_pb = 'VNP0703000' và ptm có ma_pb khác
+    WHEN a.tenkieu_ld = 'ptm-goi'
+         AND a.ma_pb = 'VNP0703000'
+         AND EXISTS (
+             SELECT 1 
+             FROM SSS_dgia_202408 c
+             WHERE a.ma_tb = c.ma_tb
+               AND c.tenkieu_ld = 'ptm'
+               AND c.ma_pb <> 'VNP0703000'
+         ) THEN a.DTHU_DONGIA_GOI * a.HESO_HHBG
+
+    -- Trường hợp 3: Không tính cho dòng có ma_pb = 'VNP0703000' nếu ptm-goi có ma_pb khác
+    WHEN a.tenkieu_ld = 'ptm'
+         AND a.ma_pb = 'VNP0703000'
+         AND EXISTS (
+             SELECT 1 
+             FROM SSS_dgia_202408 d
+             WHERE a.ma_tb = d.ma_tb
+               AND d.tenkieu_ld = 'ptm-goi'
+               AND d.ma_pb <> 'VNP0703000'
+         ) THEN 0
+
+    -- Trường hợp còn lại không thay đổi
+    ELSE a.TIEN_THULAO_GOI
+END
+, TIEN_THULAO_DNHM = CASE
+    -- Trường hợp 1: Cả hai dòng có cùng ma_pb = 'VNP0703000'
+    WHEN EXISTS (
+        SELECT 1 
+        FROM SSS_dgia_202408 b
+        WHERE a.ma_tb = b.ma_tb
+          AND a.tenkieu_ld = 'ptm'
+          AND b.tenkieu_ld = 'ptm-goi'
+          AND a.ma_pb = 'VNP0703000'
+          AND b.ma_pb = 'VNP0703000'
+    ) THEN TIEN_THULAO_DNHM
+
+    -- Trường hợp 2: ptm-goi có ma_pb = 'VNP0703000' và ptm có ma_pb khác
+    WHEN a.tenkieu_ld = 'ptm-goi'
+         AND a.ma_pb = 'VNP0703000'
+         AND EXISTS (
+             SELECT 1 
+             FROM SSS_dgia_202408 c
+             WHERE a.ma_tb = c.ma_tb
+               AND c.tenkieu_ld = 'ptm'
+               AND c.ma_pb <> 'VNP0703000'
+         ) THEN TIEN_THULAO_DNHM
+
+    -- Trường hợp 3: Không tính cho dòng có ma_pb = 'VNP0703000' nếu ptm-goi có ma_pb khác
+    WHEN a.tenkieu_ld = 'ptm'
+         AND a.ma_pb = 'VNP0703000'
+         AND EXISTS (
+             SELECT 1 
+             FROM SSS_dgia_202408 d
+             WHERE a.ma_tb = d.ma_tb
+               AND d.tenkieu_ld = 'ptm-goi'
+               AND d.ma_pb <> 'VNP0703000'
+         ) THEN 0
+
+    -- Trường hợp còn lại không thay đổi
+    ELSE a.TIEN_THULAO_DNHM
+END
+;
+
+
+
+
+
+--#vde: các trường hợp when case loại trừ ko tính  
+   UPDATE SSS_dgia_202408
         SET TIEN_THULAO_GOI = 0,
             TIEN_THULAO_DNHM = 0,
             LYDO_KHONGTINH = CASE 
@@ -262,10 +357,4 @@
            OR PHAN_LOAI_KENH = 'CTVXHH'
            OR ten_goi in (select ten_goi from dm_goi_loai_tru );
         
-        
-        
-  --==UPDATE tính tiền thù lao gói:      
-        update SSS_dgia_202408
-        set TIEN_THULAO_GOI = DTHU_DONGIA_GOI*HESO_HHBG 
-        where CK_GOI_TLDG >= 1
-        ;
+
