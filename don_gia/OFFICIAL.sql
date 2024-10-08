@@ -174,6 +174,12 @@
         );
         select  * from SSS_dgia_202408 where kenh_trong = 1 and tenkieu_ld = 'ptm-goi';
        --bundle xuat kho:
+
+          update SSS_dgia_202408 a
+                    set tien_goi = (select x.GIA_GOI_CO_VAT from va_DM_KIT_BUNDLE x where a.ten_goi = x.ten_goi)
+                        ,DTHU_DONGIA_GOI = (select x.GIAGOI_SAUCK_COVAT from va_DM_KIT_BUNDLE x where a.ten_goi = x.ten_goi)
+          where tien_goi is null
+                    ;
        UPDATE SSS_dgia_202408 a
         SET bundle_xk = 1
         WHERE EXISTS (
