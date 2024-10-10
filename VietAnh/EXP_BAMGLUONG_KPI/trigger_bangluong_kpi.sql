@@ -1,7 +1,7 @@
-create table ttkd_bsc.audit_bangluong_kpi as
+create table ttkd_bsc.bangluong_kpi_audit as
 select * from vietanhvh.audit_bangluong_kpi ;
 
-CREATE OR REPLACE TRIGGER trg_audit_bangluong_kpi
+CREATE OR REPLACE TRIGGER ttkd_bsc.trg_bangluong_kpi_audit
 AFTER UPDATE ON ttkd_bsc.bangluong_kpi
 FOR EACH ROW
 DECLARE
@@ -29,7 +29,7 @@ BEGIN
        :OLD.MUCDO_HOANTHANH != :NEW.MUCDO_HOANTHANH OR :OLD.DIEM_CONG != :NEW.DIEM_CONG OR :OLD.DIEM_TRU != :NEW.DIEM_TRU THEN
        
         -- Ghi tất cả các cột vào bảng audit khi có bất kỳ thay đổi nào
-        INSERT INTO audit_bangluong_kpi (
+        INSERT INTO ttkd_bsc.bangluong_kpi_audit (
              thang, ma_kpi,ten_kpi, ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ngaycong,
             tytrong, donvi_tinh, donvi_giao, giao, thuchien, tyle_thuchien, mucdo_hoanthanh, diem_cong, diem_tru, ghichu,
             ngay_public, ngay_deadline, manv_public, manv_apply, ngay_apply, sql_text, session_id, commit_id,changed_by,changed_on
