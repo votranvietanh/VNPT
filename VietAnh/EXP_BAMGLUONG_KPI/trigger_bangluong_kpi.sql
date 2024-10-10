@@ -2,7 +2,7 @@ create table ttkd_bsc.audit_bangluong_kpi as
 select * from vietanhvh.audit_bangluong_kpi ;
 
 CREATE OR REPLACE TRIGGER trg_audit_bangluong_kpi
-AFTER UPDATE ON ttkd_bsc.bangluong_kpi_202409
+AFTER UPDATE ON ttkd_bsc.bangluong_kpi
 FOR EACH ROW
 DECLARE
     v_sql_text VARCHAR2(4000);
