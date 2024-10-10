@@ -1,5 +1,5 @@
 create table ttkd_bsc.bangluong_kpi_audit as
-select * from vietanhvh.audit_bangluong_kpi ;
+    select * from vietanhvh.audit_bangluong_kpi ;
 
 CREATE OR REPLACE TRIGGER ttkd_bsc.trg_bangluong_kpi_audit
 AFTER UPDATE ON ttkd_bsc.bangluong_kpi
