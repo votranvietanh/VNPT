@@ -1,3 +1,6 @@
+create table ttkd_bsc.audit_bangluong_kpi as
+select * from vietanhvh.audit_bangluong_kpi ;
+
 CREATE OR REPLACE TRIGGER trg_audit_bangluong_kpi
 AFTER UPDATE ON vietanhvh.bangluong_kpi
 FOR EACH ROW
