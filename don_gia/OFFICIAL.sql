@@ -416,9 +416,6 @@ END
 ;
 
 
-
-
-
 --#vde: các trường hợp when case loại trừ ko tính
    UPDATE SSS_dgia_202408
         SET TIEN_THULAO_GOI = 0,
