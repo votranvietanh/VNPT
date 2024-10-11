@@ -321,6 +321,7 @@ from PL1_2024 a left join cte b on a.MA_USER_TIEPTHI = b.MA_DIEM_BAN
     --==UPDTAE tháng kết thúc để tính lương thu hồi?
         update SSS_dgia_202408
         set thang_kt = to_number(to_char(add_months(ngay_kh, CK_GOI_TLDG),'yyyymm'))
+        where thang_kt is null
         ;
 
 
@@ -330,7 +331,8 @@ from PL1_2024 a left join cte b on a.MA_USER_TIEPTHI = b.MA_DIEM_BAN
         SET TIEN_THULAO_GOI = CASE
                         WHEN CK_GOI_TLDG >= 1 THEN DTHU_DONGIA_GOI * HESO_HHBG
                         WHEN CK_GOI_TLDG = 0 THEN 0
-                    END;
+                    END
+        where thang_kt is null;
 
 --===== #vde LOẠI TRỪ các trường hợp
 --PBH ONL: (các TB ptm có mua gói kích hoạt bởi nv PBHOL) OR (kích PTM GÓI) thì sẽ tính đơn giá.
@@ -439,7 +441,6 @@ END
         where dai_ly = 1;
 
         select * from SSS_dgia_202408;
-
 
 ;
 select * from va_DM_KIT_BUNDLE;
