@@ -441,11 +441,6 @@ END
         select * from SSS_dgia_202408;
 
 
-
-
-
-
-
 ;
 select * from va_DM_KIT_BUNDLE;
 select * from va_DM_GOICUOC_PHANKY;
