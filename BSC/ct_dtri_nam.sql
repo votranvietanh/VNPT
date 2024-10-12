@@ -242,7 +242,7 @@ WHERE
         'VNP0701600', 'VNP0701800', 'VNP0702100', 'VNP0702200', 'VNP0702300',
         'VNP0702400', 'VNP0702500'
     )
-    and b.ma_nv in (select x.ma_nv from ttkd_Bsc.blkpi_dm_to_pgd x where x.dichvu ='VNP tra truoc'
+    and b.ma_nv in (select x.ma_nv from ttkd_Bsc.blkpi_dm_to_pgd x where x.dichvu  in  ('VNP tra truoc','VNP tra sau')
                 and x.thang = 202409
                 and x.ma_to =a.ma_to)
 GROUP BY
@@ -254,9 +254,11 @@ GROUP BY
     b.ma_vtcv;
     update va_TL_bsc_dthu_dtri_nam
     set tlth = round((DTHU_THUC_HIEN/SL_GIAO),2)*100
-    where loai_tinh ='KPI_TO' and thang = 202409;
+    where loai_tinh <> 'KPI_NV' and thang = 202409;
 
+--    delete from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409  and loai_tinh = 'KPI_TO';
    select * from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409 ;and ten_nv = 'Trần Huỳnh Ánh Nhiên'
    ;
-   select * from ttkd_bsc.nhanvien where ma_nv = 'VNP020754' and thang =202409
+   select * from ttkd_bsc.nhanvien where ma_nv = 'VNP019529' and thang =202409
    ;
+   select * from  ttkd_Bsc.blkpi_dm_to_pgd where thang =202409;
