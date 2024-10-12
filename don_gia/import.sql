@@ -104,3 +104,21 @@ _ https://smcs.vnpt.com.vn/client/reportAgentHCM
     WHERE HINH_THUC_TB = 'TS' and thang = 202408
     AND SO_TB IN (SELECT SOMAY FROM TTKD_BSC.DT_PTM_VNP_202408 WHERE GOI_LUONGTINH IS NOT NULL) --??i tên b?ng
     ;
+---
+update MANPN.BSCC_DIGI
+set thang =  manpn.MANPN_GET_YEARMONTH_FROM_M(1)
+where thang is null
+;
+
+update MANPN.BSCC_DIGI_DONLE
+set thang =  manpn.MANPN_GET_YEARMONTH_FROM_M(1)
+where thang is null
+;
+delete from MANPN.BSCC_IMPORT_GOI_BRIS
+where stt = 0
+;
+UPDATE MANPN.BSCC_IMPORT_GOI_BRIS
+SET THANG = manpn.MANPN_GET_YEARMONTH_FROM_M(1)
+WHERE THANG IS NULL;
+select * from MANPN.BSCC_IMPORT_GOI_BRIS
+order by thang desc; where thang = 202409 ; --didong

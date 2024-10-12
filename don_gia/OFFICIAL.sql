@@ -213,11 +213,19 @@ from PL1_2024 a left join cte b on a.MA_USER_TIEPTHI = b.MA_DIEM_BAN
             where a.phan_loai_kenh is null
             ;
         --UPDATE kênh nội bộ/đại lý
-        UPDATE SSS_dgia_202408 a
-                SET dai_ly = 1
-                where a.ma_tb in (select m.so_thue_bao FROM manpn.BSCC_IMPORT_CHUOI_TOAN_QUOC m
-                        WHERE m.thang = 202408)
-                        ;
+
+                    MERGE INTO SSS_dgia_202408 a
+USING manpn.BSCC_IMPORT_CHUOI_TOAN_QUOC m
+ON (a.ma_tb = m.so_thue_bao AND a.THANG_PTM = m.thang)
+WHEN MATCHED THEN
+    UPDATE SET a.dai_ly = 1;
+    UPDATE SSS_dgia_202408
+SET dai_ly = 1
+WHERE PHAN_LOAI_KENH = 'Chuỗi toàn quốc';
+
+
+
+
 
         UPDATE SSS_dgia_202408 a
                 SET dai_ly = 1
@@ -231,9 +239,10 @@ from PL1_2024 a left join cte b on a.MA_USER_TIEPTHI = b.MA_DIEM_BAN
           set kenh_trong =  case when (kenh_trong is null and manv_ptm is not null) then 1
                      else 0 end
           ;
-           UPDATE SSS_dgia_202408
+            UPDATE SSS_dgia_202408
           set dai_ly = 0
-          where dai_ly is null;
+          where dai_ly is null
+           ;
 
 
 
@@ -332,7 +341,7 @@ from PL1_2024 a left join cte b on a.MA_USER_TIEPTHI = b.MA_DIEM_BAN
                         WHEN CK_GOI_TLDG >= 1 THEN DTHU_DONGIA_GOI * HESO_HHBG
                         WHEN CK_GOI_TLDG = 0 THEN 0
                     END
-        where thang_kt is null;
+        ;
 
 --===== #vde LOẠI TRỪ các trường hợp
 --PBH ONL: (các TB ptm có mua gói kích hoạt bởi nv PBHOL) OR (kích PTM GÓI) thì sẽ tính đơn giá.
@@ -349,11 +358,12 @@ SET TIEN_THULAO_GOI = CASE
           AND b.tenkieu_ld = 'ptm-goi'
           AND a.ma_pb = 'VNP0703000'
           AND b.ma_pb = 'VNP0703000'
+          and a.CK_GOI_TLDG > 0
     ) THEN a.DTHU_DONGIA_GOI * a.HESO_HHBG
 
     -- Trường hợp 2: ptm-goi có ma_pb = 'VNP0703000' và ptm có ma_pb khác
     WHEN a.tenkieu_ld = 'ptm-goi'
-         AND a.ma_pb = 'VNP0703000'
+         AND a.ma_pb = 'VNP0703000' and a.CK_GOI_TLDG > 0
          AND EXISTS (
              SELECT 1
              FROM SSS_dgia_202408 c
@@ -363,7 +373,7 @@ SET TIEN_THULAO_GOI = CASE
          ) THEN a.DTHU_DONGIA_GOI * a.HESO_HHBG
 
     -- Trường hợp 3: Không tính cho dòng có ma_pb = 'VNP0703000' nếu ptm-goi có ma_pb khác
-    WHEN a.tenkieu_ld = 'ptm'
+    WHEN a.tenkieu_ld = 'ptm' and a.CK_GOI_TLDG > 0
          AND a.ma_pb = 'VNP0703000'
          AND EXISTS (
              SELECT 1
@@ -414,7 +424,10 @@ END
     ELSE a.TIEN_THULAO_DNHM
 END
 ;
-
+update SSS_dgia_202408
+set LYDO_KHONGTINH ='CK gói = 0'
+where manv_ptm is not null and CK_GOI_TLDG = 0 and LYDO_KHONGTINH is null
+;
 
 --#vde: các trường hợp when case loại trừ ko tính
    UPDATE SSS_dgia_202408
@@ -426,8 +439,9 @@ END
                                 WHEN PHAN_LOAI_KENH = 'CTVXHH' or manv_dktt like 'P%' THEN 'CTVXHH ko tính đơn giá'
                                 WHEN ten_goi in (select ten_goi from dm_goi_loai_tru ) then ten_goi ||' ko tinh'
                                 WHEN dai_ly = 1 then 'Đại lý ko tinh'
+
                              END
-        WHERE BUNDLE_XK = 1
+        WHERE (BUNDLE_XK = 1 and tenkieu_ld  ='ptm-goi')
            OR ma_pb = 'VNP0700800'
            OR PHAN_LOAI_KENH = 'CTVXHH' OR manv_dktt like 'P%'
            OR ten_goi in (select ten_goi from dm_goi_loai_tru )
@@ -437,8 +451,10 @@ END
             TIEN_THULAO_DNHM = 0
         where dai_ly = 1;
 
-        select * from SSS_dgia_202408;
+        select *from SSS_dgia_202408;
 
 ;
-select * from va_DM_KIT_BUNDLE;
-select * from va_DM_GOICUOC_PHANKY;
+--select * from va_DM_KIT_BUNDLE;
+--select * from va_DM_GOICUOC_PHANKY;
+--delete from SSS_dgia_202408;
+
