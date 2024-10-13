@@ -423,7 +423,13 @@ END
     -- Trường hợp còn lại không thay đổi
     ELSE a.TIEN_THULAO_DNHM
 END
+,lydo_khongtinh = CASE
+        WHEN (a.TIEN_THULAO_GOI = 0 and a.ma_pb = 'VNP0703000' and a.TENKIEU_LD ='ptm-goi') OR (a.TIEN_THULAO_DNHM = 0 and a.ma_pb = 'VNP0703000'and a.TENKIEU_LD ='ptm-goi') THEN 'PBH ONL_v2'
+        ELSE a.lydo_khongtinh
+    END
 ;
+
+
 update SSS_dgia_202408
 set LYDO_KHONGTINH ='CK gói = 0'
 where manv_ptm is not null and CK_GOI_TLDG = 0 and LYDO_KHONGTINH is null
@@ -450,11 +456,50 @@ where manv_ptm is not null and CK_GOI_TLDG = 0 and LYDO_KHONGTINH is null
         SET TIEN_THULAO_GOI = 0,
             TIEN_THULAO_DNHM = 0
         where dai_ly = 1;
+---gom thành 1 dòng thêm các cột thông tin của nhân viên thứ 2
 
-        select *from SSS_dgia_202408;
+
+
+
+
+
+
+
+
+        select distinct LYDO_KHONGTINH from SSS_dgia_202408
+                                       where ( TIEN_THULAO_DNHM = 0 or TIEN_THULAO_GOI =0)
+                                            and MANV_PTM is not null
+                                            and TENKIEU_LD in ('ptm','ptm-goi')
+        ;
 
 ;
 --select * from va_DM_KIT_BUNDLE;
 --select * from va_DM_GOICUOC_PHANKY;
---delete from SSS_dgia_202408;
+select * from SSS_dgia_202408 where  MANV_PTM is not null and ma_tb in (select ma_tb from SSS_dgia_202408 where  MANV_PTM is not null group by ma_tb having count(ma_tb)>2)
+order by ma_tb; --1837tb >2
+select * from SSS_dgia_202408 where  MANV_PTM is not null and ma_tb in (select ma_tb from SSS_dgia_202408 where  MANV_PTM is not null group by ma_tb having count(ma_tb)>2)
+order by ma_tb; --1837tb >2
+
+SELECT *
+FROM (
+    -- Lấy những dòng có tenkieu_ld là 'ptm'
+    SELECT a.*,1
+    FROM SSS_DGIA_202408 a
+    WHERE a.tenkieu_ld = 'ptm'
+
+    UNION ALL
+
+    -- Lấy dòng có tenkieu_ld là 'ptm-goi' với TIEN_GOI lớn nhất cho mỗi ma_tb
+    SELECT *
+    FROM (
+        SELECT a.*, ROW_NUMBER() OVER (PARTITION BY a.ma_tb ORDER BY a.TIEN_GOI DESC) as rnk
+        FROM SSS_DGIA_202408 a
+        WHERE a.tenkieu_ld = 'ptm-goi'
+    )
+    WHERE rnk = 1
+);
+
+
+select * from SSS_dgia_202408 where ma_tb = '84812004570';
+
 
