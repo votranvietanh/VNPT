@@ -25,30 +25,20 @@ SET thang = 202409
 WHERE To_number(TO_CHAR(ngay_kich_hoat, 'yyyymm')) = 202409;
 
 
-SELECT * FROM PL5;
-
-INSERT INTO PL1_MONTHLY(MA_TB,PHANLOAI_NHOM,NGAY_INIT,LOAIKENH_DK_TTTB,MANV_DK_TTTB,goicuoc,chuky_goi,dthu_goi,acc_init,kenh_bangoi,acc_bangoi,loaikenh_dk_bangoi,manv_dk_bangoi,DTHU_HMM,geo_state_key,ploai,loai_sim,ngay_ins)
-SELECT MA_TB,loai_sim, NGAY_KICH_HOAT,LOAI_kenh,MA_HRM_USER_DKTT, goi_cuoc,chu_ky_goi,dthu_goi,USER_DKTT,DIEM_CHAM_TIEPTHI,USER_DKTT,LOAI_KENH_CUA_USER,MA_HRM_USER_DKTT,DTHU_HMM,TINH_PSC_5917, 'PL1',loai_sim,sysdate
+INSERT INTO PL1_MONTHLY(THANG,MA_TB,PHANLOAI_NHOM,NGAY_INIT,LOAIKENH_DK_TTTB,MANV_DK_TTTB,goicuoc,chuky_goi,dthu_goi,acc_init,kenh_bangoi,acc_bangoi,loaikenh_dk_bangoi,manv_dk_bangoi,DTHU_HMM,geo_state_key,ploai,loai_sim,ngay_ins)
+SELECT 202409,MA_TB,loai_sim, NGAY_KICH_HOAT,LOAI_kenh,MA_HRM_USER_DKTT, goi_cuoc,chu_ky_goi,dthu_goi,USER_DKTT,DIEM_CHAM_TIEPTHI,USER_DKTT,LOAI_KENH_CUA_USER,MA_HRM_USER_DKTT,DTHU_HMM,TINH_PSC_5917, 'PL1',loai_sim,sysdate
 FROM PL1_2024
 WHERE To_number(TO_CHAR(ngay_kich_hoat, 'yyyymm')) = 202409;
 
 ;
 
-INSERT INTO PL4_MONTHLY (MA_TB,NGAY_INIT,goicuoc,chuky_goi,dthu_goi,kenh_bangoi,acc_bangoi,loaikenh_dk_bangoi,manv_dk_bangoi,tennv_dk_bangoi,geo_state_key,ploai,ngay_ins)
-SELECT MA_TB, NGAY_KICH_HOAT, ma_goi,chu_ky_goi,doanh_thu_ban_goi,CONG_CU_BAN_GOI,USER_KENH_BAN,LOAI_KENH_BAN,HRM_NV_BAN_GOI_NV_QLKENH_BAN,NV_BAN_GOI_NV_QL_KENH_BAN,DON_VI_PSC_5917, 'PL4',SYSDATE
+INSERT INTO PL4_MONTHLY (THANG,MA_TB,NGAY_INIT,goicuoc,chuky_goi,dthu_goi,kenh_bangoi,acc_bangoi,loaikenh_dk_bangoi,manv_dk_bangoi,tennv_dk_bangoi,geo_state_key,ploai,ngay_ins)
+SELECT 202409,MA_TB, NGAY_KICH_HOAT, ma_goi,chu_ky_goi,doanh_thu_ban_goi,CONG_CU_BAN_GOI,USER_KENH_BAN,LOAI_KENH_BAN,HRM_NV_BAN_GOI_NV_QLKENH_BAN,NV_BAN_GOI_NV_QL_KENH_BAN,DON_VI_PSC_5917, 'PL4',SYSDATE
 FROM PL4_2024
 WHERE TO_NUMBER(TO_CHAR(ngay_kich_hoat, 'yyyymm')) = 202409;
 
 ;
 
----- UPDATE THANG
-            UPDATE PL1_MONTHLY
-            SET thang = 202409
-            WHERE  TO_NUMBER(TO_CHAR(ngay_init, 'yyyymm')) = 202409;
-;
-            UPDATE PL4_MONTHLY
-            SET thang = 202409
-            WHERE  TO_NUMBER(TO_CHAR(ngay_init, 'yyyymm')) = 202409;
 
 ----
 -- C?p nh?t các tr??ng MATO_DK_TTTB, TENTO_DK_TTTB, MAPB_DK_TTTB, TENPB_DK_TTTB, TENNV_DK_TTTB trong b?ng PL1_MONTHLY
@@ -136,7 +126,6 @@ WHERE
     );
 
 ----=======
- select * from PL1_MONTHLY where thang = 202409;
 
             MERGE INTO PL4_monthly a
         USING (
@@ -182,15 +171,15 @@ WHERE
             WHERE  TO_NUMBER(TO_CHAR(ngay_init, 'yyyymm')) = 202409;
 
             ;
-
 ---- insert to view:
-            insert into PL5(MA_TB, PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_DK_TTTB, MANV_DK_TTTB, TENNV_DK_TTTB, MATO_DK_TTTB,
+            insert into PL5(THANG,MA_TB, PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_DK_TTTB, MANV_DK_TTTB, TENNV_DK_TTTB, MATO_DK_TTTB,
                  TENTO_DK_TTTB, MAPB_DK_TTTB, TENPB_DK_TTTB, GOICUOC, CHUKY_GOI, DTHU_GOI, ACC_INIT,
                  KENH_BANGOI, ACC_BANGOI, LOAIKENH_DK_BANGOI, MANV_DK_BANGOI, TENNV_DK_BANGOI, MATO_DK_BANGOI, TENTO_DK_BANGOI, MAPB_DK_BANGOI,
-                 TENPB_DK_BANGOI, DTHU_HMM, DTHU_TKC, TONG_DTHU_PTM,GEO_STATE_KEY,ploai,LOAI_SIM,ngay_ins)
+                 TENPB_DK_BANGOI, DTHU_HMM, DTHU_TKC, TONG_DTHU_PTM,GEO_STATE_KEY,ploai,LOAI_SIM)
 
         select * from(
                 SELECT
+                    202409,
                 NVL(a.MA_TB, b.MA_TB) AS MA_TB,
                 NVL(a.PHANLOAI_NHOM, b.PHANLOAI_NHOM) AS PHANLOAI_NHOM,
                 NVL(a.NGAY_INIT, b.NGAY_INIT) AS NGAY_INIT,
@@ -217,7 +206,7 @@ WHERE
                     ELSE b.DTHU_GOI
                 END  AS DTHU_GOI,
                 NVL(a.ACC_INIT, b.ACC_INIT) AS ACC_INIT,
-                NVL(a.KENH_BANGOI, '') || ';' || NVL(b.KENH_BANGOI, '') AS KENH_BANGOI,
+                NVL(a.KENH_BANGOI, '') || '; ' || NVL(b.KENH_BANGOI, '') AS KENH_BANGOI,
                     CASE
                     WHEN a.ACC_BANGOI IS NULL THEN b.ACC_BANGOI
                     WHEN b.ACC_BANGOI IS NULL THEN a.ACC_BANGOI
@@ -247,8 +236,8 @@ WHERE
                     WHEN a.ploai IS NULL THEN b.ploai
                     ELSE a.ploai
                 END AS ploai,
-                a.loai_sim,
-                nvl(TO_CHAR(a.ngay_ins, 'DD/MM/YYYY'),TO_CHAR(b.ngay_ins, 'DD/MM/YYYY')) as ngay_ins
+                a.loai_sim
+--         NVL(TO_CHAR(a.ngay_ins, 'DD/MM/YYYY'), TO_CHAR(b.ngay_ins, 'DD/MM/YYYY')) AS ngay_ins
             FROM
                 PL1_monthly a
             full JOIN
@@ -257,14 +246,6 @@ WHERE
             WHERE  TO_NUMBER(TO_CHAR(ngay_init, 'yyyymm')) = 202409;
 
                 ;
-
-        ----- bo sung PL5 , cot thang
-        UPDATE PL5
-        SET thang = 202409
-        WHERE  TO_NUMBER(TO_CHAR(ngay_init, 'yyyymm')) = 202409;
-
-        select * from PL5 where thang = 202409;
-
         -----===================
         MERGE INTO PL5 a
     USING (
@@ -322,7 +303,6 @@ WHERE
         end
         where thang = 202409 --(SYSDATE, 'DD/MM/YYYY')
         ;
-        select * from pl1_monthly where thang = 202409;
         --
               MERGE INTO PL5 a
             USING (
@@ -364,21 +344,19 @@ WHERE
     --delete xong them :
     delete from ttkdhcm_ktnv.TBL_VNP_BRIS where thang = 202409;
 
-    SELECT * FROM ttkdhcm_ktnv.TBL_VNP_BRIS WHERE THANG = 202409;
-    select * from PL5 where thang = 202409;
 
     insert into ttkdhcm_ktnv.TBL_VNP_BRIS(MA_TB, PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_DK_TTTB, MANV_DK_TTTB, TENNV_DK_TTTB, MATO_DK_TTTB, TENTO_DK_TTTB, MAPB_DK_TTTB, TENPB_DK_TTTB, GOICUOC, CHUKY_GOI, DTHU_GOI, ACC_INIT, KENH_BANGOI, ACC_BANGOI, LOAIKENH_DK_BANGOI, MANV_DK_BANGOI, TENNV_DK_BANGOI, MATO_DK_BANGOI, TENTO_DK_BANGOI, MAPB_DK_BANGOI, TENPB_DK_BANGOI, DTHU_HMM, DTHU_TKC, TONG_DTHU_PTM, ACC_GHINHAN, LOAIKENH_GHINHAN, NGUON, NGAY_INS,  DTHU_TKC_NGAY, TONG_DTHU_PTM_NGAY, GEO_STATE_KEY, THANG)
-    select to_char(MA_TB), PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_DK_TTTB, MANV_DK_TTTB, TENNV_DK_TTTB, MATO_DK_TTTB, TENTO_DK_TTTB, MAPB_DK_TTTB, TENPB_DK_TTTB, GOICUOC, CHUKY_GOI, DTHU_GOI, ACC_INIT, KENH_BANGOI, ACC_BANGOI, LOAIKENH_DK_BANGOI, MANV_DK_BANGOI, TENNV_DK_BANGOI, MATO_DK_BANGOI, TENTO_DK_BANGOI, MAPB_DK_BANGOI, TENPB_DK_BANGOI, DTHU_HMM, DTHU_TKC, TONG_DTHU_PTM, ACC_GHINHAN, LOAIKENH_GHINHAN,  ploai, NGAY_INS, DTHU_TKC_NGAY, TONG_DTHU_PTM_NGAY, GEO_STATE_KEY, THANG
+    select to_char(MA_TB), PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_DK_TTTB, MANV_DK_TTTB, TENNV_DK_TTTB, MATO_DK_TTTB, TENTO_DK_TTTB, MAPB_DK_TTTB, TENPB_DK_TTTB, GOICUOC, CHUKY_GOI, DTHU_GOI, ACC_INIT, KENH_BANGOI, ACC_BANGOI, LOAIKENH_DK_BANGOI, MANV_DK_BANGOI, TENNV_DK_BANGOI, MATO_DK_BANGOI, TENTO_DK_BANGOI, MAPB_DK_BANGOI, TENPB_DK_BANGOI, DTHU_HMM, DTHU_TKC, TONG_DTHU_PTM, ACC_GHINHAN, LOAIKENH_GHINHAN,  ploai, SYSDATE, DTHU_TKC_NGAY, TONG_DTHU_PTM_NGAY, GEO_STATE_KEY, THANG
     from PL5--ttkd_bct.va_ct_vnp_bris
     where  to_number(TO_CHAR(ngay_init, 'yyyymm')) = 202409;
 
     -- check trung` ma_tb
-    select*
-    from ttkdhcm_ktnv.TBL_VNP_BRIS
-    where thang = 202409
-        and ma_tb in ( select ma_tb
-        from ttkdhcm_ktnv.TBL_VNP_BRIS
-        where thang = 202409 group by ma_tb having count(ma_tb)>1);
+--                 select*
+--                 from ttkdhcm_ktnv.TBL_VNP_BRIS
+--                 where thang = 202409
+--                     and ma_tb in ( select ma_tb
+--                     from ttkdhcm_ktnv.TBL_VNP_BRIS
+--                     where thang = 202409 group by ma_tb having count(ma_tb)>1);
 
         -- del accghi nhan null --> ko map dc kenh ban
                 delete from ttkdhcm_ktnv.TBL_VNP_BRIS
@@ -401,7 +379,7 @@ WHERE
                         WHERE rn > 1
                     );
 
-
+--END
 
 
 
@@ -421,6 +399,9 @@ WHERE
                select * from ttkdhcm_ktnv.TBL_VNP_BRIS where thang = 202409;
 
                select thang,count(*) from pL5 group by thang;
+
+    SELECT * FROM ttkdhcm_ktnv.TBL_VNP_BRIS WHERE THANG = 202409;
+    select * from PL5 where thang = 202409;
 
 
                 
