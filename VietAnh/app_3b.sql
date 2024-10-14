@@ -6,8 +6,8 @@ CREATE OR REPLACE PROCEDURE CREATE_APP_3B_TABLE (suffix1 number)
     sql_stmt CLOB; 
 BEGIN
     -- Calculate suffix2 and suffix3
-    suffix2 := suffix1 - 1;
-    suffix3 := suffix1 - 2;
+    suffix2 := to_number(to_char(add_months(sysdate, -2), 'yyyymm'));
+    suffix3 := to_number(to_char(add_months(sysdate, -3), 'yyyymm'));
 
 
     table_name := 'APP_3B_' || suffix1;
@@ -87,6 +87,6 @@ END;
 											----RUN:
 										/
 										BEGIN
-										    CREATE_APP_3B_TABLE(202408);
-										END;
-										/
+										    CREATE_APP_3B_TABLE(202409);
+
+                                        END;
