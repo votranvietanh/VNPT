@@ -589,7 +589,5 @@ select *
 from  manpn.manpn_goi_tonghop_202408
 where manv_ptm = 'CTV080920' ;and loai_tb='ptm'
 ;
-select * from manpn.bscc_import_goi_bris where thang = 202408 and so_tb ='84914386401';
-
 select * from MANPN.BSCC_INSERT_DM_GOICUOC_PHANKY;
 select * from MANPN.BSCC_INSERT_DM_KIT_BUNDLE;
