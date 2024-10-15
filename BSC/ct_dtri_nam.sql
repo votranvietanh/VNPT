@@ -262,3 +262,28 @@ GROUP BY
    select * from ttkd_bsc.nhanvien where ma_nv = 'VNP019529' and thang =202409
    ;
    select * from  ttkd_Bsc.blkpi_dm_to_pgd where thang =202409;
+
+UPDATE TTKD_BSC.bangluong_kpi a
+SET thuchien = (
+    SELECT x.TLTH
+    FROM (
+        SELECT x.TLTH, ROW_NUMBER() OVER (PARTITION BY x.MA_NV, x.ma_kpi ORDER BY CASE WHEN x.loai_tinh = 'KPI_TO' THEN 1 ELSE 2 END) as rn
+        FROM vietanhvh.va_TL_bsc_dthu_dtri_nam x
+        WHERE x.thang = 202409
+          AND x.MA_NV = a.MA_NV
+          AND a.ma_kpi = x.ma_kpi
+    ) x
+    WHERE x.rn = 1
+)
+WHERE a.thang = 202409
+  AND a.ma_KPI = 'HCM_DT_PTMOI_060';
+
+UPDATE TTKD_BSC.bangluong_kpi a
+SET chitieu_giao = 50
+where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and thuchien is not null
+;
+
+;
+SELECT *
+FROM TTKD_BSC.bangluong_kpi_audit
+WHERE changed_on > to_date('12/10/2024', 'DD/MM/YYYY');
