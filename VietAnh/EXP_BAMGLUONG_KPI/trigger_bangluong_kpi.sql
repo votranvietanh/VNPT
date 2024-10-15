@@ -31,12 +31,12 @@ BEGIN
         -- Ghi tất cả các cột vào bảng audit khi có bất kỳ thay đổi nào
         INSERT INTO ttkd_bsc.bangluong_kpi_audit (
              thang, ma_kpi,ten_kpi, ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ngaycong,
-            tytrong, donvi_tinh, donvi_giao, giao, thuchien, tyle_thuchien, mucdo_hoanthanh, diem_cong, diem_tru, ghichu,
+            tytrong, donvi_tinh, CHITIEU_GIAO, giao, thuchien, tyle_thuchien, mucdo_hoanthanh, diem_cong, diem_tru, ghichu,
             ngay_public, ngay_deadline, manv_public, manv_apply, ngay_apply, sql_text, session_id, commit_id,changed_by,changed_on
         )
         VALUES (
              :OLD.THANG, :OLD.MA_KPI,:OLD.ten_kpi, :OLD.MA_NV, :OLD.TEN_NV, :OLD.MA_VTCV, :OLD.TEN_VTCV, :OLD.MA_TO, :OLD.TEN_TO,
-            :OLD.MA_PB, :OLD.TEN_PB, :OLD.NGAYCONG, :OLD.TYTRONG, :OLD.DONVI_TINH, :OLD.DONVI_GIAO, :OLD.GIAO, :OLD.THUCHIEN,
+            :OLD.MA_PB, :OLD.TEN_PB, :OLD.NGAYCONG, :OLD.TYTRONG, :OLD.DONVI_TINH, :OLD.CHITIEU_GIAO, :OLD.GIAO, :OLD.THUCHIEN,
             :OLD.TYLE_THUCHIEN, :OLD.MUCDO_HOANTHANH, :OLD.DIEM_CONG, :OLD.DIEM_TRU, :OLD.GHICHU, :OLD.NGAY_PUBLIC, :OLD.NGAY_DEADLINE,
             :OLD.MANV_PUBLIC, :OLD.MANV_APPLY, :OLD.NGAY_APPLY, v_sql_text, v_session_id, v_commit_id,user,v_time_commit
         );
