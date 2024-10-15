@@ -44,8 +44,8 @@ BEGIN
             :OLD.TYLE_THUCHIEN, :OLD.MUCDO_HOANTHANH, :OLD.DIEM_CONG, :OLD.DIEM_TRU, :OLD.GHICHU, :OLD.NGAY_PUBLIC, :OLD.NGAY_DEADLINE,
             :OLD.MANV_PUBLIC, :OLD.MANV_APPLY, :OLD.NGAY_APPLY, v_sql_text, v_session_id, v_commit_id,user,v_time_commit
         );
-------TTKD_BSC----
-create or replace TRIGGER ttkd_bsc.trg_bangluong_kpi_audit
+------TTKD_BSC---- VA đã sửa
+CREATE OR REPLACE TRIGGER ttkd_bsc.trg_bangluong_kpi_audit
 AFTER UPDATE ON ttkd_bsc.bangluong_kpi
 FOR EACH ROW
 DECLARE
@@ -61,11 +61,6 @@ BEGIN
     v_commit_id := DBMS_TRANSACTION.LOCAL_TRANSACTION_ID(FALSE);
     v_time_commit := SYSTIMESTAMP;
 
-    -- ??? đang lỗi hình như lấy từ view ko được thử lấy từ v$sql ?
---    SELECT sql_fulltext INTO v_sql_text
---    FROM ttkd_bsc.v_sql--ttkd_bsc.v_sql
---    WHERE sql_id = (SELECT sql_id FROM ttkd_bsc.v_session  WHERE audsid = v_session_id); --ttkd_bsc.v_session
-
 
 
     -- Kiểm tra sự thay đổi của từng cột
@@ -74,9 +69,9 @@ BEGIN
 
         -- Ghi tất cả các cột vào bảng audit khi có bất kỳ thay đổi nào
         INSERT INTO ttkd_bsc.bangluong_kpi_audit (
-             thang, ma_kpi,ten_kpi, ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ngaycong,
-            tytrong, donvi_tinh, chitieu_giao, giao, thuchien, tyle_thuchien, mucdo_hoanthanh, diem_cong, diem_tru, ghichu,
-            ngay_public, ngay_deadline, manv_public, manv_apply, ngay_apply, sql_text, session_id, commit_id,changed_by,changed_on
+            THANG, MA_KPI, TEN_KPI, MA_NV, TEN_NV, MA_VTCV, TEN_VTCV, MA_TO, TEN_TO, MA_PB, TEN_PB, NGAYCONG,
+            TYTRONG, DONVI_TINH, CHITIEU_GIAO, GIAO, THUCHIEN, TYLE_THUCHIEN, MUCDO_HOANTHANH, DIEM_CONG, DIEM_TRU, GHICHU,
+            NGAY_PUBLIC, NGAY_DEADLINE, MANV_PUBLIC, MANV_APPLY, NGAY_APPLY, sql_text, session_id, commit_id,changed_by,changed_on
         )
         VALUES (
              :OLD.THANG, :OLD.MA_KPI,:OLD.ten_kpi, :OLD.MA_NV, :OLD.TEN_NV, :OLD.MA_VTCV, :OLD.TEN_VTCV, :OLD.MA_TO, :OLD.TEN_TO,
@@ -84,8 +79,6 @@ BEGIN
             :OLD.TYLE_THUCHIEN, :OLD.MUCDO_HOANTHANH, :OLD.DIEM_CONG, :OLD.DIEM_TRU, :OLD.GHICHU, :OLD.NGAY_PUBLIC, :OLD.NGAY_DEADLINE,
             :OLD.MANV_PUBLIC, :OLD.MANV_APPLY, :OLD.NGAY_APPLY, v_sql_text, v_session_id, v_commit_id,user,v_time_commit
         );
-    END IF;
-END;
     END IF;
 END;
 /
