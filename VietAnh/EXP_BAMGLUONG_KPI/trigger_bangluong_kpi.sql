@@ -1,5 +1,9 @@
 create table ttkd_bsc.bangluong_kpi_audit as
     select * from vietanhvh.audit_bangluong_kpi ;
+--đổi cột donvi_giao --> chitieu_giao
+alter table vietanhvh.audit_bangluong_kpi
+rename column donvi_giao to chitieu_giao
+;
 
 CREATE OR REPLACE TRIGGER ttkd_bsc.trg_bangluong_kpi_audit
 AFTER UPDATE ON ttkd_bsc.bangluong_kpi
