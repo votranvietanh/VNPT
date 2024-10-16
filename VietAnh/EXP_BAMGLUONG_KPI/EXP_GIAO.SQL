@@ -27,6 +27,15 @@
                                         v_diem_tru NUMBER;
                                         cur_kpi SYS_REFCURSOR;  -- Khai báo con trỏ để xử lý truy vấn động
                                     BEGIN
+                                                 BEGIN
+                                                  EXECUTE IMMEDIATE 'DROP TABLE BLkpi_' || p_thang ||'_giao';
+                                              EXCEPTION
+                                                  WHEN OTHERS THEN
+                                                      -- Bỏ qua lỗi nếu bảng không tồn tại
+                                                      IF SQLCODE != -942 THEN
+                                                          RAISE;
+                                                      END IF;
+                                              END;
                                         -- Tạo bảng mới với các cột KPI và các loại dữ liệu khác
                                         v_sql := 'CREATE TABLE BLkpi_' || p_thang || '_giao AS ' ||
                                                  'SELECT ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ';
