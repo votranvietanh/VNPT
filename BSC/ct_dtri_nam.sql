@@ -257,14 +257,14 @@ GROUP BY
     where loai_tinh <> 'KPI_NV' and thang = 202409;
 
 --    delete from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409  and loai_tinh = 'KPI_TO';
-   select * from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409 ;and ten_nv = 'Trần Huỳnh Ánh Nhiên'
+   select * from vietanhvh.va_ct_bsc_dthu_dtri_nam where thang = 202409 ;and ten_nv = 'Trần Huỳnh Ánh Nhiên'
    ;
    select * from ttkd_bsc.nhanvien where ma_nv = 'VNP019529' and thang =202409
    ;
    select * from  ttkd_Bsc.blkpi_dm_to_pgd where thang =202409;
 
 UPDATE TTKD_BSC.bangluong_kpi a
-SET thuchien = (
+SET TYLE_THUCHIEN = (
     SELECT x.TLTH
     FROM (
         SELECT x.TLTH, ROW_NUMBER() OVER (PARTITION BY x.MA_NV, x.ma_kpi ORDER BY CASE WHEN x.loai_tinh = 'KPI_TO' THEN 1 ELSE 2 END) as rn
@@ -280,10 +280,26 @@ WHERE a.thang = 202409
 
 UPDATE TTKD_BSC.bangluong_kpi a
 SET chitieu_giao = 50
-where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and thuchien is not null
+where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and TYLE_THUCHIEN is not null
+;
+UPDATE TTKD_BSC.bangluong_kpi a
+SET THUCHIEN = null
+    ,giao = null;
+-- UPDATE TTKD_BSC.bangluong_kpi a
+-- SET TYLE_THUCHIEN = round((thuchien/chitieu_giao)*100,2)
+-- where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and thuchien is not null
+-- ;
+UPDATE bangluong_kpi a
+SET TYLE_THUCHIEN = 4561
+where thang = 202409 and MA_NV ='VNP030414'
 ;
 
+select * from ttkd_Bsc.blkpi_dm_to_pgd x where x.dichvu  in  ('VNP tra truoc','VNP tra sau') and x.ma_to in (
+    select distinct ma_to from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409
+    )
 ;
-SELECT *
-FROM TTKD_BSC.bangluong_kpi_audit
-WHERE changed_on > to_date('12/10/2024', 'DD/MM/YYYY');
+select * from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409 and ma_to ='VNP0701330';
+select * from ttkd_Bsc.nhanvien  where thang = 202409 and ma_vtcv ='VNP-HNHCM_BHKV_1';
+
+select * from TTKD_BSC.bangluong_kpi
+where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060';
