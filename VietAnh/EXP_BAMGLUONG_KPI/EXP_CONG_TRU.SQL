@@ -12,7 +12,7 @@
           BEGIN
               -- Xóa bảng khi đã tồn tại
               BEGIN
-                  EXECUTE IMMEDIATE 'DROP TABLE kpi_CONGTRU_' || p_thang;
+                  EXECUTE IMMEDIATE 'DROP TABLE vietanhvh.kpi_CONGTRU_' || p_thang;
               EXCEPTION
                   WHEN OTHERS THEN
                       -- Bỏ qua lỗi nếu bảng không tồn tại
@@ -21,7 +21,7 @@
                       END IF;
               END;
           
-              v_sql := 'CREATE TABLE kpi_CONGTRU_' || p_thang || ' AS
+              v_sql := 'CREATE TABLE vietanhvh.kpi_CONGTRU_' || p_thang || ' AS
                         SELECT THANG, MA_NV, TEN_NV, TEN_VTCV, TEN_TO, TEN_PB,
                                CASE WHEN SUM(DIEM_CONG) = 0 THEN NULL ELSE SUM(DIEM_CONG) END AS DIEM_CONG,
                                CASE WHEN SUM(DIEM_TRU) = 0 THEN NULL ELSE SUM(DIEM_TRU) END AS DIEM_TRU
