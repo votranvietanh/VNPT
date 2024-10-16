@@ -26,8 +26,17 @@
                                         v_diem_tru NUMBER;
                                         cur_kpi SYS_REFCURSOR;  -- Khai báo con trỏ để xử lý truy vấn động
                                     BEGIN
+                                             BEGIN
+                                                  EXECUTE IMMEDIATE 'DROP TABLE vietanhvh.BL_' || p_thang || '_TONGHOP';
+                                              EXCEPTION
+                                                  WHEN OTHERS THEN
+                                                      -- Bỏ qua lỗi nếu bảng không tồn tại
+                                                      IF SQLCODE != -942 THEN
+                                                          RAISE;
+                                                      END IF;
+                                              END;
                                         -- Tạo bảng mới với các cột KPI và các loại dữ liệu khác
-                                        v_sql := 'CREATE TABLE BL_' || p_thang || '_TONGHOP AS ' ||
+                                        v_sql := 'CREATE TABLE vietanhvh.BL_' || p_thang || '_TONGHOP AS ' ||
                                                  'SELECT ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ';
                                     
                                         -- Truy vấn các KPI khác nhau theo thứ tự của các loại dữ liệu
