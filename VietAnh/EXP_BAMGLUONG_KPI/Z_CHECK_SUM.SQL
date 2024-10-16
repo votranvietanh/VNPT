@@ -21,13 +21,13 @@ select * from ttkd_bsc.bangluong_kpi where thang = 202408 and ma_kpi ='HCM_DT_PT
                     vietanhvh.CREATE_KPI_SUMMARY_GIAO(202409);
                 END;
                 /
-                select * from BLkpi_202409_giao; --GIAO
+                select * from vietanhvh.BLkpi_202409_giao; --GIAO
                 
                  BEGIN
                         vietanhvh.KPI_CONGTRU(202409);
                  END;
                 /
-                 SELECT * FROM kpi_CONGTRU_202409;
+                 SELECT * FROM vietanhvh.kpi_CONGTRU_202409;
                 
                 
                 BEGIN
@@ -35,4 +35,4 @@ select * from ttkd_bsc.bangluong_kpi where thang = 202408 and ma_kpi ='HCM_DT_PT
                 END;
                 /
 --                drop table BL_202408_tonghop;
-                select * from BL_202409_tonghop;
+                select * from vietanhvh.BL_202409_tonghop;
