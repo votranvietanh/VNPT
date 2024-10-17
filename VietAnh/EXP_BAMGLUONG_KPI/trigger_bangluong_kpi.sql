@@ -18,8 +18,13 @@ BEGIN
 
 
     -- Kiểm tra sự thay đổi của từng cột
-    IF :OLD.CHITIEU_GIAO != :NEW.CHITIEU_GIAO OR :OLD.GIAO != :NEW.GIAO OR :OLD.THUCHIEN != :NEW.THUCHIEN OR :OLD.TYLE_THUCHIEN != :NEW.TYLE_THUCHIEN OR
-       :OLD.MUCDO_HOANTHANH != :NEW.MUCDO_HOANTHANH OR :OLD.DIEM_CONG != :NEW.DIEM_CONG OR :OLD.DIEM_TRU != :NEW.DIEM_TRU THEN
+     IF NVL(:OLD.CHITIEU_GIAO, 0) != NVL(:NEW.CHITIEU_GIAO, 0) OR
+       NVL(:OLD.GIAO, 0) != NVL(:NEW.GIAO, 0) OR
+       NVL(:OLD.THUCHIEN, 0) != NVL(:NEW.THUCHIEN, 0) OR
+       NVL(:OLD.TYLE_THUCHIEN, 0) != NVL(:NEW.TYLE_THUCHIEN, 0) OR
+       NVL(:OLD.MUCDO_HOANTHANH, 0) != NVL(:NEW.MUCDO_HOANTHANH, 0) OR
+       NVL(:OLD.DIEM_CONG, 0) != NVL(:NEW.DIEM_CONG, 0) OR
+       NVL(:OLD.DIEM_TRU, 0) != NVL(:NEW.DIEM_TRU, 0) THEN
 
         -- Ghi tất cả các cột vào bảng audit khi có bất kỳ thay đổi nào
         INSERT INTO ttkd_bsc.bangluong_kpi_audit (
