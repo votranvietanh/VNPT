@@ -17,7 +17,7 @@ BEGIN
 
 
 
-    -- Kiểm tra sự thay đổi của từng cột
+    -- Kiểm tra sự thay đổi của từng cột, hàm NVL để trigger so sánh được với NULL
      IF NVL(:OLD.CHITIEU_GIAO, 0) != NVL(:NEW.CHITIEU_GIAO, 0) OR
        NVL(:OLD.GIAO, 0) != NVL(:NEW.GIAO, 0) OR
        NVL(:OLD.THUCHIEN, 0) != NVL(:NEW.THUCHIEN, 0) OR
