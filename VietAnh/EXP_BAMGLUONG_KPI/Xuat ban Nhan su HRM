@@ -1,0 +1,16 @@
+begin
+	 ttkd_bsc.exp_bangluong_kpi_giao(202409);
+end;
+/
+begin
+	ttkd_bsc.exp_bangluong_kpi_thuchien(202409);
+end;
+/
+begin
+	ttkd_bsc.exp_bangluong_kpi_diem(202409);
+end;
+/
+
+select * from ttkd_bsc.blkpi_giao_202409_20241020_2135;  ---postfix _YYYYMMDD_H24MI
+select * from ttkd_bsc.blkpi_thuchien_202409_20241020_2135;
+select * from ttkd_bsc.blkpi_diem_202409_20241020_2135;
