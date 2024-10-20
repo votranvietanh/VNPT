@@ -8,11 +8,11 @@
                     create_kpi_summary_gom(TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')));
                 END;
                 /
-                drop table BL_202408_tonghop;
-                select * from BL_202408_tonghop;
+              --  drop table BL_202408_tonghop;
+                 select * from vietanhvh.BL_TONGHOP202409_20241020_1538;
 
 ---====================================================== BUILD ====================================================================
-                                    CREATE OR REPLACE PROCEDURE create_kpi_summary_gom (
+                                  CREATE OR REPLACE PROCEDURE create_kpi_summary_gom_v2 (
                                         p_thang    IN NUMBER    -- Tháng 
                                     ) AUTHID CURRENT_USER AS
                                         v_sql VARCHAR2(32767);
@@ -26,17 +26,17 @@
                                         v_diem_tru NUMBER;
                                         cur_kpi SYS_REFCURSOR;  -- Khai báo con trỏ để xử lý truy vấn động
                                     BEGIN
-                                             BEGIN
-                                                  EXECUTE IMMEDIATE 'DROP TABLE vietanhvh.BL_' || p_thang || '_TONGHOP';
-                                              EXCEPTION
-                                                  WHEN OTHERS THEN
-                                                      -- Bỏ qua lỗi nếu bảng không tồn tại
-                                                      IF SQLCODE != -942 THEN
-                                                          RAISE;
-                                                      END IF;
-                                              END;
+--                                             BEGIN
+--                                                  EXECUTE IMMEDIATE 'DROP TABLE vietanhvh.BL_' || p_thang || '_TONGHOP';
+--                                              EXCEPTION
+--                                                  WHEN OTHERS THEN
+--                                                      -- Bỏ qua lỗi nếu bảng không tồn tại
+--                                                      IF SQLCODE != -942 THEN
+--                                                          RAISE;
+--                                                      END IF;
+--                                              END;
                                         -- Tạo bảng mới với các cột KPI và các loại dữ liệu khác
-                                        v_sql := 'CREATE TABLE vietanhvh.BL_' || p_thang || '_TONGHOP AS ' ||
+                                        v_sql := 'CREATE TABLE vietanhvh.BL_TONGHOP' || p_thang||'_'|| TO_CHAR(SYSDATE, 'yyyymmdd_hh24mi') || ' AS ' ||
                                                  'SELECT ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ';
                                     
                                         -- Truy vấn các KPI khác nhau theo thứ tự của các loại dữ liệu
