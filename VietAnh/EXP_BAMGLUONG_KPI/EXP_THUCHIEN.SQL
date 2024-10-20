@@ -12,7 +12,7 @@
                  select * from ttkd_bsc.BL_TONGHOP202409_20241020_1538;
 
 ---====================================================== BUILD ====================================================================
-                                  CREATE OR REPLACE PROCEDURE ttkd_bsc.create_kpi_summary_gom_v2 (
+                                  CREATE OR REPLACE PROCEDURE ttkd_bsc.exp_bangluong_kpi_thuchien (
                                         p_thang    IN NUMBER    -- Tháng 
                                     ) AUTHID CURRENT_USER AS
                                         v_sql VARCHAR2(32767);
@@ -36,7 +36,7 @@
 --                                                      END IF;
 --                                              END;
                                         -- Tạo bảng mới với các cột KPI và các loại dữ liệu khác
-                                        v_sql := 'CREATE TABLE ttkd_bsc.BL_TONGHOP' || p_thang||'_'|| TO_CHAR(SYSDATE, 'yyyymmdd_hh24mi') || ' AS ' ||
+                                        v_sql := 'CREATE TABLE ttkd_bsc.BLkpi_thuchien_' || p_thang||'_'|| TO_CHAR(SYSDATE, 'yyyymmdd_hh24mi') || ' AS ' ||
                                                  'SELECT ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ';
                                     
                                         -- Truy vấn các KPI khác nhau theo thứ tự của các loại dữ liệu
