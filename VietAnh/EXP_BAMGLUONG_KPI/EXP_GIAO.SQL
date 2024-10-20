@@ -5,11 +5,10 @@
                                             
         -- Gọi procedure cho tháng hiện tại
                 BEGIN
-                    create_kpi_summary_GIAO_v2(TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')));
+                    ttkd_bsc.exp_bangluong_kpi_giao(TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')));
                 END;
-                /
-                drop table BLkpi_202409_giao;
-                select * from BLkpi_giao_202409_yyyymmddhh24mi; --BLkpi_giao_202409_20241021_2310
+                /                
+                select * from ttkd_bsc.BLkpi_giao_202409_yyyymmddhh24mi; --BLkpi_giao_202409_20241021_2310
 
 ---====================================================== BUILD ====================================================================
                            create or replace PROCEDURE ttkd_bsc.exp_bangluong_kpi_giao(
