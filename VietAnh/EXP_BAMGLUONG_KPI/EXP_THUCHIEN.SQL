@@ -5,11 +5,11 @@
                                             
         -- Gọi procedure cho tháng hiện tại
                 BEGIN
-                    ttkd_bsc.create_kpi_summary_gom_v2(TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')));
+                    ttkd_bsc.exp_bangluong_kpi_thuchien(TO_NUMBER(TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')));
                 END;
                 /
               --  drop table BL_202408_tonghop;
-                 select * from ttkd_bsc.BL_TONGHOP202409_20241020_1538;
+                 select * from ttkd_bsc.BLkpi_thuchien_202409_20241020_1538;
 
 ---====================================================== BUILD ====================================================================
                                   CREATE OR REPLACE PROCEDURE ttkd_bsc.exp_bangluong_kpi_thuchien (
