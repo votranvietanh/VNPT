@@ -12,7 +12,7 @@
                 select * from BLkpi_giao_202409_yyyymmddhh24mi; --BLkpi_giao_202409_20241021_2310
 
 ---====================================================== BUILD ====================================================================
-                          create or replace PROCEDURE create_kpi_summary_GIAO_v2(
+                           create or replace PROCEDURE ttkd_bsc.exp_bangluong_kpi_giao(
                                         p_thang    IN NUMBER    -- Tháng 
                                     ) AUTHID CURRENT_USER AS
                                         v_sql VARCHAR2(32767);
@@ -37,7 +37,7 @@
 --                                                      END IF;
 --                                              END;
                                         -- Tạo bảng mới với các cột KPI và các loại dữ liệu khác
-                                        v_sql := 'CREATE TABLE BLkpi_giao' || p_thang ||'_'|| TO_CHAR(SYSDATE, 'yyyymmdd_hh24mi') || ' AS ' ||
+                                        v_sql := 'CREATE TABLE ttkd_bsc.BLkpi_giao_' || p_thang ||'_'|| TO_CHAR(SYSDATE, 'yyyymmdd_hh24mi') || ' AS ' ||
                                                  'SELECT ma_nv, ten_nv, ma_vtcv, ten_vtcv, ma_to, ten_to, ma_pb, ten_pb, ';
 
                                         -- Truy vấn các KPI khác nhau theo thứ tự của các loại dữ liệu
