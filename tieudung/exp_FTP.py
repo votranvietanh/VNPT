@@ -1,3 +1,5 @@
+#HDSD đang làm xuất file từ oracle, tên file đặt theo quy ước 3 chữ cái: đầu giữa cuối, mỗi lần chạy code phải sửa tháng #EDIT_1 và #EDIT_2
+
 import ftplib
 import os
 
@@ -8,7 +10,7 @@ ftp_pass = 'Ktnv#768'      # Thay đổi với mật khẩu của bạn
 
 # Danh sách các file cần chuyển và tên file đích
 files_and_directories = {
-    'J:/sqldeveloper/sqldeveloper/bin/07_2024/BCH.xlsx': '/PhongKyThuatNghiepVu/Public/BHKVBinhChanh/BCH_CHITIET_TIEUDUNG_202407.xlsx', #EDIT
+    'J:/sqldeveloper/sqldeveloper/bin/07_2024/BCH.xlsx': '/PhongKyThuatNghiepVu/Public/BHKVBinhChanh/BCH_CHITIET_TIEUDUNG_202407.xlsx', #EDIT_1
     'J:/sqldeveloper/sqldeveloper/bin/07_2024/CCI.xlsx': '/PhongKyThuatNghiepVu/Public/BHKVCuChi/CCI_CHITIET_TIEUDUNG_202407.xlsx',
     'J:/sqldeveloper/sqldeveloper/bin/07_2024/CLN.xlsx': '/PhongKyThuatNghiepVu/Public/BHKVChoLon/CLN_CHITIET_TIEUDUNG_202407.xlsx',
     'J:/sqldeveloper/sqldeveloper/bin/07_2024/GDH.xlsx': '/PhongKyThuatNghiepVu/Public/BHKVGiaDinh/GDH_CHITIET_TIEUDUNG_202407.xlsx',
@@ -19,7 +21,7 @@ files_and_directories = {
     'J:/sqldeveloper/sqldeveloper/bin/07_2024/TDC.xlsx': '/PhongKyThuatNghiepVu/Public/BHKVThuDuc/TDC_CHITIET_TIEUDUNG_202407.xlsx'
 }
 
-subdirectory_name = '07-2024'  # EDIT
+subdirectory_name = '07-2024'  # EDIT_2
 
 try:
     # Kết nối đến FTP
