@@ -21,7 +21,8 @@ drop table SSS_dgia_202408;
 select *from ttkd_bct.va_dm_loaikenh_bh where thang = 202408;
 select distinct LOAIKENH from ttkd_bct.va_dm_loaikenh_bh where thang = 202408;
 
-select * from ttkd_bsc.ds_diemban_31import; --20256
+select * from ttkd_bsc.ds_diemban_31import where so_eload in ('84842694969'
+    ) and thang = 202409; --20256
 desc SSS_dgia_202408;
 
 ----insert PTM:
@@ -177,15 +178,15 @@ WHERE rn = 1;
     where manv_dktt is null
     ;
         update SSS_dgia_202409 a
-        set MANV_PTM = (select (b.ma_nv) from ttkd_bsc.nhanvien b where b.thang = 202409 and b.USER_CCBS = a.manv_dktt) -- tháng 9 ttvt_ctv086203_hcm đag bị double nên dùng max
+        set MANV_PTM = (select (b.ma_nv) from ttkd_bsc.nhanvien b where b.thang = 202409 and b.USER_CCBS = a.username_kh) -- tháng 9 ttvt_ctv086203_hcm đag bị double nên dùng max
         where manv_ptm is null
         ;
         update SSS_dgia_202409 a
-        set MANV_PTM = (select b.ma_nv from ttkd_bsc.nhanvien b where b.thang = 202409 and b.USER_CCOS = a.manv_dktt)
+        set MANV_PTM = (select b.ma_nv from ttkd_bsc.nhanvien b where b.thang = 202409 and b.USER_CCOS = a.username_kh)
         where manv_ptm is null
         ;
         update SSS_dgia_202409 a
-        set MANV_PTM = (select b.ma_nv from SSS_kenh_noi_bo b where b.thang = 202409 and b.SO_ELOAD = a.manv_dktt)
+        set MANV_PTM = (select ma_nv from SSS_kenh_noi_bo b where b.thang = 202409 and b.SO_ELOAD = a.username_kh)
         where manv_ptm is null
         ;
         --nhan vien quan li diem ban khoi up
@@ -194,15 +195,17 @@ WHERE rn = 1;
         ON (a.manv_dktt = d.ma_diem_ban AND d.thang = 202409)
         WHEN MATCHED THEN
             UPDATE SET a.manv_ptm = d.manv_hrm
-            WHERE a.manv_ptm IS NULL;
+            WHERE a.manv_dktt in (select (ma_diem_ban) from ttkd_bsc.ds_diemban_31import where thang = 202409);
+
 
             MERGE INTO SSS_dgia_202409 a
         USING ttkd_bsc.ds_diemban_31import d
         ON (a.manv_dktt = to_char(d.so_eload) AND d.thang = 202409)
         WHEN MATCHED THEN
             UPDATE SET a.manv_ptm = d.manv_hrm
-            WHERE a.manv_ptm IS NULL;
-
+            WHERE a.manv_dktt in (select to_char(so_eload) from ttkd_bsc.ds_diemban_31import where thang = 202409);
+ ;
+;
         UPDATE SSS_dgia_202409 a
         SET MANV_PTM = (
             SELECT b.ma_nv
@@ -221,7 +224,7 @@ WHERE rn = 1;
         where manv_ptm is null
         ;
 --===UPDATE thông tin nhân viên:
-     update SSS_dgia_202409 a
+     update SSS_dgia_202409_v2 a
         set (tennv_ptm,ma_to,ten_to, ma_pb, ten_pb, ma_vtcv, nhom_tiepthi) = ( select x.ten_nv, x.ma_to, x.ten_to, x.ma_pb, x.ten_pb, x.ma_vtcv, x.NHOMLD_ID from ttkd_bsc.nhanvien x where x.thang=a.thang_ptm and x.ma_nv = a.manv_ptm)
     where tennv_ptm is null
        ;
@@ -372,9 +375,11 @@ where a.THANG_PTM = 202409
   --==UPDATE tính tiền thù lao gói:
       UPDATE SSS_dgia_202409
         SET TIEN_THULAO_GOI = CASE
-                        WHEN CK_GOI_TLDG >= 1 THEN DTHU_DONGIA_GOI * HESO_HHBG
+                        WHEN CK_GOI_TLDG >= 1 and TENKIEU_LD ='ptm-goi' and MANV_PTM is not null
+                                    THEN DTHU_DONGIA_GOI * HESO_HHBG
                         WHEN CK_GOI_TLDG = 0 THEN 0
                     END
+
         ;
 
 --===== #vde LOẠI TRỪ các trường hợp
@@ -520,10 +525,10 @@ where a.ma_tb in (select ma_tb from khieunai_td_dgia where thang = 202409)
     and a.TENKIEU_LD ='ptm'
 ;
       update SSS_dgia_202409 a
-        set (tennv_ptm,ma_to,ten_to, ma_pb, ten_pb, ma_vtcv, nhom_tiepthi) = ( select x.ten_nv, x.ma_to, x.ten_to, x.ma_pb, x.ten_pb, x.ma_vtcv, x.NHOMLD_ID from ttkd_bsc.nhanvien x where x.thang=a.thang_ptm and x.ma_nv = a.USERNAME_KH)
+        set (manv_ptm,tennv_ptm,ma_to,ten_to, ma_pb, ten_pb, ma_vtcv, nhom_tiepthi) = ( select x.ma_nv,x.ten_nv, x.ma_to, x.ten_to, x.ma_pb, x.ten_pb, x.ma_vtcv, x.NHOMLD_ID from ttkd_bsc.nhanvien x where x.thang=a.thang_ptm and x.ma_nv = a.USERNAME_KH)
     where ma_tb in  (select ma_tb from khieunai_td_dgia where thang = 202409) and TENKIEU_LD ='ptm'
 
-
+---những manv_goi ở bên 1 dòng nếu null --> kiểm tra cột tiền gói coi = 0 ko ? gán 0
 -----------------====== NHÁP:
 
 
@@ -560,7 +565,7 @@ FROM (
     FROM (
         SELECT a.*, ROW_NUMBER() OVER (PARTITION BY a.ma_tb ORDER BY a.TIEN_GOI DESC) as rnk
         FROM SSS_DGIA_202409 a
-        WHERE a.tenkieu_ld = 'ptm-goi'
+        WHERE a.tenkieu_ld = 'ptm-goi' and a.MANV_PTM is not null
     )
     WHERE rnk = 1
 );
@@ -569,7 +574,7 @@ select count(*) from SSS_DGIA_202408 where TENKIEU_LD ='ptm'
 select * from one_line_202409 where ma_tb = '84886223649';
 -- drop table one_line_202409;
 
-CREATE TABLE one_line_202409 AS
+CREATE TABLE one_line_202409_v2 AS
 (SELECT thang_ptm,
         LISTAGG(nguon, '; ') WITHIN GROUP (ORDER BY TENKIEU_LD)              AS nguon,
         LISTAGG(phan_loai_kenh, '; ') WITHIN GROUP (ORDER BY TENKIEU_LD)     AS phan_loai_kenh,
@@ -594,7 +599,7 @@ CREATE TABLE one_line_202409 AS
         dthu_KPI,
         0 dthu_dnhm_kpi,
         LISTAGG(lydo_khongtinh, '; ') WITHIN GROUP (ORDER BY TENKIEU_LD)     AS lydo_khongtinh
- FROM SSS_dgia_202409_2
+ FROM SSS_DGIA_202409_2_v2
  GROUP BY ma_tb, thang_ptm, dthu_KPI);
 
 
@@ -642,7 +647,8 @@ where BUNDLE_XK = 1 and TENKIEU_LD='ptm-goi';
 select * from MANPN.BSCC_INSERT_DM_GOICUOC_PHANKY;
 select * from MANPN.BSCC_INSERT_DM_KIT_BUNDLE;
 
-select count(*) from SSS_DGIA_202409_tmp where manv_ptm in (SELECT ma_nv
+select manv_ptm,tennv_ptm,ten_pb from SSS_DGIA_202409_v2 where manv_ptm in
+  (SELECT ma_nv,kqth,khdk
 FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
 WHERE thang = 202409 and dinhmuc_2 IN (32000000, 30000000)
   AND ma_vtcv IN ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_17')
@@ -678,7 +684,7 @@ SET HESO_KK = CASE
 update SSS_DGIA_202409
 set heso_kk = 0.05
     ,TIEN_THULAO_KK = DTHU_DONGIA_GOI*HESO_KK
-where manv_ptm in (select ma_nv FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
+where manv_ptm in (select ma_nv,ten_pb FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
                     WHERE thang = 202409 and
                         dinhmuc_2 IN (32000000, 30000000)
                       AND ma_vtcv IN ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_17')
@@ -694,9 +700,95 @@ select * from SSS_dgia_202409;
 update one_line_202409;
 
 select * from vietanhvh.SSS_dgia_202409_2 where (TIEN_THULAO_GOI > 0 or BUNDLE_XK = 1) and tenkieu_ld = 'ptm-goi'
-        and manv_ptm in (select ma_nv FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
+        and manv_ptm in (select ma_nv,ten_nv,kqth FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
                     WHERE thang = 202409 and
                         dinhmuc_2 IN (32000000, 30000000)
                       AND ma_vtcv IN ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_17')
                       AND KQTH >= dinhmuc_2
                       AND KHDK >= dinhmuc_2);
+
+select * from manpn.manpn_goi_tonghop_202409 where ma_tb ='84912762430';
+select * from PL1_2024 where ma_tb in (
+'84888778075')
+;
+
+-- CHÈN BÀ THẮNG
+INSERT INTO one_line_202409(THANG_PTM, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG, MANV_PTM, TENNV_PTM, MATO_PTM, TENTO_PTM, MAPB_PTM, TENPB_PTM, TIEN_DNHM, DTHU_DONGIA_DNHM, TIEN_THULAO_DNHM, MANV_GOI, MATO_GOI, MAPB_GOI, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI, DTHU_KPI, DTHU_DNHM_KPI, LYDO_KHONGTINH, LYDO_KHONGTINH_KPI, GHI_CHU)
+select 202409,'coevnpt','NV KDDDTT',ACCS_MTHD_KEY,'TR60D',1,'VNP017782','Trương Thị Thanh Trúc','VNP0701230',	'Tổ Kinh Doanh Di Động Trả Trước',	'VNP0701200',
+       'Phòng Bán Hàng Khu Vực Chợ Lớn',25000,20000,20000,'VNP016957','VNP0701230',	'VNP0701200',60000,45000,0,null,null,'; Bundle_xuatkho', null,'1491 sim của chị Thắng'
+    from manpn.a_temp_cl2;
+
+update one_line_202409
+set MANV_PTM = 'VNP017782' --bà Trúc
+where manv_ptm = 'VNP016957' --bà thắng
+;
+update one_line_202409
+set (TENNV_PTM, MATO_PTM, TENTO_PTM, MAPB_PTM, TENPB_PTM) = (select ten_nv,ma_to,ten_to,ma_pb,ten_pb from ttkd_bsc.nhanvien where thang = 202409 and ma_nv ='VNP017782')
+where manv_ptm = 'VNP017782'
+;
+select * from one_line_202409 where manv_ptm ='VNP017782';
+
+update one_line_202409
+set heso_kk = 0.05
+where manv_ptm in (select ma_nv FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
+                    WHERE thang = 202409 and
+                        dinhmuc_2 IN (32000000, 30000000)
+                      AND ma_vtcv IN ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_17')
+                      AND KQTH >= dinhmuc_2
+                      AND KHDK >= dinhmuc_2)
+and CK_GOI_TLDG>0
+;
+update one_line_202409
+set TIEN_THULAO_GOI = nvl(TIEN_THULAO_GOI+(DTHU_DONGIA_GOI*HESO_KK),0)
+where heso_kk = 0.05
+;
+
+select * from one_line_202409 where NGUON like '%luongtinh%';
+
+create table khieunai_bosung_U1500 as (select manv_ptm,tennv_ptm,sum(dthu_kpi) kpi from one_line_202409;
+select *  from one_line_202409
+
+where ma_tb in (
+'84814520248',
+'84813204316',
+'84813217634',
+'84814550240',
+'84814557342',
+'84814558076',
+'84814563821',
+'84814569140',
+'84814569410',
+'84814582260',
+'84814583691'
+);
+group by manv_ptm,TENNV_PTM)
+;
+select a.ma_tb,(a.tien_thulao_dnhm),nvl(b.tien_thulao_dnhm,0) btien_thulao_dnhm ,(a.tien_thulao_dnhm-nvl(b.tien_thulao_dnhm,0)) CL
+
+from one_line_202409_tmp a
+ join
+    (select * from one_line_202409
+              where ma_tb not in (SELECT ACCS_MTHD_KEY FROM manpn.a_temp_cl2) and nguon not like '%luongtinh%'
+              ) b
+        on a.ma_tb =b.ma_tb;
+where a.ma_tb in ('84822857422','84854540607');
+select * from ONE_LINE_202409 where ma_tb in (
+'84814520248',
+'84813204316',
+'84813217634',
+'84814550240',
+'84814557342',
+'84814558076',
+'84814563821',
+'84814569140',
+'84814569410',
+'84814582260',
+'84814583691'
+);
+
+
+select * from ONE_LINE_202409 where ma_tb in ('84915496620','84915174934' ,'84945026178');
+
+select * from TTKD_BSC.blkpi_danhmuc_kpi where thang =202409 and ma_kpi ='HCM_DT_PTMOI_060';
+select * from blkpi_giao_202409_20241020_2135;
+select * from blkpi_giao_202409_20241021_2213;

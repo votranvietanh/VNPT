@@ -284,7 +284,8 @@ where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and TYLE_THUCHIEN is not nu
 ;
 UPDATE TTKD_BSC.bangluong_kpi a
 SET THUCHIEN = null
-    ,giao = null;
+
+where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060';
 -- UPDATE TTKD_BSC.bangluong_kpi a
 -- SET TYLE_THUCHIEN = round((thuchien/chitieu_giao)*100,2)
 -- where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and thuchien is not null
@@ -298,6 +299,7 @@ select * from ttkd_Bsc.blkpi_dm_to_pgd x where x.dichvu  in  ('VNP tra truoc','V
     select distinct ma_to from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409
     )
 ;
+
 select * from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409 and ma_to ='VNP0701330';
 select * from ttkd_Bsc.nhanvien  where thang = 202409 and ma_vtcv ='VNP-HNHCM_BHKV_1';
 
