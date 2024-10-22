@@ -1,0 +1,29 @@
+begin
+	 ttkd_bsc.exp_bangluong_kpi_giao(202409);
+end;
+/
+begin
+	ttkd_bsc.exp_bangluong_kpi_thuchien(202409);
+end;
+/
+begin
+	ttkd_bsc.exp_bangluong_kpi_diem(202409);
+end;
+/
+
+select * from ttkd_bsc.blkpi_giao_202409_20241020_2135;  ---postfix _YYYYMMDD_H24MI
+select * from ttkd_bsc.blkpi_thuchien_202409_20241020_2135;
+select * from ttkd_bsc.blkpi_diem_202409_20241020_2135;
+----Don gia
+select 
+	ma_nv, ten_nv,ma_vtcv,ten_vtcv,	ma_pb,	ten_pb,	ma_to,ten_to,	loai_ld
+	 , dtptm_dongia_cdbr,	dtptm_dongia_vnpts,	dtptm_dongia_cntt, tong_dtptm
+	  , luong_dongia_cdbr, luong_dongia_cntt, luong_dongia_vnpts, 
+	  luong_dongia_dnhm_vnptt, luong_dongia_goi_vnptt, ghtt_vnpts,	luong_khac,
+	  luong_dongia_ghtt, luong_dongia_nghiepvu, luong_dongia_chungtu, luong_dongia_thucuoc
+	 , tong_luong_dongia,	ghichu
+	 , luong_dongia_ptm_thuhoi,	luong_dongia_khac_thuhoi, thuhoi_dongia_ghtt
+	  , giamtru_hosotainha, giamtru_ghtt_cntt, LUONG_DONGIA_PTM_THUHOI_T7_dot2, tong_luong_thuhoi
+	  , TONG_THULAO_THUCCHI
+from ttkd_bsc.bangluong_dongia_202409
+where donvi = 'TTKD' and TONG_THULAO_THUCCHI is not null
