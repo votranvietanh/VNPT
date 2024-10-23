@@ -72,6 +72,8 @@
 
                                         -- In câu lệnh SQL để kiểm tra
                                         DBMS_OUTPUT.PUT_LINE(v_sql);
+                                         -- In tên bảng vừa tạo: thanh công cụ View --> DBMS_output
+                                      DBMS_OUTPUT.PUT_LINE('Created table: ' || v_table_name);
 
                                         -- Thực thi câu lệnh SQL để tạo bảng
                                         EXECUTE IMMEDIATE v_sql;
