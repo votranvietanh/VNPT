@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/BSC/ct_dtri_nam.sql" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/VietAnh/app_3b.sql" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/VietAnh/baocao_bris.sql" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/don_gia/OFFICIAL.sql" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/don_gia/import.sql" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/don_gia/tut_aMan.sql" dialect="Oracle" />
+  </component>
+</project>
