@@ -153,22 +153,51 @@
                                  and ma_nv = a.manv_ptm)
         where thang_tldg = 202408 and nguon = 'va_ct_bsc_ptm' and kenh_ptm is null;
 -----man_cp_hoahong;
-    insert into ttkd_bct.hocnq_cp_nhancong_hoahong(THANG, THANG_TLDG, MA_TB, TEN_TB
-    , MA_GD, TEN_KIEULD, NHOM_DICHVU, LOAIHINH_TB, PHONG_PTM
-    , MANV_PTM, TENNV_PTM, KENH_PTM
-    , PHONG_QL, DATCOC_CSD, SOTHANG_DC
+ insert into ttkd_bct.hocnq_cp_nhancong_hoahong(THANG, THANG_TLDG, MA_TB
+    , TEN_KIEULD, NHOM_DICHVU, LOAIHINH_TB, PHONG_PTM
+    , MANV_PTM,  KENH_PTM
+    ,  DATCOC_CSD, SOTHANG_DC
     , DTHU_GOI, DTHU_TLDG, TIENLUONG_DAILY, TIENLUONG_PBH_PTM, TIENLUONG_PQL, NGUON)
 
-select 202408, 202408, ma_tb,''
-    , '',case when TENKIEU_LD = 'ptm' then 'Phát triển mới - hòa mạng'
-                    when TENKIEU_LD = 'ptm_goi' then 'Phát triển mới - mua gói' else '' end, '','VNPTT', ma_pb
-    , manv_ptm, '', b.TENNHOM_TAT
-    ,'','',''
-    , DTHU_GOI_GOC, DTHU_GOI_GOC,  0,  case when  TENKIEU_LD = 'ptm_goi' and kenh_noibo is null then 0 else nvl(LUONG_DONGIA_NVPTM,0)+ nvl(LUONG_DONGIA_DNHM_NVPTM,0)  end dg,
-    case when TENKIEU_LD = 'ptm_goi' and kenh_noibo is null then round(NVL(DONGIA_KK,0) * NVL(DTHU_GOI_GOC,0),0) else 0 end dg_kenhngoai
-    ,'VNPTT__'||nguon
-from ttkd_bsc.ct_bsc_ptm a left join ttkd_bsc.dm_nhomld b on a.NHOM_TIEPTHI = b.NHOMLD_ID
-where thang_ptm=202408 and loaitb_id=21 and thoadk_dg=1 ;
+    select a.thang_ptm, a.thang_ptm, ma_tb,tenkieu_ld || '- mua gói' tenkieuld,'Di động' dv_vt
+           , a.dich_vu, a.MAPB_HOTRO, a.MANV_HOTRO,
+           (select x.TEN_NHOM from ttkd_bsc.dm_nhomld x where x.nhomld_id = b.nhomld_id) kenh_ptm
+            ,  a.DATCOC_CSD,SOTHANG_DC, DOANHTHU_DONGIA_NVHOTRO,DOANHTHU_DONGIA_NVHOTRO,
+           0, LUONG_DONGIA_NVHOTRO,
+           0,'VNPTT'
+    from ttkd_bsc.ct_bsc_ptm a
+    left join TTKD_BSC.nhanvien b on b.thang = a.thang_Ptm and a.MANV_HOTRO = b.ma_nv
+    where thang_ptm = 202409
+      and loaitb_id = 21
+      and LUONG_DONGIA_NVHOTRO >0
+UNION ALL
+      select a.thang_ptm, a.thang_ptm, ma_tb,tenkieu_ld,'Di động' dv_vt, a.dich_vu, a.ma_pb, manv_ptm,
+           (select x.TEN_NHOM from ttkd_bsc.dm_nhomld x where x.nhomld_id = b.nhomld_id) kenh_ptm
+            ,  CAST( '' AS number ),CAST( '' AS number ), CAST( '' AS number ),DOANHTHU_DONGIA_DNHM,
+           0, LUONG_DONGIA_DNHM_NVPTM,
+           0,'VNPTT'
+    from ttkd_bsc.ct_bsc_ptm a
+    left join TTKD_BSC.nhanvien b on b.thang = a.thang_Ptm and a.manv_ptm = b.ma_nv
+    where thang_ptm = 202409
+      and loaitb_id = 21
+        and LUONG_DONGIA_DNHM_NVPTM > 0
+    ;
+--     insert into ttkd_bct.hocnq_cp_nhancong_hoahong(THANG, THANG_TLDG, MA_TB, TEN_TB
+--     , MA_GD, TEN_KIEULD, NHOM_DICHVU, LOAIHINH_TB, PHONG_PTM
+--     , MANV_PTM, TENNV_PTM, KENH_PTM
+--     , PHONG_QL, DATCOC_CSD, SOTHANG_DC
+--     , DTHU_GOI, DTHU_TLDG, TIENLUONG_DAILY, TIENLUONG_PBH_PTM, TIENLUONG_PQL, NGUON)
+
+-- select 202408, 202408, ma_tb,''
+--     , '',case when TENKIEU_LD = 'ptm' then 'Phát triển mới - hòa mạng'
+--                     when TENKIEU_LD = 'ptm_goi' then 'Phát triển mới - mua gói' else '' end, '','VNPTT', ma_pb
+--     , manv_ptm, '', b.TENNHOM_TAT
+--     ,'','',''
+--     , DTHU_GOI_GOC, DTHU_GOI_GOC,  0,  case when  TENKIEU_LD = 'ptm_goi' and kenh_noibo is null then 0 else nvl(LUONG_DONGIA_NVPTM,0)+ nvl(LUONG_DONGIA_DNHM_NVPTM,0)  end dg,
+--     case when TENKIEU_LD = 'ptm_goi' and kenh_noibo is null then round(NVL(DONGIA_KK,0) * NVL(DTHU_GOI_GOC,0),0) else 0 end dg_kenhngoai
+--     ,'VNPTT__'||nguon
+-- from ttkd_bsc.ct_bsc_ptm a left join ttkd_bsc.dm_nhomld b on a.NHOM_TIEPTHI = b.NHOMLD_ID
+-- where thang_ptm=202408 and loaitb_id=21 and thoadk_dg=1 ;
 
 ---man--HHBG - hoahong
     insert into ttkd_bct.hocnq_cp_nhancong_hoahong(THANG, THANG_TLDG, MA_TB, TEN_TB
