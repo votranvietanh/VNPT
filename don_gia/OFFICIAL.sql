@@ -641,6 +641,7 @@ set manv_goi = manv_ptm
 where manv_goi is null and ten_goi is null
 ;
 
+--25/10 ĐÃ TỐI ƯU ĐẾN ĐÂY
 
 SELECT manv, SUM(tien_thulao) AS tong_tien_thulao
 FROM (
@@ -659,6 +660,7 @@ GROUP BY manv;
 
 select * from MANPN.BSCC_INSERT_DM_GOICUOC_PHANKY;
 select * from MANPN.BSCC_INSERT_DM_KIT_BUNDLE;
+
 --tìm nhan vien đat chỉ tieu KK:
             select manv_ptm,tennv_ptm,ten_pb from SSS_DGIA_202409_v2 where manv_ptm in
               (SELECT ma_nv,kqth,khdk
@@ -670,9 +672,6 @@ select * from MANPN.BSCC_INSERT_DM_KIT_BUNDLE;
 
 
 
-select * from vietanhvh.SSS_DGIA_202409 where TIEN_THULAO_KK >0;
-create table SSS_dgia_202409_tmp
-as select * from SSS_dgia_202409;
 update SSS_DGIA_202409
 set TIEN_THULAO_KK = 0;
 update SSS_DGIA_202409
