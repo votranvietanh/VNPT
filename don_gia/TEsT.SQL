@@ -356,6 +356,7 @@ WHERE rn = 1;
 where TIEN_THULAO_GOI is null
         ;
 
+
         UPDATE SSS_dongia_202409_test a
 SET TIEN_THULAO_GOI = CASE
     -- Trường hợp 1: Cả hai dòng có cùng ma_pb = 'VNP0703000'

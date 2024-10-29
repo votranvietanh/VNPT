@@ -738,7 +738,7 @@ select * from one_line_202409 where manv_ptm ='VNP017782';
 
 update one_line_202409
 set heso_kk = 0.05
-where manv_ptm in (select ma_nv FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
+where manv_goi in (select ma_nv FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
                     WHERE thang = 202409 and
                         dinhmuc_2 IN (32000000, 30000000)
                       AND ma_vtcv IN ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_17')
