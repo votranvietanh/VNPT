@@ -21,3 +21,12 @@ select a.*,a.sothuebao, a.username from TTKDHCM_KTNV.vnp_yeucau a;
 select distinct USER_KENH_BAN from MANPN.bscc_import_goi_bris where thang = 202409;
 
 select * from nhuy.userld_202409_goc;
+
+with raw_dt as (
+    select * from manpn.bscc_import_goi_bris_p04 where LOAI_TB_THANG ='HH' and thang = 202409
+)
+select * from raw_dt
+    where ACCS_MTHD_KEY in (select ACCS_MTHD_KEY from raw_dt group by ACCS_MTHD_KEY having count(ACCS_MTHD_KEY)>1 )
+    order by ACCS_MTHD_KEY
+--DOANH_THU_BAN_GOI/1.1
+;
