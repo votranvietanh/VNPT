@@ -55,4 +55,42 @@ where a.USER_KENH_BAN in (
                     a.thang = 202410
             )
     and a.thang = 202409;
+-- bảng OB CKD
+select * from OB_CKD_ct;
+select * from OB_CKN_ct;
+select * from ob_bangoi_ct WHERE '84'||SO_THUE_BAO  IN (SELECT MA_TB FROM PL1_2024);
+select * from dgia_hienhuu_pl4;
+
+select * from ob_hvc_ct;
+SELECT * FROM ob_bangoi_ct;
+select * from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY;
+
+with ds_thuebao as (
+        select ACCS_MTHD_KEY ma_tb, SERVICE_CODE ten_goi, P2_CHUKY chu_ky, TOT_RVN_PACKAGE dthu_goi, REGIS_DT ngay_kh, TRANS_TYPE loai_gd, LOAIHINH_TB, USER_CODE user_ban_goi
+            , USER_NAME, CHANNEL_TYPE loai_kenh, CHANNEL_MEMBER thanhvien_kenh
+            , HRM_CODE ma_hrm, STAFF_NAME ten_nv, REGIS_SYSTEM_CD cong_cu_ban_goi, LOAI_HVC, REGIS_TYPE_GRP
+        from dgia_hienhuu_pl4
+        where LOAI_TB_THANG ='HH' and thang = 202409
+                and REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT')
+)
+;
+CREATE TABLE DONGIA_DTHU_HIENHUU AS
+ select ACCS_MTHD_KEY ma_tb
+ ,  CASE
+        WHEN (TO_DATE(ACTVTN_DT,'DD/MM/YYYY HH24:MI:SS') < ADD_MONTHS(trunc(sysdate, 'mm'), -2) AND LOAIHINH_TB = 'TT') --DANG TEST DANG T9, THANG 10 FIX 2->1
+          OR (TO_DATE(ACTVTN_DT,'DD/MM/YYYY HH24:MI:SS') < ADD_MONTHS(trunc(sysdate, 'mm'), -5) AND LOAIHINH_TB = 'TS')
+        THEN 1
+        ELSE 0
+    END AS IS_TBHH
+
+ ,TO_CHAR(TO_DATE(ACTVTN_DT,'DD/MM/YYYY HH24:MI:SS'),'YYYYMM') THANG_KH_SIM, SERVICE_CODE ten_goi, P2_CHUKY chu_ky, TOT_RVN_PACKAGE dthu_goi, REGIS_DT ngay_kh, REGIS_TYPE_GRP , TRANS_TYPE loai_gd, LOAIHINH_TB, USER_CODE user_ban_goi
+    , USER_NAME, CHANNEL_TYPE loai_kenh, CHANNEL_MEMBER thanhvien_kenh
+    , HRM_CODE ma_hrm, STAFF_NAME ten_nv, REGIS_SYSTEM_CD cong_cu_ban_goi, LOAI_HVC,DECODE(LOAI_HVC,'HVC',25,'NOHVC',20) HESO,TOT_RVN_PACKAGE DTHU_TLDG, TOT_RVN_PACKAGE*DECODE(LOAI_HVC,'HVC',25,'NOHVC',20)/100 TIEN_THULAO
+from dgia_hienhuu_pl4
+where LOAI_TB_THANG ='HH' and thang = 202409
+        and REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT')
+  --        AND ACCS_MTHD_KEY NOT IN (select '84'||SO_THUE_BAO from ob_bangoi_ct where thang = 202409 )
+;
+SELECT * FROM DONGIA_DTHU_HIENHUU ;
+
 
