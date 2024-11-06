@@ -22,13 +22,17 @@ left join ttkd_bsc.nhanvien b
 on a.ma_to = b.ma_to 
 and b.thang = 202410 and b.ma_vtcv ='VNP-HNHCM_BHKV_17'
 union all
-        select b.MA_NV, 'VNP-HNHCM_BHKV_17' as ma_vtcv,null, b.MA_PB, a.SL_TB, 'KPI_PB' as loai_kpi 
+        select b.MA_NV, 'VNP-HNHCM_BHKV_2' as ma_vtcv,null, b.MA_PB, a.SL_TB, 'KPI_PB' as loai_kpi 
     from (
             select MA_pb, sum(SL_TB) as SL_TB
             from rawdata
             group by MA_pb
          ) a
-    left join ttkd_bsc.nhanvien b 
+    left join 
+            (select * from ttkd_Bsc.blkpi_dm_to_pgd x where thang = 202410 and x.dichvu  in  ('VNP tra truoc','VNP tra sau') 
+            and x.ma_to in (select distinct ma_to from rawdata)
+        )
+    b 
     on a.MA_pb = b.MA_pb 
-    and b.thang = 202410 and b.ma_vtcv ='VNP-HNHCM_BHKV_17'
+    and b.ma_vtcv ='VNP-HNHCM_BHKV_2'
 ;
