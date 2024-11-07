@@ -1,3 +1,5 @@
+--QUAN TRỌNG tháng 11 nhớ lọc 2 nv select * from ttkd_bsc.bangluong_kpi where thang = 202410 and ma_nv in('VNP016799',
+'VNP017843'); -- vì là CHSB ko tính chỉ tiêu này
 -- INSERT TRẢ TRƯỚC: 62.179
         insert into VA_ct_BSC_DTHU_DTRI_NAM(THANG,thang_ptm, DICH_VU, MA_TB, MANV_PTM, MA_VTCV, TEN_NV,  MA_PB, TEN_PB,MA_TO, TEN_TO, DTHU_THUC_HIEN)
 
