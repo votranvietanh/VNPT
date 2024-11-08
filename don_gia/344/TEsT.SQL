@@ -588,3 +588,5 @@ select * from ttkd_bsc.nhanvien; --5822
 
 select * from one_line_202409_test; where ma_tb ='84832601934';
  select check_telconame_new('0853050901') from dual;
+--
+select * from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202409 and dich_vu ='VNPTT';

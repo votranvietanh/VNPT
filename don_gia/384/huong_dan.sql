@@ -56,9 +56,11 @@ where a.USER_KENH_BAN in (
             )
     and a.thang = 202409;
 -- bảng OB CKD
-select * from OB_CKD_ct;
-select * from OB_CKN_ct;
+select * from OB_CKD_ct WHERE SO_THUE_BAO ='834454233';
+select * from OB_CKN_ct WHERE SO_TB='886035873';
 select * from ob_bangoi_ct WHERE '84'||SO_THUE_BAO  IN (SELECT MA_TB FROM PL1_2024);
+-- filter điều kiện chu_ky_goi <> null , nếu null tự check la` nó ko Bgoi' trog thang
+--GOI_CUOC_DK là gói mua
 select * from dgia_hienhuu_pl4;
 
 select * from ob_hvc_ct;
@@ -74,6 +76,9 @@ with ds_thuebao as (
                 and REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT')
 )
 ;
+select * from dgia_hienhuu_pl4;
+drop table DONGIA_DTHU_HIENHUU;
+
 CREATE TABLE DONGIA_DTHU_HIENHUU AS
  select ACCS_MTHD_KEY ma_tb
  ,  CASE
@@ -85,12 +90,179 @@ CREATE TABLE DONGIA_DTHU_HIENHUU AS
 
  ,TO_CHAR(TO_DATE(ACTVTN_DT,'DD/MM/YYYY HH24:MI:SS'),'YYYYMM') THANG_KH_SIM, SERVICE_CODE ten_goi, P2_CHUKY chu_ky, TOT_RVN_PACKAGE dthu_goi, REGIS_DT ngay_kh, REGIS_TYPE_GRP , TRANS_TYPE loai_gd, LOAIHINH_TB, USER_CODE user_ban_goi
     , USER_NAME, CHANNEL_TYPE loai_kenh, CHANNEL_MEMBER thanhvien_kenh
-    , HRM_CODE ma_hrm, STAFF_NAME ten_nv, REGIS_SYSTEM_CD cong_cu_ban_goi, LOAI_HVC,DECODE(LOAI_HVC,'HVC',25,'NOHVC',20) HESO,TOT_RVN_PACKAGE DTHU_TLDG, TOT_RVN_PACKAGE*DECODE(LOAI_HVC,'HVC',25,'NOHVC',20)/100 TIEN_THULAO
-from dgia_hienhuu_pl4
+    , HRM_CODE ma_hrm, STAFF_NAME ten_nv, REGIS_SYSTEM_CD cong_cu_ban_goi
+      , LOAI_HVC,DECODE(LOAI_HVC,'HVC',25,'NOHVC',20) HESO,TOT_RVN_PACKAGE DTHU_TLDG, TOT_RVN_PACKAGE*DECODE(LOAI_HVC,'HVC',25,'NOHVC',20)/100 TIEN_THULAO
+    ,  'PL04' nguon, TRANS_TYPE LOAI_GD_tldg
+ from dgia_hienhuu_pl4
 where LOAI_TB_THANG ='HH' and thang = 202409
         and REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT')
-  --        AND ACCS_MTHD_KEY NOT IN (select '84'||SO_THUE_BAO from ob_bangoi_ct where thang = 202409 )
+        and P2_CHUKY is not null --bỏ các gói ngày,se~ con` sót lại nhưững gói ngày như MI_YT10k nhưng ct để là ck tháng!
 ;
-SELECT * FROM DONGIA_DTHU_HIENHUU ;
+-----
 
+
+Pending// tập gia hạn CKN -CKD
+
+SELECT *
+FROM (
+    SELECT
+        CASE
+            WHEN (DOANHTHU_TRUOC_GIAHAN - DOANH_THU_DK < 0) AND MAGOI_TRUOC_OB IS NULL THEN 'BAN_GOI'
+            WHEN (DOANHTHU_TRUOC_GIAHAN - DOANH_THU_DK > 0) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'HA_GOI'
+            WHEN (DOANHTHU_TRUOC_GIAHAN - DOANH_THU_DK < 0) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'NANG_GOI'
+            WHEN (
+                CASE
+                    WHEN CHU_KY_GOI2 = '0' THEN '0' -- Trường hợp 0
+                    WHEN INSTR(CHU_KY_GOI2, 'T') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'T') - 1) -- Trường hợp 3T
+                    WHEN INSTR(CHU_KY_GOI2, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
+                    ELSE NULL
+                END
+            ) > (
+                CASE
+                    WHEN CHU_KY_GOI = '0' THEN '0' -- Trường hợp 0
+                    WHEN INSTR(CHU_KY_GOI, 'T') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'T') - 1) -- Trường hợp 3T
+                    WHEN INSTR(CHU_KY_GOI, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
+                    ELSE NULL
+                END
+            )
+            AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'NANG_CHU_KY_GOI'
+
+            WHEN (
+                CASE
+                    WHEN CHU_KY_GOI2 = '0' THEN '0' -- Trường hợp 0
+                    WHEN INSTR(CHU_KY_GOI2, 'T') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'T') - 1) -- Trường hợp 3T
+                    WHEN INSTR(CHU_KY_GOI2, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
+                    ELSE NULL
+                END
+            ) < (
+                CASE
+                    WHEN CHU_KY_GOI = '0' THEN '0' -- Trường hợp 0
+                    WHEN INSTR(CHU_KY_GOI, 'T') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'T') - 1) -- Trường hợp 3T
+                    WHEN INSTR(CHU_KY_GOI, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
+                    ELSE NULL
+                END
+            )
+                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'HA_CHU_KY_GOI'
+
+            WHEN (
+                CASE
+                    WHEN CHU_KY_GOI2 = '0' THEN '0' -- Trường hợp 0
+                    WHEN INSTR(CHU_KY_GOI2, 'T') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'T') - 1) -- Trường hợp 3T
+                    WHEN INSTR(CHU_KY_GOI2, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
+                    ELSE NULL
+                END
+            ) = (
+                CASE
+                    WHEN CHU_KY_GOI = '0' THEN '0' -- Trường hợp 0/-strong/-heart:>:o:-((:-h WHEN INSTR(CHU_KY_GOI, 'T') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'T') - 1) -- Trường hợp 3T
+                    WHEN INSTR(CHU_KY_GOI, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
+                    ELSE NULL
+                END
+            )
+                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'GIA_HAN'
+            ELSE 'GIAHAN'
+        END AS loai_gd,
+        ma_tb,
+        MAGOI_TRUOC_OB,
+        CHU_KY_GOI,
+        DOANHTHU_TRUOC_GIAHAN,
+        THOI_GIAN_OB,
+        MAGOI_DICHVU_MOI,
+        CHU_KY_GOI2,
+        DOANH_THU_DK
+    FROM (
+        SELECT
+            '84' || SO_THUE_BAO AS ma_tb,
+            MAGOI_TRUOC_OB,
+            CHU_KY_GOI,
+            DOANHTHU_TRUOC_GIAHAN,
+            TO_CHAR(THOI_GIAN_OB) AS THOI_GIAN_OB,
+            MAGOI_DICHVU_MOI,
+            CHU_KY_GOI2,
+            DOANH_THU_DK
+        FROM vietanhvh.ob_ckd_ct
+
+        UNION ALL
+
+        SELECT
+            '84' || so_tb AS ma_tb,
+            MA_GOI_TRUOC_OB,
+            TO_CHAR(CHU_KY_GOI) AS CHU_KY_GOI,
+            DOANH_THU_TRUOCGIAHAN,
+            THOI_GIAN_TH_OB AS THOI_GIAN_OB,
+            MA_GOI_DICHVU AS MAGOI_DICHVU_MOI,
+            CHU_KY_GOI2,
+            DOANH_THU_DK
+        FROM vietanhvh.OB_CKN_ct
+    )
+)
+
+
+
+
+---
+insert into DONGIA_DTHU_HIENHUU ( MA_TB, USER_BAN_GOI
+                                , MA_HRM
+                                , TEN_GOI
+                                , DTHU_GOI
+                                , NGAY_KH
+                                , IS_TBHH
+                                , THANG_KH_SIM
+                                , LOAIHINH_TB
+                                , LOAI_HVC
+                                ,DTHU_TLDG
+                                ,HESO
+                                , nguon)
+
+with data as (
+    SELECT '84'||so_thue_bao ma_tb,dtv
+    ,ma_hrm,GOI_CUOC_DK ten_goi,DOANH_THU_DK , ngay_mo_dich_vu ngay_kich_goi
+    FROM ob_bangoi_ct
+)
+,dm_goi as (
+            select TEN_GOI, to_char(CHU_KY) CHU_KY
+            from manpn.BSCC_INSERT_DM_KIT_BUNDLE
+            where chu_ky >0
+    union all
+            select GOI_CUOC TEN_GOI, CHU_KY_THANG CHU_KY
+            from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY
+            where CHU_KY_THANG <>'N'
+
+        )
+Select a.*
+     ,CASE
+        WHEN (b.DATE_ENTER_ACTIVE < ADD_MONTHS(trunc(sysdate, 'mm'), -2) ) --DANG TEST DANG T9, THANG 10 FIX 2->1
+        THEN 1
+        ELSE 0
+    END AS IS_TBHH
+     ,to_char((b.DATE_ENTER_ACTIVE),'yyyymm') ngay_kh,'TT' LOAIHINH_TB
+    , case when ma_tb in (select ma_tb  from ob_hvc_ct) then 'HCV'
+        else 'NOHVC' end as LOAI_HVC,a.DOANH_THU_DK,20,'OB' nguon
+From data a
+Left join  CUOCVINA.tieudung_bts_202408@ttkddbbk2 b -- để tìm ngày_kh cho sim trong file bangoi ccos
+    on a.ma_tb = b.subscriber_id_84
+where  ten_goi in (select ten_goi from dm_goi)
+         --tập này bị trùng ưu tiên chọn trong PL4 tại các cói MI_TK10A bị sai trong bangoi
+        and a.ma_tb not in (select ma_tb from DONGIA_DTHU_HIENHUU where nguon ='PL04')
+;
+--
+UPDATE DONGIA_DTHU_HIENHUU
+set loai_gd = 'GIAHAN_OB'
+    ,heso = 3
+where
+     loai_gd not in ('NANG_GOI','NANG_CHUKY') -- nếu trog file CKN/CKD thì tính theo PL4
+    and ma_tb in (select ma_tb
+                from (select '84' || so_thue_bao ma_tb
+                      from OB_CKD_ct
+                    union all
+                      select '84' || so_tb
+                      from OB_CKN_ct)
+                )
+ ;
+--delete chu kỳ ngày
+delete from DONGIA_DTHU_HIENHUU
+where ten_goi in (select goi_cuoc from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY where chu_ky_thang ='N')
+;
+
+  select * from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY a;
+  select *  FROM DONGIA_DTHU_HIENHUU;
 
