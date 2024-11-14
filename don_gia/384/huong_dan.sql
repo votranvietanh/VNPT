@@ -106,7 +106,10 @@ CREATE TABLE DONGIA_DTHU_HIENHUU_202410 AS
     ,  'BRIS_P04' nguon, TRANS_TYPE LOAI_GD_tldg
  from bscc_import_goi_bris_p04
 where LOAI_TB_THANG ='HH' and thang = 202410
-        and (REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT') OR USER_CODE NOT IN ('SYSTEM','SMS','sms','ccbs_vnp','crosssell_vnp','4G-SPR','1543|TDL_CTNET','1543|TELESALE'))
+        and (REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT')
+            )
+        and TRANS_TYPE not in ('GIAHAN','GIAHAN_TUDONG')
+        and USER_CODE NOT IN ('SYSTEM','SMS','sms','ccbs_vnp','crosssell_vnp','4G-SPR','1543|TDL_CTNET','1543|TELESALE')
         and P2_CHUKY is not null --bỏ các gói ngày,se~ con` sót lại nhưững gói ngày như MI_YT10k nhưng ct để là ck tháng!
 ;
 
@@ -126,7 +129,7 @@ and loai_gd not in('DANGKY','NANG_GOI','NANG_CHUKY')
  ;
 --OK// INSERT tập gia hạn CKN -CKD
 INSERT INTO DONGIA_DTHU_HIENHUU_202410(LOAI_GD,IS_TBHH,ma_tb,USER_BAN_GOI,thang_kh_sim,ngay_kh,ten_goi,chu_ky,dthu_goi,DTHU_TLDG,LOAIHINH_TB,LOAI_HVC,nguon)
-
+;
 SELECT a.LOAI_GD, 1 IS_TBHH,a.MA_TB,a.USER_DTV
         ,to_number(to_char(b.DATE_ENTER_ACTIVE,'yyyymm'))              DATE_ENTER_ACTIVE
         , to_date(a.NGAYMO_DICHVU,'dd/mm/yyyy hh24:mi:ss')  NGAYMO_DICHVU
@@ -143,59 +146,16 @@ SELECT a.LOAI_GD, 1 IS_TBHH,a.MA_TB,a.USER_DTV
 
 FROM (
     SELECT
-        CASE
-            WHEN (DOANHTHU_TRUOC_GIAHAN - DOANH_THU_DK < 0) AND MAGOI_TRUOC_OB IS NULL THEN 'GIAHAN'
-            WHEN (DOANHTHU_TRUOC_GIAHAN - DOANH_THU_DK > 0) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'HA_GOI'
-            WHEN (DOANHTHU_TRUOC_GIAHAN - DOANH_THU_DK < 0) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'NANG_GOI'
-            WHEN (
-                CASE
-                    WHEN CHU_KY_GOI2 = '0' THEN '0' -- Trường hợp 0
-                    WHEN INSTR(CHU_KY_GOI2, 'T') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'T') - 1) -- Trường hợp 3T
-                    WHEN INSTR(CHU_KY_GOI2, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
-                    ELSE NULL
-                END
-            ) > (
-                CASE
-                    WHEN CHU_KY_GOI = '0' THEN '0' -- Trường hợp 0
-                    WHEN INSTR(CHU_KY_GOI, 'T') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'T') - 1) -- Trường hợp 3T
-                    WHEN INSTR(CHU_KY_GOI, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
-                    ELSE NULL
-                END
-            )
-            AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'NANG_CHUKY'
-
-            WHEN (
-                CASE
-                    WHEN CHU_KY_GOI2 = '0' THEN '0' -- Trường hợp 0
-                    WHEN INSTR(CHU_KY_GOI2, 'T') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'T') - 1) -- Trường hợp 3T
-                    WHEN INSTR(CHU_KY_GOI2, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
-                    ELSE NULL
-                END
-            ) < (
-                CASE
-                    WHEN CHU_KY_GOI = '0' THEN '0' -- Trường hợp 0
-                    WHEN INSTR(CHU_KY_GOI, 'T') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'T') - 1) -- Trường hợp 3T
-                    WHEN INSTR(CHU_KY_GOI, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
-                    ELSE NULL
-                END
-            )
-                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'HA_CHUKY'
-
-            WHEN (
-                CASE
-                    WHEN CHU_KY_GOI2 = '0' THEN '0' -- Trường hợp 0
-                    WHEN INSTR(CHU_KY_GOI2, 'T') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'T') - 1) -- Trường hợp 3T
-                    WHEN INSTR(CHU_KY_GOI2, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI2, 1, INSTR(CHU_KY_GOI2, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
-                    ELSE NULL
-                END
-            ) = (
-                CASE
-                    WHEN CHU_KY_GOI = '0' THEN '0' -- Trường hợp 0/-strong/-heart:>:o:-((:-h WHEN INSTR(CHU_KY_GOI, 'T') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'T') - 1) -- Trường hợp 3T
-                    WHEN INSTR(CHU_KY_GOI, 'THÁNG') > 0 THEN SUBSTR(CHU_KY_GOI, 1, INSTR(CHU_KY_GOI, 'THÁNG') - 1) -- Trường hợp 3 THÁNG
-                    ELSE NULL
-                END
-            )
-                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'GIA_HAN'
+         CASE
+            WHEN (DOANHTHU_TRUOC_GIAHAN < DOANH_THU_DK ) AND MAGOI_TRUOC_OB IS NULL THEN 'DANGKY'
+            WHEN (DOANHTHU_TRUOC_GIAHAN > DOANH_THU_DK ) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'HA_GOI'
+            WHEN (DOANHTHU_TRUOC_GIAHAN < DOANH_THU_DK ) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'NANG_GOI'
+            WHEN CHU_KY_GOI2> CHU_KY_GOI
+                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'NANG_CHUKY'
+            WHEN CHU_KY_GOI2 < CHU_KY_GOI
+                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'HA_GOI'
+            WHEN CHU_KY_GOI2 = CHU_KY_GOI
+                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'GIAHAN'
             ELSE 'GIAHAN'
         END AS loai_gd,
         ma_tb,USER_DTV,
@@ -210,11 +170,19 @@ FROM (
         SELECT
             '84' || SO_THUE_BAO AS ma_tb,
             MAGOI_TRUOC_OB,USER_DTV,
-            CHU_KY_GOI,
+             CASE
+        WHEN REGEXP_LIKE(CHU_KY_GOI, '^\d+T$') THEN TO_NUMBER(REGEXP_SUBSTR(CHU_KY_GOI, '^\d+'))
+        WHEN REGEXP_LIKE(CHU_KY_GOI, '^\d+\s*tháng$') THEN TO_NUMBER(REGEXP_SUBSTR(CHU_KY_GOI, '^\d+'))
+        ELSE NULL
+    END AS CHU_KY_GOI,
             DOANHTHU_TRUOC_GIAHAN,
             TO_CHAR(NGAYMO_DICHVU) AS NGAYMO_DICHVU,
             MAGOI_DICHVU_MOI,
-            CHU_KY_GOI2,
+             CASE
+        WHEN REGEXP_LIKE(CHU_KY_GOI2, '^\d+T$') THEN TO_NUMBER(REGEXP_SUBSTR(CHU_KY_GOI2, '^\d+'))
+        WHEN REGEXP_LIKE(CHU_KY_GOI2, '^\d+\s*tháng$') THEN TO_NUMBER(REGEXP_SUBSTR(CHU_KY_GOI2, '^\d+'))
+        ELSE NULL
+    END AS CHU_KY_GOI2,
             DOANH_THU_DK
         FROM vietanhvh.ob_ckd_ct
         where thang = 202410
@@ -224,11 +192,19 @@ FROM (
         SELECT
             '84' || so_tb AS ma_tb,
             MA_GOI_TRUOC_OB,USER_DTV,
-            TO_CHAR(CHU_KY_GOI) AS CHU_KY_GOI,
+            CASE
+        WHEN REGEXP_LIKE(TO_CHAR(CHU_KY_GOI), '^\d+T$') THEN TO_NUMBER(REGEXP_SUBSTR(TO_CHAR(CHU_KY_GOI), '^\d+'))
+        WHEN REGEXP_LIKE(TO_CHAR(CHU_KY_GOI), '^\d+\s*tháng$') THEN TO_NUMBER(REGEXP_SUBSTR(TO_CHAR(CHU_KY_GOI), '^\d+'))
+        ELSE NULL
+    END AS CHU_KY_GOI,
             DOANH_THU_TRUOCGIAHAN,
             NGAY_MO_DICHVU AS NGAY_MO_DICHVU,
             MA_GOI_DICHVU AS MAGOI_DICHVU_MOI,
-            CHU_KY_GOI2,
+             CASE
+        WHEN REGEXP_LIKE(CHU_KY_GOI2, '^\d+T$') THEN TO_NUMBER(REGEXP_SUBSTR(CHU_KY_GOI2, '^\d+'))
+        WHEN REGEXP_LIKE(CHU_KY_GOI2, '^\d+\s*tháng$') THEN TO_NUMBER(REGEXP_SUBSTR(CHU_KY_GOI2, '^\d+'))
+        ELSE NULL
+    END AS CHU_KY_GOI2,
             DOANH_THU_DK
         FROM vietanhvh.OB_CKN_ct
         where thang = 202410
@@ -288,7 +264,8 @@ where  ten_goi in (select ten_goi from dm_goi)
          --tập này bị trùng ưu tiên chọn trong PL4 tại các cói MI_TK10A bị sai trong bangoi
         and a.ma_tb not in (select ma_tb from DONGIA_DTHU_HIENHUU_202410 where nguon ='BRIS_P04') --edit
 ;
---
+--insert HVC
+    select MA_TB, DTV, MA_HRM, LOAIHINH_TB, GOICUOC_DANGKY, DTHU_DKY_USER, NGAY_KH from ob_hvc_ct;
 
 -- tạo bảng lọc 1 dòng loại luôn chu ky ngày,Loại trừ các TH a Tuyen,a Khann
 drop table S_DONGIA_DTHU_HIENHUU_202410;
