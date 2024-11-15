@@ -535,6 +535,11 @@ WHERE BUNDLE_XK = 1 AND tenkieu_ld = 'ptm-goi'
    OR ten_goi IN (SELECT ten_goi FROM dm_goi_loai_tru)
    OR DAI_LY = 1;
 
+update SSS_dgia_202410
+set HESO_HHBG = 0
+where TENKIEU_LD ='ptm'
+;
+
 
         update SSS_dgia_202410
         set TIEN_THULAO_GOI = 0
@@ -608,8 +613,7 @@ where a.ma_tb in (select ma_tb from khieunai_td_dgia where thang = 202410)
         ;
 
 ;
---select * from va_DM_KIT_BUNDLE;
---select * from va_DM_GOICUOC_PHANKY;
+
 
 
 
@@ -618,7 +622,7 @@ where a.ma_tb in (select ma_tb from khieunai_td_dgia where thang = 202410)
 
 
 -----------------------================= TAO BANG 2 DONG, MOI STB 1 GOI VKCK HPHUC ============================
-select * from SSS_dgia_202410_2;
+select * from SSS_dgia_202410_2 ;
 drop table SSS_dgia_202410_2;
 
 create table SSS_dgia_202410_2 as -- tạo bảng 2 dòng ( ptm và chỉ 1 gói)
@@ -691,26 +695,6 @@ set manv_goi = manv_ptm
 where manv_goi is null and ten_goi is null
 ;
 
---25/10 ĐÃ TỐI ƯU ĐẾN ĐÂY
-
-SELECT manv, SUM(tien_thulao) AS tong_tien_thulao
-FROM (
-    SELECT manv_ptm AS manv, tien_thulao_dnhm AS tien_thulao
-    FROM one_line
-    WHERE manv_ptm IS NOT NULL
-
-    UNION ALL
-
-    SELECT manv_goi AS manv, tien_thulao_goi AS tien_thulao
-    FROM one_line
-    WHERE manv_goi IS NOT NULL
-)
-GROUP BY manv;
-
-
-select * from MANPN.BSCC_INSERT_DM_GOICUOC_PHANKY;
-select * from MANPN.BSCC_INSERT_DM_KIT_BUNDLE;
-
 --tìm nhan vien đat chỉ tieu KK:
             select manv_goi,ten_goi from one_line_202410 where manv_ptm in
               (SELECT ma_nv
@@ -727,47 +711,23 @@ set TIEN_THULAO_KK = 0;
 update SSS_DGIA_202410
 set HESO_KK = 0;
 
-UPDATE SSS_dgia_202410
-SET HESO_KK = CASE
-                WHEN
-                   ma_pb = 'VNP0700800'
-                  OR PHAN_LOAI_KENH = 'CTVXHH'
-                  OR manv_dktt LIKE 'P%'
-                  OR ten_goi IN (SELECT ten_goi FROM dm_goi_loai_tru)
-                  OR DAI_LY = 1
-                THEN 0
-                ELSE 0.05
-              END;
+-- UPDATE SSS_dgia_202410
+-- SET HESO_KK = CASE
+--                 WHEN
+--                    ma_pb = 'VNP0700800'
+--                   OR PHAN_LOAI_KENH = 'CTVXHH'
+--                   OR manv_dktt LIKE 'P%'
+--                   OR ten_goi IN (SELECT ten_goi FROM dm_goi_loai_tru)
+--                   OR DAI_LY = 1
+--                 THEN 0
+--                 ELSE 0.05
+--               END;
 --
--- update SSS_DGIA_202410
--- set heso_kk = 0.05
---     ,TIEN_THULAO_KK = DTHU_DONGIA_GOI*HESO_KK
--- where manv_ptm in (select ma_nv,ten_pb FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
---                     WHERE thang = 202410 and
---                         dinhmuc_2 IN (32000000, 30000000)
---                       AND ma_vtcv IN ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_17')
---                       AND KQTH >= dinhmuc_2
---                       AND KHDK >= dinhmuc_2)
--- and CK_GOI_TLDG>0
-;
 
+select manv_goi from one_line_202410 where heso_kk = 0.05 --check coi đủ SL NV ở query select trên
+group by manv_goi;
 
--- CHÈN BÀ THẮNG
-INSERT INTO one_line_202410(THANG_PTM, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG, MANV_PTM, TENNV_PTM, MATO_PTM, TENTO_PTM, MAPB_PTM, TENPB_PTM, TIEN_DNHM, DTHU_DONGIA_DNHM, TIEN_THULAO_DNHM, MANV_GOI, MATO_GOI, MAPB_GOI, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI, DTHU_KPI, DTHU_DNHM_KPI, LYDO_KHONGTINH, LYDO_KHONGTINH_KPI, GHI_CHU)
-select 202410,'coevnpt','NV KDDDTT',ACCS_MTHD_KEY,'TR60D',1,'VNP017782','Trương Thị Thanh Trúc','VNP0701230',	'Tổ Kinh Doanh Di Động Trả Trước',	'VNP0701200',
-       'Phòng Bán Hàng Khu Vực Chợ Lớn',25000,20000,20000,'VNP016957','VNP0701230',	'VNP0701200',60000,45000,0,null,null,'; Bundle_xuatkho', null,'1491 sim của chị Thắng'
-    from manpn.a_temp_cl2;
-
-update one_line_202410
-set MANV_PTM = 'VNP017782' --bà Trúc
-where manv_ptm = 'VNP016957' --bà thắng
-;
-update one_line_202410
-set (TENNV_PTM, MATO_PTM, TENTO_PTM, MAPB_PTM, TENPB_PTM) = (select ten_nv,ma_to,ten_to,ma_pb,ten_pb from ttkd_bsc.nhanvien where thang = 202410 and ma_nv ='VNP017782')
-where manv_ptm = 'VNP017782'
-;
-select * from one_line_202410 where manv_ptm ='VNP017782';
-
+-----ALL update tien KK
 update one_line_202410
 set heso_kk = 0.05
 where manv_goi in (select ma_nv FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
@@ -783,66 +743,7 @@ set TIEN_THULAO_GOI = nvl(TIEN_THULAO_GOI+(DTHU_DONGIA_GOI*HESO_KK),0)
 where heso_kk = 0.05
 ;
 
-select * from one_line_202410 where NGUON like '%luongtinh%';
-
-create table khieunai_bosung_U1500 as (select manv_ptm,tennv_ptm,sum(dthu_kpi) kpi from one_line_202410;
-select *  from one_line_202410
-
-where ma_tb in (
-'84814520248',
-'84813204316',
-'84813217634',
-'84814550240',
-'84814557342',
-'84814558076',
-'84814563821',
-'84814569140',
-'84814569410',
-'84814582260',
-'84814583691'
-);
-group by manv_ptm,TENNV_PTM)
-;
-select a.ma_tb,(a.tien_thulao_dnhm),nvl(b.tien_thulao_dnhm,0) btien_thulao_dnhm ,(a.tien_thulao_dnhm-nvl(b.tien_thulao_dnhm,0)) CL
-
-from one_line_202410_tmp a
- join
-    (select * from one_line_202410
-              where ma_tb not in (SELECT ACCS_MTHD_KEY FROM manpn.a_temp_cl2) and nguon not like '%luongtinh%'
-              ) b
-        on a.ma_tb =b.ma_tb;
-where a.ma_tb in ('84822857422','84854540607');
-select * from ONE_LINE_202410 where ma_tb in (
-'84814520248',
-'84813204316',
-'84813217634',
-'84814550240',
-'84814557342',
-'84814558076',
-'84814563821',
-'84814569140',
-'84814569410',
-'84814582260',
-'84814583691'
-);
-
-
-select * from ONE_LINE_202410 where ma_tb in ('84915496620','84915174934' ,'84945026178');
-
-select * from TTKD_BSC.blkpi_danhmuc_kpi where thang =202410 and ma_kpi ='HCM_DT_PTMOI_060';
-select * from blkpi_giao_202410_20241020_2135;
-select * from blkpi_giao_202410_20241021_2213;
-( '84812077853',
-    '84812016936',
-    '84941212160',
-    '84837501539',
-    '84886629253',
-    '84886619172',
-    '84947148166',
-    '84812050542',
-    '84941313594',
-    '84916370891',
-    '84916315641',
-    '84916310964',
-    '84916311432',
-    '84911444516')
+select *
+from one_line_202410
+where heso_kk = 0.05;
+---end update tien KK

@@ -44,5 +44,8 @@ from (select THANG
           and IS_TBHH = 1 and lydo_khongtinh is  null
 
            ))
+where ma_tb in ('84918122701','84838118168'
+,'84942979333')
+;
 
 
