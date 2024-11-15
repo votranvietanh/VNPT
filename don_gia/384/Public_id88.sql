@@ -1,6 +1,7 @@
--- drop table dongia_DTHH;
+drop table dongia_DTHH;
+select ma_tb from vietanhvh.dongia_DTHH group by ma_tb having count(ma_tb)>1;
 
-create table dongia_DTHH as
+create table dongia_DTHH as;
 select *
 from (select THANG
            , MA_TB
@@ -17,31 +18,31 @@ from (select THANG
            , MA_HRM                                   ma_nv
            , TEN_NV
            , MA_VTCV
+           ,(select ma_to from ttkd_bsc.nhanvien where ma_nv=ma_hrm and thang = 202410) ma_to
+           ,(select ten_to from ttkd_bsc.nhanvien where ma_nv=ma_hrm and thang = 202410) ten_to
            , MA_PB
            , TEN_PB
            , CONG_CU_BAN_GOI
            , LOAI_HVC
            , HESO
            , DTHU_TLDG
-           , round(DTHU_TLDG / 0.8, 0)                DTHU_KPI
+           , round(TIEN_THULAO / 0.8, 0)                DTHU_KPI
            , TIEN_THULAO
            , NGUON
            , lydo_khongtinh
       from (select *
             from vietanhvh.S_DONGIA_DTHU_HIENHUU_202410 --50.998
             where ma_pb = 'VNP0703000'
-              and IS_TBHH = 1
               and loai_gd not in ('HA_CHUKY', 'HA_GOI')
-              and lydo_khongtinh is null
+           and IS_TBHH = 1 and lydo_khongtinh is  null
 
             union all
             select *
             from vietanhvh.S_DONGIA_DTHU_HIENHUU_202410
             where ma_pb <> 'VNP0703000'
-              and loai_gd not in ('GIAHAN', 'GIAHAN_TUDONG')
-              and IS_TBHH = 1
-              and loai_gd not in ('HA_CHUKY', 'HA_GOI')
-              and lydo_khongtinh is null
-            )
-      )
+              and loai_gd not in ('GIAHAN', 'GIAHAN_TUDONG', 'HA_CHUKY', 'HA_GOI')
+          and IS_TBHH = 1 and lydo_khongtinh is  null
+
+           ))
+
 

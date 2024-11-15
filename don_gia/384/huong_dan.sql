@@ -87,13 +87,13 @@ select count(*) from ds_thuebao
 ;
 select * from dgia_hienhuu_pl4 where ACCS_MTHD_KEY= '84329665567';
 drop table DONGIA_DTHU_HIENHUU_202410;
-select count(ma_tb) from DONGIA_DTHU_HIENHUU_202410;
+select * from DONGIA_DTHU_HIENHUU_202410 where ma_tb='84949746271';
 
 ---START
 CREATE TABLE DONGIA_DTHU_HIENHUU_202410 AS
  select ACCS_MTHD_KEY ma_tb
  ,  CASE
-        WHEN (TO_DATE(ACTVTN_DT,'DD/MM/YYYY HH24:MI:SS') < ADD_MONTHS(trunc(sysdate, 'mm'), -2) AND LOAIHINH_TB = 'TT')
+        WHEN (TO_DATE(ACTVTN_DT,'DD/MM/YYYY HH24:MI:SS') < ADD_MONTHS(trunc(sysdate, 'mm'), -1) AND LOAIHINH_TB = 'TT')
           OR (TO_DATE(ACTVTN_DT,'DD/MM/YYYY HH24:MI:SS') < ADD_MONTHS(trunc(sysdate, 'mm'), -6) AND LOAIHINH_TB = 'TS')
         THEN 1
         ELSE 0
@@ -104,10 +104,10 @@ CREATE TABLE DONGIA_DTHU_HIENHUU_202410 AS
     , HRM_CODE ma_hrm, STAFF_NAME ten_nv, REGIS_SYSTEM_CD cong_cu_ban_goi
       , LOAI_HVC,DECODE(LOAI_HVC,'HVC',25,'NOHVC',20) HESO,TOT_RVN_PACKAGE DTHU_TLDG, TOT_RVN_PACKAGE*DECODE(LOAI_HVC,'HVC',25,'NOHVC',20)/100 TIEN_THULAO
     ,  'BRIS_P04' nguon, TRANS_TYPE LOAI_GD_tldg
- from bscc_import_goi_bris_p04
+ from MANPN.bscc_import_goi_bris_p04
 where LOAI_TB_THANG ='HH' and thang = 202410
-        and (REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT')
-            )
+--         and ACCS_MTHD_KEY= '84942979333'
+        and (REGIS_SYSTEM_CD NOT IN('SELFCARE','MYVNPT'))
         and TRANS_TYPE not in ('GIAHAN','GIAHAN_TUDONG')
         and USER_CODE NOT IN ('SYSTEM','SMS','sms','ccbs_vnp','crosssell_vnp','4G-SPR','1543|TDL_CTNET','1543|TELESALE')
         and P2_CHUKY is not null --bỏ các gói ngày,se~ con` sót lại nhưững gói ngày như MI_YT10k nhưng ct để là ck tháng!
@@ -116,20 +116,25 @@ where LOAI_TB_THANG ='HH' and thang = 202410
 delete DONGIA_DTHU_HIENHUU_202410
 where
      ma_tb in (select ma_tb
-                from (select '84' || so_thue_bao ma_tb
-                      from OB_CKD_ct
-                      where thang = 202410
-                    union all
-                      select '84' || so_tb
-                      from OB_CKN_ct
-                      where thang = 202410
-                      )
-                )
-and loai_gd not in('DANGKY','NANG_GOI','NANG_CHUKY')
+               from (select '84' || so_thue_bao ma_tb
+                     from OB_CKD_ct
+                     where thang = 202410
+                     union all
+                     select '84' || so_tb
+                     from OB_CKN_ct
+                     where thang = 202410
+                     union all
+                     select '84' || so_thue_bao
+                     from ob_bangoi_ct
+                     where thang = 202410
+                     union all
+                     select '84' || MA_TB
+                     from ob_hvc_ct
+                     where thang = 202410))
  ;
 --OK// INSERT tập gia hạn CKN -CKD
 INSERT INTO DONGIA_DTHU_HIENHUU_202410(LOAI_GD,IS_TBHH,ma_tb,USER_BAN_GOI,thang_kh_sim,ngay_kh,ten_goi,chu_ky,dthu_goi,DTHU_TLDG,LOAIHINH_TB,LOAI_HVC,nguon)
-;
+
 SELECT a.LOAI_GD, 1 IS_TBHH,a.MA_TB,a.USER_DTV
         ,to_number(to_char(b.DATE_ENTER_ACTIVE,'yyyymm'))              DATE_ENTER_ACTIVE
         , to_date(a.NGAYMO_DICHVU,'dd/mm/yyyy hh24:mi:ss')  NGAYMO_DICHVU
@@ -146,18 +151,7 @@ SELECT a.LOAI_GD, 1 IS_TBHH,a.MA_TB,a.USER_DTV
 
 FROM (
     SELECT
-         CASE
-            WHEN (DOANHTHU_TRUOC_GIAHAN < DOANH_THU_DK ) AND MAGOI_TRUOC_OB IS NULL THEN 'DANGKY'
-            WHEN (DOANHTHU_TRUOC_GIAHAN > DOANH_THU_DK ) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'HA_GOI'
-            WHEN (DOANHTHU_TRUOC_GIAHAN < DOANH_THU_DK ) AND MAGOI_TRUOC_OB IS NOT NULL THEN 'NANG_GOI'
-            WHEN CHU_KY_GOI2> CHU_KY_GOI
-                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'NANG_CHUKY'
-            WHEN CHU_KY_GOI2 < CHU_KY_GOI
-                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'HA_GOI'
-            WHEN CHU_KY_GOI2 = CHU_KY_GOI
-                AND MAGOI_TRUOC_OB = MAGOI_DICHVU_MOI THEN 'GIAHAN'
-            ELSE 'GIAHAN'
-        END AS loai_gd,
+        'GIAHAN' loai_gd,
         ma_tb,USER_DTV,
         MAGOI_TRUOC_OB,
         CHU_KY_GOI,
@@ -212,104 +206,135 @@ FROM (
 ) a
 left join  CUOCVINA.tieudung_bts_202409@ttkddbbk2 b --edit tieudung để tìm ngày_kh cho sim trong file bangoi ccos
     on a.ma_tb = b.subscriber_id_84
-where a.ma_tb  not in (select ma_tb from DONGIA_DTHU_HIENHUU_202410) --edit ten bang theo thang
-
+where
+    a.ma_tb  not in (select ma_tb from DONGIA_DTHU_HIENHUU_202410) --edit ten bang theo thang
+--  ma_tb ='84832525763'
 ;
-
-
----
+select * from DONGIA_DTHU_HIENHUU_202410;
+---HVC+BANGOI:
 insert into DONGIA_DTHU_HIENHUU_202410 ( MA_TB, USER_BAN_GOI
                                 , MA_HRM
                                 , TEN_GOI
                                 , DTHU_GOI
                                 , NGAY_KH
+                                , LOAI_HVC
                                 , IS_TBHH
                                 , THANG_KH_SIM
                                 , LOAIHINH_TB
-                                , LOAI_HVC
                                 ,DTHU_TLDG
-                                ,HESO
                                 , nguon
                                 ,loai_gd)
 
 with data as (
     SELECT '84'||so_thue_bao ma_tb,dtv
-    ,ma_hrm,GOI_CUOC_DK ten_goi,DOANH_THU_DK , ngay_mo_dich_vu ngay_kich_goi
+    ,ma_hrm,GOI_CUOC_DK ten_goi,to_number(DOANH_THU_DK) DOANH_THU_DK , to_date(to_char(ngay_mo_dich_vu,'dd-mm-yyyy'),'dd-mm-yyyy') ngay_kich_goi,'NOHVC' loai_HVC
     FROM ob_bangoi_ct
     where thang= 202410
+union all
+        select '84'||MA_TB, DTV, MA_HRM,  GOICUOC_DANGKY, DTHU_DKY_USER,
+              to_date(NGAY_KH,'DD/MM/YYYY HH24:MI:SS'),'HVC'loai_HVC
+    from ob_hvc_ct
+    where thang = 202410
 )
-,dm_goi as (
-            select TEN_GOI, to_char(CHU_KY) CHU_KY
-            from manpn.BSCC_INSERT_DM_KIT_BUNDLE
-            where chu_ky >0
-    union all
-            select GOI_CUOC TEN_GOI, CHU_KY_THANG CHU_KY
-            from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY
-            where CHU_KY_THANG <>'N'
-        )
+
 Select a.*
      ,CASE
-        WHEN (b.DATE_ENTER_ACTIVE < ADD_MONTHS(trunc(sysdate, 'mm'), -2) ) --DANG TEST DANG T9, THANG 10 FIX 2->1
-        THEN 1
+         WHEN (b.DATE_ENTER_ACTIVE < ADD_MONTHS(TRUNC(SYSDATE, 'mm'), -1))
+             THEN 1
         ELSE 0
     END AS IS_TBHH
-     ,to_char((b.DATE_ENTER_ACTIVE),'yyyymm') ngay_kh,'TT' LOAIHINH_TB
-    , case when ma_tb in (select ma_tb  from ob_hvc_ct) then 'HCV'
-        else 'NOHVC' end as LOAI_HVC,a.DOANH_THU_DK,20,'OB_BG' nguon
+     ,(to_char((b.DATE_ENTER_ACTIVE),'yyyymm')) ngay_kh,'TT' LOAIHINH_TB
+    ,a.DOANH_THU_DK,'OB_BG' nguon
     ,'DANGKY' loai_gd
 From data a
 Left join  CUOCVINA.tieudung_bts_202409@ttkddbbk2 b -- edit để tìm ngày_kh cho sim trong file bangoi ccos
     on a.ma_tb = b.subscriber_id_84
-where  ten_goi in (select ten_goi from dm_goi)
+where
          --tập này bị trùng ưu tiên chọn trong PL4 tại các cói MI_TK10A bị sai trong bangoi
-        and a.ma_tb not in (select ma_tb from DONGIA_DTHU_HIENHUU_202410 where nguon ='BRIS_P04') --edit
+         a.ma_tb not in (select ma_tb from DONGIA_DTHU_HIENHUU_202410 where nguon ='BRIS_P04') --edit
 ;
---insert HVC
-    select MA_TB, DTV, MA_HRM, LOAIHINH_TB, GOICUOC_DANGKY, DTHU_DKY_USER, NGAY_KH from ob_hvc_ct;
+--update HVC
+            MERGE INTO DONGIA_DTHU_HIENHUU_202410 a
+        USING (
+            SELECT so_tb
+            FROM manpn.giamhuy_hcm@ttkddbbk2
+            WHERE thang = 202410
+            ) b
+        ON (a.ma_tb = b.so_tb)
+        WHEN MATCHED THEN
+            UPDATE SET a.loai_hvc = 'HVC'
+--         WHERE a.nguon IN ('CKN_CKD', 'OB_BG')
+        ;
+        UPDATE DONGIA_DTHU_HIENHUU_202410
+        SET loai_hvc = 'NOHVC'
+        WHERE  loai_hvc IS NULL;
 
 -- tạo bảng lọc 1 dòng loại luôn chu ky ngày,Loại trừ các TH a Tuyen,a Khann
 drop table S_DONGIA_DTHU_HIENHUU_202410;
-        create table S_DONGIA_DTHU_HIENHUU_202410 as
-        with src_data as (select 202410 thang,
-                            a.MA_TB, IS_TBHH, a.THANG_KH_SIM, a.TEN_GOI, a.CHU_KY, a.DTHU_GOI, a.NGAY_KH,
-                            a.REGIS_TYPE_GRP, a.LOAI_GD, a.LOAIHINH_TB, a.USER_BAN_GOI, a.USER_NAME, a.LOAI_KENH,
-                            a.THANHVIEN_KENH, a.MA_HRM, a.TEN_NV
-                            , (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang= 202410 and a.ma_hrm = x.ma_nv) ma_vtcv
-                            , (select x.ma_pb from ttkd_bsc.nhanvien x where x.thang= 202410 and a.ma_hrm = x.ma_nv) ma_pb
-                            , (select x.ten_pb from ttkd_bsc.nhanvien x where x.thang= 202410 and a.ma_hrm = x.ma_nv) ten_pb
-                            ,a.CONG_CU_BAN_GOI, a.LOAI_HVC, a.HESO, a.DTHU_TLDG, a.TIEN_THULAO, a.NGUON, a.LOAI_GD_TLDG
-            ,row_number() over (partition by a.ma_tb order by a.USER_BAN_GOI ,a.dthu_goi desc) rnk
-             from DONGIA_DTHU_HIENHUU_202410 a
-        )
-        , r_data as ( select * from src_data where rnk = 1)
-           --ds stb loai_tru
-        , prevent_data as (select SOMAY
-                           From TTKD_BSC.DT_PTM_VNP_202409
-                           where KIEU_LD = 'Chuyen C->P' -- C->P
-                              or LOAI_GOI = 'GOI KHONG KM' --Post PTM thang n-1 khong gói đã chi 60k, thì tháng n mua gói không chi
-                              or GOI_LUONGTINH IS NOT NULL
-                              or (loai_tb = 'EZPOST'
-                                   and (loai_goi like '%1500%'
-                                   or loai_goi like '%900%')
-                               )
-                        union all
-                           Select somay --P-->C
-                           From khanhtdt_ttkd.CCBS_ID1896@TTKDDB
-                           Where thang = 202409
-                             and kieu_ld = 'P -> C'
-                        union all
-                           Select somay -- Chuyen tinh khac
-                           From khanhtdt_ttkd.CCBS_ID1896_CT@TTKDDB
-                           Where thang = 202409
-                           )
+   CREATE TABLE S_DONGIA_DTHU_HIENHUU_202410 AS
+WITH src_data AS (
+    SELECT 202410 AS thang,
+           a.MA_TB, IS_TBHH, a.THANG_KH_SIM, a.TEN_GOI, a.CHU_KY, a.DTHU_GOI, a.NGAY_KH,
+           a.REGIS_TYPE_GRP, a.LOAI_GD, a.LOAIHINH_TB, a.USER_BAN_GOI, a.USER_NAME, a.LOAI_KENH,
+           a.THANHVIEN_KENH, a.MA_HRM, a.TEN_NV,
+           x.ma_vtcv, x.ma_pb, x.ten_pb, -- lấy dữ liệu từ bảng ttkd_bsc.nhanvien
+           a.CONG_CU_BAN_GOI, a.LOAI_HVC, a.HESO, a.DTHU_TLDG, a.TIEN_THULAO, a.NGUON, a.LOAI_GD_TLDG,
+           ROW_NUMBER() OVER (PARTITION BY a.ma_tb ORDER BY a.USER_BAN_GOI, a.dthu_goi DESC) AS rnk
+    FROM DONGIA_DTHU_HIENHUU_202410 a
+    LEFT JOIN ttkd_bsc.nhanvien x
+           ON a.ma_hrm = x.ma_nv AND x.thang = 202410
+)
+, r_data AS (
+    SELECT * FROM src_data WHERE rnk = 1
+)
+-- ds stb loai_tru
+, prevent_data AS (
+    SELECT SOMAY
+    FROM TTKD_BSC.DT_PTM_VNP_202409
+    WHERE KIEU_LD = 'Chuyen C->P'
+       OR LOAI_GOI = 'GOI KHONG KM'
+       OR GOI_LUONGTINH IS NOT NULL
+       OR (loai_tb = 'EZPOST' AND (loai_goi LIKE '%1500%' OR loai_goi LIKE '%900%'))
+    UNION ALL
+    SELECT somay
+    FROM khanhtdt_ttkd.CCBS_ID1896@TTKDDB
+    WHERE thang = 202409 AND kieu_ld = 'P -> C'
+    UNION ALL
+    SELECT somay
+    FROM khanhtdt_ttkd.CCBS_ID1896_CT@TTKDDB
+    WHERE thang = 202409
+)
+-- Kết hợp r_data với prevent_data
+SELECT a.*,
+       CASE
+           WHEN pd.SOMAY IS NOT NULL
+           THEN 'DS loại trừ: C2P,EZPOST1500/900,P2C,Chuyển tỉnh tháng trước'
+            WHEN  EXISTS (SELECT 1 FROM manpn.BSCC_INSERT_DM_GOICUOC_PHANKY WHERE chu_ky_thang = 'N' AND goi_cuoc = a.ten_goi)
+            THEN 'Khong phải CK tháng'
+        WHEN NOT EXISTS (
+            SELECT 1 FROM ttkd_bsc.nhanvien
+            WHERE thang = 202410
+              AND (user_ccbs = a.user_ban_goi OR user_ccos = a.user_ban_goi OR ma_nv = a.user_ban_goi)
+        ) THEN 'ko phải nv noi bo'
+       END AS lydo_khongtinh
+FROM r_data a
+LEFT JOIN prevent_data pd ON a.ma_tb = pd.SOMAY;
 
-        select *
-        from r_data
-        where ten_goi  not in (select goi_cuoc from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY where chu_ky_thang ='N')
-            and ma_tb not in(select SOMAY From prevent_data)
-        ;
+UPDATE S_DONGIA_DTHU_HIENHUU_202410 a
+SET lydo_khongtinh =
+    CASE
+        WHEN  EXISTS (SELECT 1 FROM manpn.BSCC_INSERT_DM_GOICUOC_PHANKY WHERE chu_ky_thang = 'N' AND goi_cuoc = a.ten_goi)
+            THEN 'Khong phải CK tháng'
+        WHEN NOT EXISTS (
+            SELECT 1 FROM ttkd_bsc.nhanvien
+            WHERE thang = 202410
+              AND (user_ccbs = a.user_ban_goi OR user_ccos = a.user_ban_goi OR ma_nv = a.user_ban_goi)
+        ) THEN 'ko phải nv noi bo'
+        WHEN IS_TBHH = 0 then 'PTM ko tinh'
+        ELSE NULL
+    END
+WHERE lydo_khongtinh IS NULL; -- chỉ cập nhật nếu chưa có giá trị
 
-select * from S_DONGIA_DTHU_HIENHUU_202410;
 --update ma_hrm con thieu:
         update S_DONGIA_DTHU_HIENHUU_202410 a
         set ma_hrm = (select (b.ma_nv) from ttkd_bsc.nhanvien b where b.thang = 202410 and b.ma_nv = a.USER_BAN_GOI) -- tháng 9 ttvt_ctv086203_hcm đag bị double nên dùng max
@@ -392,6 +417,7 @@ WHEN MATCHED THEN
 ---Tinh tiennnnnn noVat./1.1
 update S_DONGIA_DTHU_HIENHUU_202410
 set heso = 0;
+
 update S_DONGIA_DTHU_HIENHUU_202410
 set heso = case when loai_gd in ('NANG_GOI','DANGKY','NANG_CHUKY') and LOAI_HVC ='HVC' then 25
                 when loai_gd in ('NANG_GOI','DANGKY','NANG_CHUKY') and LOAI_HVC ='NOHVC' then 20
@@ -402,6 +428,8 @@ end
 where IS_TBHH = 1
 ;
 
+
+
 update S_DONGIA_DTHU_HIENHUU_202410
 set TIEN_THULAO = round((DTHU_TLDG/1.1)*heso/100*IS_TBHH)
 ;
@@ -409,7 +437,6 @@ set TIEN_THULAO = round((DTHU_TLDG/1.1)*heso/100*IS_TBHH)
 
 select distinct  loai_gd from  S_DONGIA_DTHU_HIENHUU ;
 select *from S_DONGIA_DTHU_HIENHUU ;where  loai_gd is null;
-
 ;
 
   select * from manpn.BSCC_INSERT_DM_KIT_BUNDLE a;
