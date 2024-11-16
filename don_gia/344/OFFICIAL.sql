@@ -570,9 +570,7 @@ select * from one_line_202410 where ma_tb  in ('84814005472','84816240746','8481
 select * from SSS_dgia_202410_2 where ma_tb ='84916374837';
 select * from SSS_dgia_202410 where ma_tb ='84813461192';
 
-create table bosung_T10 as
-    select * from one_line_202410 where 1=0;
-select count(*) from SSS_dgia_202410;
+
 
 
 
@@ -696,7 +694,7 @@ where manv_goi is null and ten_goi is null
 ;
 
 --tìm nhan vien đat chỉ tieu KK:
-            select manv_goi,ten_goi from one_line_202410 where manv_ptm in
+            select manv_goi,ten_goi from one_line_202410 where manv_goi in
               (SELECT ma_nv
             FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
             WHERE thang = 202410 and dinhmuc_2 IN (32000000, 30000000)
@@ -738,12 +736,63 @@ where manv_goi in (select ma_nv FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
                       AND KHDK >= dinhmuc_2)
 and CK_GOI_TLDG>0
 ;
+--note chạy lại lần 2 sẽbi de` tien`
 update one_line_202410
 set TIEN_THULAO_GOI = nvl(TIEN_THULAO_GOI+(DTHU_DONGIA_GOI*HESO_KK),0)
 where heso_kk = 0.05
+;
+update one_line_202410
+set TIEN_THULAO_GOI = nvl(DTHU_DONGIA_GOI,0)*heso_hhbg+(nvl(DTHU_DONGIA_GOI,0)*HESO_KK)
 ;
 
 select *
 from one_line_202410
 where heso_kk = 0.05;
 ---end update tien KK
+
+--bs thang 10:
+select * from bosung_T10;
+select manv_goi,ten_goi from bosung_T10 where manv_goi in
+              (SELECT ma_nv
+            FROM ttkd_bsc.dinhmuc_giao_dthu_ptm
+            WHERE thang = 202409 and dinhmuc_2 IN (32000000, 30000000)
+              AND ma_vtcv IN ('VNP-HNHCM_BHKV_15', 'VNP-HNHCM_BHKV_17')
+              AND KQTH >= dinhmuc_2
+              AND KHDK >= dinhmuc_2);
+update bosung_T10
+set TIEN_THULAO_GOI = nvl(DTHU_DONGIA_GOI,0)*heso_hhbg + (nvl(DTHU_DONGIA_GOI,0)*HESO_KK)
+;
+update bosung_T10
+set DTHU_KPI = round(DTHU_DONGIA_GOI/1.1,0)
+where HESO_KK = 0;
+
+select * from vietanhvh.BOSUNG_T10
+where ma_tb in (
+    '84837981109',
+'84822829006',
+'84919794246',
+'84917150409'
+    )
+;
+ select * from (
+           select THANG_PTM thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG,
+             MANV_GOI ma_nv,b.ten_nv, MATO_GOI ma_to,b.ten_to, MAPB_GOI ma_pb,b.ten_pb,'mua_goi' tenkieu_ld, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI,
+             DTHU_KPI, LYDO_KHONGTINH
+         from vietanhvh.one_line_202410 a
+         join ttkd_bsc.nhanvien b on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv
+            union all
+         select THANG_PTM thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG, MANV_PTM ma_nv, TENNV_PTM,
+            MATO_PTM ma_to, TENTO_PTM, MAPB_PTM ma_pb, TENPB_PTM,'ptm' tenkieu_ld, TIEN_DNHM, DTHU_DONGIA_DNHM, TIEN_THULAO_DNHM
+--         MANV_GOI, MATO_GOI, MAPB_GOI, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI,
+         , DTHU_DNHM_KPI, LYDO_KHONGTINH
+         from vietanhvh.one_line_202410
+union all
+ select THANG_PTM thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG,
+             MANV_GOI ma_nv,b.ten_nv, MATO_GOI ma_to,b.ten_to, MAPB_GOI ma_pb,b.ten_pb,'mua_goi' tenkieu_ld, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI,
+             DTHU_KPI, LYDO_KHONGTINH
+         from vietanhvh.bosung_T10 a
+           join ttkd_bsc.nhanvien b on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv
+
+
+
+         ) where ma_tb ='84917150409';
