@@ -39,4 +39,6 @@ union all
          from vietanhvh.bosung_T10 a
             join ttkd_bsc.nhanvien b
                 on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv
-         )
+         ) where MA_TB ='84917150409'
+;
+insert into

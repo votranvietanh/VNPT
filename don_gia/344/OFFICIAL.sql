@@ -579,36 +579,49 @@ select * from SSS_dgia_202410 where ma_tb ='84813461192';
 
 
 ----=== đơn giá THỦ ĐỨC
+select * from one_line_202410 where ma_tb ='84886703462';
+select * from SSS_dgia_202410 where ma_tb ='84886703462';
 select * from khieunai_td_dgia;
 update SSS_dgia_202410 a
-set USERNAME_KH = (select x.NGUOI_THAYTHE x from khieunai_td_dgia x
+set MANV_PTM = (select x.NGUOI_THAYTHE x from khieunai_td_dgia x
                                             where x.thang = 202410
                                                and x.MA_TB = a.ma_tb
                                                and x.ma_tiepthi = username_kh)
-, manv_thaythe = (select x.NGUOI_THAYTHE x from khieunai_td_dgia x
-                                            where x.thang = 202410
-                                               and x.MA_TB = a.ma_tb
-                                               and x.ma_tiepthi = username_kh)
-where a.ma_tb in (select ma_tb from khieunai_td_dgia where thang = 202410)
-    and a.TENKIEU_LD ='ptm'
+where  a.ma_tb in (select ma_tb from khieunai_td_dgia x where x.thang = 202410)
+    and TENKIEU_LD ='ptm'
 ;
-      update SSS_dgia_202410 a
-        set (manv_ptm,tennv_ptm,ma_to,ten_to, ma_pb, ten_pb, ma_vtcv, nhom_tiepthi) = ( select x.ma_nv,x.ten_nv, x.ma_to, x.ten_to, x.ma_pb, x.ten_pb, x.ma_vtcv, x.NHOMLD_ID from ttkd_bsc.nhanvien x where x.thang=a.thang_ptm and x.ma_nv = a.USERNAME_KH)
+update SSS_dgia_202410 a
+        set (manv_ptm,tennv_ptm,ma_to,ten_to, ma_pb, ten_pb, ma_vtcv, nhom_tiepthi) = ( select x.ma_nv,x.ten_nv, x.ma_to, x.ten_to, x.ma_pb, x.ten_pb, x.ma_vtcv, x.NHOMLD_ID from ttkd_bsc.nhanvien x where x.thang=a.thang_ptm and x.ma_nv = a.MANV_PTM)
     where ma_tb in  (select ma_tb from khieunai_td_dgia where thang = 202410) and TENKIEU_LD ='ptm'
       ;
-      drop index idx_tmp;
+
+
+update SSS_dgia_202410_2 a
+set MANV_PTM = (select x.NGUOI_THAYTHE x from khieunai_td_dgia x
+                                            where x.thang = 202410
+                                               and x.MA_TB = a.ma_tb
+                                               and x.ma_tiepthi = username_kh)
+where  a.ma_tb in (select ma_tb from khieunai_td_dgia x where x.thang = 202410)
+    and TENKIEU_LD ='ptm';
+      update SSS_dgia_202410_2 a
+        set (manv_ptm,tennv_ptm,ma_to,ten_to, ma_pb, ten_pb, ma_vtcv, nhom_tiepthi) = ( select x.ma_nv,x.ten_nv, x.ma_to, x.ten_to, x.ma_pb, x.ten_pb, x.ma_vtcv, x.NHOMLD_ID from ttkd_bsc.nhanvien x where x.thang=a.thang_ptm and x.ma_nv = a.MANV_PTM)
+    where ma_tb in  (select ma_tb from khieunai_td_dgia where thang = 202410) and TENKIEU_LD ='ptm'
+      ;
+
+--1dong
+update one_line_202410 a
+set MANV_PTM = (select x.NGUOI_THAYTHE x from khieunai_td_dgia x
+                                            where x.thang = 202410
+                                               and x.MA_TB = a.ma_tb)
+where  a.ma_tb in (select ma_tb from khieunai_td_dgia x where x.thang = 202410);
+ update one_line_202410 a
+        set (manv_ptm,tennv_ptm,MATO_PTM, TENTO_PTM, MAPB_PTM, TENPB_PTM) = ( select x.ma_nv,x.ten_nv, x.ma_to, x.ten_to, x.ma_pb, x.ten_pb from ttkd_bsc.nhanvien x where x.thang=a.thang_ptm and x.ma_nv = a.MANV_PTM)
+    where ma_tb in  (select ma_tb from khieunai_td_dgia where thang = 202410)
+      ;
+;      drop index idx_tmp;
 ---những manv_goi ở bên 1 dòng nếu null --> kiểm tra cột tiền gói coi = 0 ko ? gán 0
 -----------------====== NHÁP:
 
-
-
-
-
-        select distinct LYDO_KHONGTINH from SSS_dgia_202408
-                                       where ( TIEN_THULAO_DNHM = 0 or TIEN_THULAO_GOI =0)
-                                            and MANV_PTM is not null
-                                            and TENKIEU_LD in ('ptm','ptm-goi')
-        ;
 
 ;
 
@@ -796,3 +809,4 @@ union all
 
 
          ) where ma_tb ='84917150409';
+
