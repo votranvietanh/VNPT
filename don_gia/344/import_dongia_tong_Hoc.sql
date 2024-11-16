@@ -16,68 +16,27 @@ select 'VNPTT', 2, 21, 'Hòa mạng mới di động' tenkieu_ld, 2 kieuld_id, 1
 
 
 -----VA: code T10 public tren ID88
-select *
-from (select THANG_PTM thang,
-             NGUON,
-             PHAN_LOAI_KENH,
-             MA_TB,
-             TEN_GOI,
-             CK_GOI_TLDG,
-             MANV_GOI  ma_nv,
-             b.ten_nv,
-             MATO_GOI  ma_to,
-             b.ten_to,
-             MAPB_GOI  ma_pb,
-             b.ten_pb,
-             'mua_goi' tenkieu_ld,
-             TIEN_GOI,
-             DTHU_DONGIA_GOI,
-             TIEN_THULAO_GOI,
-             DTHU_KPI,
-             LYDO_KHONGTINH
-      from vietanhvh.one_line_202410 a
-               join ttkd_bsc.nhanvien b on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv
-      union all
-      select THANG_PTM thang,
-             NGUON,
-             PHAN_LOAI_KENH,
-             MA_TB,
-             TEN_GOI,
-             CK_GOI_TLDG,
-             MANV_PTM  ma_nv,
-             TENNV_PTM,
-             MATO_PTM  ma_to,
-             TENTO_PTM,
-             MAPB_PTM  ma_pb,
-             TENPB_PTM,
-             'ptm'     tenkieu_ld,
-             TIEN_DNHM,
-             DTHU_DONGIA_DNHM,
-             TIEN_THULAO_DNHM
---         MANV_GOI, MATO_GOI, MAPB_GOI, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI,
-              ,
-             DTHU_DNHM_KPI,
-             LYDO_KHONGTINH
-      from vietanhvh.one_line_202410
-      union all
-      select THANG_PTM thang,
-             NGUON,
-             PHAN_LOAI_KENH,
-             MA_TB,
-             TEN_GOI,
-             CK_GOI_TLDG,
-             MANV_GOI  ma_nv,
-             b.ten_nv,
-             MATO_GOI  ma_to,
-             b.ten_to,
-             MAPB_GOI  ma_pb,
-             b.ten_pb,
-             'mua_goi' tenkieu_ld,
-             TIEN_GOI,
-             DTHU_DONGIA_GOI,
-             TIEN_THULAO_GOI,
-             DTHU_KPI,
-             LYDO_KHONGTINH
-      from vietanhvh.bosung_T10 a
-               join ttkd_bsc.nhanvien b on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv)
-    ;
+--tach từ 1 dòng -> 2 dòng, rồi gom thêm phần bổ sung
+select * from (
+     --nv mua goi
+         select THANG_PTM thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG,
+                 MANV_GOI ma_nv,b.ten_nv, MATO_GOI ma_to,b.ten_to, MAPB_GOI ma_pb,b.ten_pb,'mua_goi' tenkieu_ld, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI,
+                 DTHU_KPI, LYDO_KHONGTINH
+         from vietanhvh.one_line_202410 a
+            join ttkd_bsc.nhanvien b
+                on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv
+union all
+    --nv PTM
+         select THANG_PTM thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG, MANV_PTM ma_nv, TENNV_PTM,
+                MATO_PTM ma_to, TENTO_PTM, MAPB_PTM ma_pb, TENPB_PTM,'ptm' tenkieu_ld, TIEN_DNHM, DTHU_DONGIA_DNHM, TIEN_THULAO_DNHM
+                , DTHU_DNHM_KPI, LYDO_KHONGTINH
+         from vietanhvh.one_line_202410
+union all
+    --Bo sungg
+         select THANG_PTM thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG,
+                MANV_GOI ma_nv,b.ten_nv, MATO_GOI ma_to,b.ten_to, MAPB_GOI ma_pb,b.ten_pb,'mua_goi' tenkieu_ld, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI,
+    DTHU_KPI, LYDO_KHONGTINH
+         from vietanhvh.bosung_T10 a
+            join ttkd_bsc.nhanvien b
+                on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv
+         )
