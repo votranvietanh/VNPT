@@ -1,7 +1,11 @@
 drop table dongia_DTHH;
-select ma_tb from vietanhvh.dongia_DTHH group by ma_tb having count(ma_tb)>1;
+select * from vietanhvh.dongia_DTHH ;where LYDO_KHONGTINH is not null;
 
-create table dongia_DTHH as;
+select ma_pb,sum(TIEN_THULAO) from dongia_DTHH
+group by ma_pb;
+select * from dongia_DTHH where TIEN_THULAO>DTHU_TLDG ;
+select * from TTKD_BSC.nhanvien where ma_nv ='CTV087563';
+create table dongia_DTHH as
 select *
 from (select THANG
            , MA_TB
@@ -31,21 +35,14 @@ from (select THANG
            , NGUON
            , lydo_khongtinh
       from (select *
-            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202410 --50.998
-            where ma_pb = 'VNP0703000'
-              and loai_gd not in ('HA_CHUKY', 'HA_GOI')
-           and IS_TBHH = 1 and lydo_khongtinh is  null
+            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202410_v3 --50.998
 
-            union all
-            select *
-            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202410
-            where ma_pb <> 'VNP0703000'
-              and loai_gd not in ('GIAHAN', 'GIAHAN_TUDONG', 'HA_CHUKY', 'HA_GOI')
-          and IS_TBHH = 1 and lydo_khongtinh is  null
+
+
 
            ))
-where ma_tb in ('84918122701','84838118168'
-,'84942979333')
+
 ;
 
+select ma_tb from vietanhvh.dthu_44;
 
