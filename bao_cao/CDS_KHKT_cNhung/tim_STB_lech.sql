@@ -1,3 +1,13 @@
+--cac ma_tb trung nhau nhung khac manv_ptm la chi trung dv CNTT
+    select distinct ma_tb,MANV_PTM
+from khkt_bc_hoahong_2
+where ma_tb  in
+(select ma_tb
+    from hoahong_imp_cntt_new
+    where thang_nghiemthu = 202406
+    )
+;
+
 -- Tạo view chênh lệch giữa kênh nôi bộ và kênh ngoài
 
 
@@ -11,16 +21,7 @@ WITH raw_data AS (
            NVL(luong_dongia_nvptm, 0) AS luong_dongia_nvptm,
            NVL(luong_dongia_nvhotro, 0) AS luong_dongia_nvhotro
     FROM TTKD_BCT.khkt_bc_hoahong a
-    WHERE  a.NGAY_BBBG BETWEEN TO_DATE('01/06/2024 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
-                            AND TO_DATE('30/06/2024 23:59:59', 'DD/MM/YYYY HH24:MI:SS')
-                            AND a.nguon in ('man_VNPTT_HHBG',
-                                            'va_tgdd',
-                                            'va_DLPL_PTTT',
-                                            'va_FPT',
-                                            'va_ct_bsc_ptm',
-                                            'KHANH CTVXHH',
-                                            'imp_CNTT')
-            OR  (a.NGAY_BBBG is null and a.thang_ptm = 202406)
+    WHERE thang_ptm = 202407
 )
 
 -- Tìm các ma_tb có trong cả hai kênh

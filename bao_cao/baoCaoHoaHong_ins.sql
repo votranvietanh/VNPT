@@ -2,30 +2,49 @@
 da imp tgdd,fpt thang 10
         insert into ttkd_bct.hocnq_cp_nhancong_hoahong(THANG, THANG_TLDG, MA_TB, TEN_KIEULD, LOAIHINH_TB, TENNV_PTM, KENH_PTM, TIENLUONG_DAILY, TIENLUONG_PBH_PTM, NGUON)
 ;
-        select 202408,202409,MA_TB,'phat trien moi','VNPTT',NGUON,'Kênh Chuỗi',  NOVAT,NOVAT,'va_kenh_chuoi'
+        select thang_ptm,thang_ptm+1,MA_TB,'phat trien moi','VNPTT',NGUON,'Kênh Chuỗi',  NOVAT,NOVAT,'va_kenh_chuoi'
                 from
              (
-                select MA_TB, LOAI_SIM, GIA_SIM_TRANG, GOI_CUOC, GIA_GOI, DTHU_HMM, DTHU_KIT, NGAY_KH, CHI_BCKH,(CHI_BCKH*1.08) as novat,'FPT' nguon
+                select to_char(thang) thang_ptm,MA_TB, LOAI_SIM, GIA_SIM_TRANG, GOI_CUOC, GIA_GOI, DTHU_HMM, DTHU_KIT, NGAY_KH, CHI_BCKH,(CHI_BCKH*1.08) as novat,'FPT' nguon
                 from FPT_BCKH_PTM
-                where thang = 202408
-            union allct_bsc_ptm
-                SELECT MA_TB, LOAI_SIM, GIA_SIM_TRANG, MA_KIT, GIA_GOI, DTHU_HMM, DTHU_KIT, NGAY_KH, CHI_BCKH,(CHI_BCKH*1.08) novat ,'TGDD' nguon
+                where thang = 202409
+            union all
+                SELECT thang,MA_TB, LOAI_SIM, GIA_SIM_TRANG, MA_KIT, GIA_GOI, DTHU_HMM, DTHU_KIT, NGAY_KH, CHI_BCKH,(CHI_BCKH*1.08) novat ,'TGDD' nguon
                 from TGDD_BCKH_PTM
-                where thang = 202408
+                where thang = 202409
             )
         ;
+
+    insert into ttkd_bct.hocnq_cp_nhancong_hoahong(THANG, THANG_TLDG, MA_TB, TEN_TB, MA_GD, TEN_KIEULD, NHOM_DICHVU, LOAIHINH_TB, PHONG_PTM, MANV_PTM, TENNV_PTM, KENH_PTM,
+PHONG_QL, DATCOC_CSD, SOTHANG_DC, DTHU_GOI, DTHU_TLDG, TIENLUONG_DAILY, TIENLUONG_PBH_PTM, TIENLUONG_PQL, NGUON)
+
+select THANG_NGHIEMTHU,THANG_NGHIEMTHU,ma_tb,ten_tb,ma_gd,'','C. CNTT,GTGT',dich_vu,(select x.ma_pb from dm_pbh x where a.phong_ql = x.ten_pb)
+, ma_daily manv_ptm,'','Đại lý pháp nhân',
+  (select x.ma_pb from dm_pbh x where a.phong_ql = x.ten_pb),'','',DTHU_NOVAT,DTHU_NOVAT,DTHU_NOVAT,0,0,'imp_ketoan'
+from hoahong_imp_cntt_new a where THANG_NGHIEMTHU = 202410
+;
+insert into khkt_bc_hoahong_2(THANG_PTM, MA_GD,MA_TB, DICHVU_VT, TEN_TB, NGAY_BBBG,MA_PB, TEN_PB,MANV_PTM, TENNV_PTM,DTHU_GOI, THANG_TLDG_DT
+        ,NHOM_TIEPTHI, LOAI_THULAO, LUONG_DONGIA_NVPTM, LUONG_DONGIA_NVHOTRO,nguon,DICHVUVT_ID, LOAITB_ID)
+select THANG_NGHIEMTHU,ma_gd,ma_tb,dich_vu,ten_tb,ngay_nghiem_thu
+     ,(select x.ma_pb from dm_pbh x where a.phong_ql = x.ten_pb) ma_pb
+    ,PHONG_QL
+,ma_daily,ten_daily,DTHU_NOVAT,THANG_NGHIEMTHU,5,'hoahong',hoa_hong,0,'ketoan'
+,(select  x.DICHVUVT_ID from css_hcm.loaihinh_tb x where a.dich_vu = x.loaihinh_tb)
+,(select  loaitb_id from css_hcm.loaihinh_tb x where a.dich_vu = x.loaihinh_tb)
+from hoahong_imp_cntt a
+;
 
 -----PTTT. thang_ptm+2=thang_tldg
         insert into ttkd_bct.hocnq_cp_nhancong_hoahong(thang,thang_tldg,ma_tb,ten_kieuld,loaihinh_tb,phong_ptm,manv_ptm,tennv_ptm,kenh_ptm,tienluong_daily,tienluong_pbh_ptm,tienluong_pql,nguon)
 --
         select THANG_PTM, THANG_TLDG,MA_TB,'phattrienmoi','VNPTS','VNP0700800',manv_ptm,manv_ptm,'Đại lý pháp nhân', LUONG,round(LUONG/6,2),round(LUONG/6*5,2),'ĐLCN-PTTT'
         from chi_hoahong
-        where thang_tldg = 202408
+        where thang_tldg = 202410
         ;
 
 ---insert xong can` check lai kenh_ptm xem ? neu co manv_ptm thi co kenh_ptm, update them phong_ql
         insert into ttkd_bct.hocnq_cp_nhancong_hoahong(THANG, THANG_TLDG, MA_TB, TEN_TB, MA_GD, TEN_KIEULD, NHOM_DICHVU, LOAIHINH_TB, PHONG_PTM, MANV_PTM, TENNV_PTM, KENH_PTM, PHONG_QL, DATCOC_CSD, SOTHANG_DC, DTHU_GOI, DTHU_TLDG, TIENLUONG_DAILY, TIENLUONG_PBH_PTM, TIENLUONG_PQL, NGUON)
-;
+
       select * from (select thang_ptm
                             , thang_tldg_dt
                             , ma_tb
@@ -38,7 +57,7 @@ da imp tgdd,fpt thang 10
                             , nvl(MA_NGUOIGT,manv_ptm) as manv_ptm
                             , ''                                                                           tennv_ptm
                             , case
-                                when nvl(MA_NGUOIGT,manv_ptm) in (select distinct ma_daily  from ttkd_bsc.dm_daily_khdn where thang=202408)
+                                when nvl(MA_NGUOIGT,manv_ptm) in (select distinct ma_daily  from ttkd_bsc.dm_daily_khdn where thang=202410)
                                     and dichvuvt_id in (13,14,15,16)
                                 then 'Đại Lý CNTT' else
                                (select y.TENNHOM_TAT
@@ -76,7 +95,7 @@ da imp tgdd,fpt thang 10
                     5)                                                                                     luong_phong_ql
                             , 'va_ct_bsc_ptm'                                                              nguon
                        from ttkd_bsc.ct_bsc_ptm a
-                       where thang_tldg_dt = 202408
+                       where thang_tldg_dt = 202410
 --                          and (doanhthu_dongia_nvptm <> 0 and luong_dongia_nvptm <> 0)
                          and a.manv_ptm in (select distinct ma_nv
                                     from ttkd_bsc.nhanvien
@@ -101,7 +120,7 @@ da imp tgdd,fpt thang 10
                             , nvl(MA_NGUOIGT,manv_ptm) as manv_ptm
                             , ''                                                                           tennv_ptm
                             , case
-                                when nvl(MA_NGUOIGT,manv_ptm) in (select distinct ma_daily  from ttkd_bsc.dm_daily_khdn where thang=202408)
+                                when nvl(MA_NGUOIGT,manv_ptm) in (select distinct ma_daily  from ttkd_bsc.dm_daily_khdn where thang=202410)
                                     and dichvuvt_id in (13,14,15,16)
                                 then 'Đại Lý CNTT' else
                            (select y.TENNHOM_TAT
@@ -132,7 +151,7 @@ da imp tgdd,fpt thang 10
                             , null                                                                         luong_ql
                             , 'va_ct_bsc_ptm'                                                              nguon
                        from ttkd_bsc.ct_bsc_ptm a
-                       where thang_tldg_dnhm = 202408
+                       where thang_tldg_dnhm = 202410
 --                          and (doanhthu_dongia_dnhm <> 0 and luong_dongia_dnhm_nvptm <> 0)
                          and a.manv_ptm in (select distinct ma_nv
                                     from ttkd_bsc.nhanvien
@@ -168,7 +187,7 @@ da imp tgdd,fpt thang 10
            0,'VNPTT'
     from ttkd_bsc.ct_bsc_ptm a
     left join TTKD_BSC.nhanvien b on b.thang = a.thang_Ptm and a.MANV_HOTRO = b.ma_nv
-    where thang_ptm = 202409
+    where thang_ptm = 202410
       and loaitb_id = 21
       and LUONG_DONGIA_NVHOTRO >0
 UNION ALL
@@ -179,7 +198,7 @@ UNION ALL
            0,'VNPTT'
     from ttkd_bsc.ct_bsc_ptm a
     left join TTKD_BSC.nhanvien b on b.thang = a.thang_Ptm and a.manv_ptm = b.ma_nv
-    where thang_ptm = 202409
+    where thang_ptm = 202410
       and loaitb_id = 21
         and LUONG_DONGIA_DNHM_NVPTM > 0
     ;
@@ -221,7 +240,7 @@ select THANG, THANG, '', ''
     , '', '', ''
     , 0,0, TIEN_KHUYEN_KHICH, TIEN_KHUYEN_KHICH, 0, 'VNPTT_228_2'
 from manpn.thulao_ndth_dachi@ttkddbbk2
-where thang >= 202407;
+where thang = 202410;
 
  insert into ttkd_bct.hocnq_cp_nhancong_hoahong(thang,thang_tldg,ma_tb,TEN_KIEULD,NHOM_DICHVU,loaihinh_tb,phong_ptm,manv_ptm,
     kenh_ptm,DATCOC_CSD,DTHU_GOI,DTHU_TLDG,TIENLUONG_DAILY,TIENLUONG_PBH_PTM,TIENLUONG_PQL,nguon
@@ -242,7 +261,7 @@ where thang >= 202407;
        end as phong_ptm
             ,so_eload,'Đại lý',GIA_GOI_CUOC,GIA_GOI_CUOC,GIA_GOI_CUOC,TONG_THU_LAO_TRUOC_THUE,TONG_THU_LAO_TRUOC_THUE,0,'man_VNPTT_HHBG'
             from manpn.thulao_hhbg_dachi@ttkddbbk2
-            where thang = 202408;
+            where thang = 202410;
 -----ins GHTT nhuY:
     insert into  vietanhvh.khkt_bc_hoahong
     ;
@@ -461,19 +480,22 @@ commit;
     From chi_hoahong
     where thang_ptm = 202406;
 
-  insert into khkt_bc_hoahong(THANG_PTM, MA_GD, MA_KH, THUEBAO_ID, MA_TB, dichvu_vt, TENKIEU_LD, TEN_TB, DIACHI_LD, NGAY_BBBG, MA_PB, TEN_PB, MA_TO, TEN_TO, MANV_PTM, TENNV_PTM, SOTHANG_DC, DATCOC_CSD, DTHU_DNHM, DTHU_GOI, THANG_TLDG_DT, SL_MAILING, NHOM_TIEPTHI, LOAI_THULAO, LUONG_DONGIA_NVPTM, LUONG_DONGIA_NVHOTRO, NGUON,DICHVUVT_ID,LOAITB_ID)
+  insert into khkt_bc_hoahong_2(THANG_PTM, MA_GD, MA_KH, THUEBAO_ID, MA_TB, dichvu_vt, TENKIEU_LD, TEN_TB, DIACHI_LD, NGAY_BBBG, MA_PB, TEN_PB, MA_TO, TEN_TO, MANV_PTM, TENNV_PTM, SOTHANG_DC, DATCOC_CSD, DTHU_DNHM, DTHU_GOI, THANG_TLDG_DT, SL_MAILING, NHOM_TIEPTHI, LOAI_THULAO, LUONG_DONGIA_NVPTM, LUONG_DONGIA_NVHOTRO, NGUON,DICHVUVT_ID,LOAITB_ID)
 select THANG_PTM, MA_GD, MA_KH, THUEBAO_ID, MA_TB, dich_vu, TENKIEU_LD, TEN_TB, DIACHI_LD, NGAY_BBBG, MA_PB, TEN_PB, MA_TO, TEN_TO
 , case when ma_nguoigt is not null and ma_nguoigt in ( select ma_daily from ttkd_bsc.dm_daily_khdn  b
                 where b.thang = thang_ptm)
+                and nvl(LUONG_DONGIA_DNHM_NVPTM,0) + nvl(LUONG_DONGIA_NVPTM,0) = 0
                 then nvl(ma_nguoigt,MANV_PTM)
-                else nvl(ma_nguoigt,MANV_PTM) end as MANV_PTM
+                else nvl(MANV_PTM,ma_nguoigt) end as MANV_PTM
 , TENNV_PTM, SOTHANG_DC, DATCOC_CSD, TIEN_DNHM, DTHU_GOI, THANG_TLDG_DT, SL_MAILING
-,  case when ma_nguoigt is not null and ma_nguoigt in ( select ma_daily from ttkd_bsc.dm_daily_khdn  b where b.thang = thang_ptm) --ton tai trong dm_daily
-                then 5
+,  case when ma_nguoigt is not null
+                 and ma_nguoigt in ( select ma_daily from ttkd_bsc.dm_daily_khdn  b where b.thang = thang_ptm) --ton tai trong dm_daily
+                 and nvl(LUONG_DONGIA_DNHM_NVPTM,0) + nvl(LUONG_DONGIA_NVPTM,0) = 0
+            then 5
         else NHOM_TIEPTHI
             end as NHOM_TIEPTHI
 ,'hoahong', nvl(LUONG_DONGIA_DNHM_NVPTM,0) + nvl(LUONG_DONGIA_NVPTM,0)  LUONG_DONGIA_NVPTM, LUONG_DONGIA_NVHOTRO,'va_ct_bsc_ptm',dichvuvt_id,loaitb_id
-    from ttkd_bsc.ct_bsc_ptm where thang_ptm = 202408
+    from ttkd_bsc.ct_bsc_ptm where thang_ptm in(202409,202410)
  ;
 
 ----============================================
@@ -484,7 +506,7 @@ select THANG_PTM, MA_GD, MA_KH, THUEBAO_ID, MA_TB, dich_vu, TENKIEU_LD, TEN_TB, 
 
 ---======================================INSER XONG,=>> UPDATE PHONG_QL ================================================================================================
 
-        select * from ttkd_bct.hocnq_cp_nhancong_hoahong where thang_tldg = 202407 AND TEN_KIEULD ='Lap dat moi MyTV OTT';
+        select distinct nguon from ttkd_bct.hocnq_cp_nhancong_hoahong where thang_tldg = 202409; AND TEN_KIEULD ='Lap dat moi MyTV OTT';
 
 
 select * from TTKD_BSC.nhanvien where ten_nv like '%Nguyễn Thị Ngọc Khuê%';
@@ -523,4 +545,36 @@ select* from  bc_gtgt_t06 where ma_tb in ('hcm_hddt_00009208'
 
 );
 
-select * from ttkd_bsc.bangluong_kpi where thang = 202408 and ma_kpi ='HCM_DT_PTMOI_055';
+ update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Nhân viên chính thức TTKD'
+    where kenh_ptm ='NVKD';
+
+    update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Nhân viên chính thức TTKD'
+    where kenh_ptm ='NVCT';
+        update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Nhân viên Viễn thông'
+    where kenh_ptm ='NVVT';
+
+     update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Công tác viên TTKD'
+    where kenh_ptm ='CTV';
+
+    update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Công tác viên VTTP'
+    where kenh_ptm ='CTV_KT';
+
+    update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Đại lý cá nhân'
+    where kenh_ptm ='DLCN';
+    update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Nhân viên Viễn thông'
+    where kenh_ptm ='NVKT';
+
+        update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Cộng tác viên Xã hội hóa'
+    where kenh_ptm ='CTV XHH';
+
+    update ttkd_bct.hocnq_cp_nhancong_hoahong
+    set kenh_ptm ='Đại lý pháp nhân'
+    where kenh_ptm ='Đại lý' and nguon ='man_VNPTT_HHBG';

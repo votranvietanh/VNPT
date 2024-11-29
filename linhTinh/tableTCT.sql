@@ -1,15 +1,66 @@
+
+
+
+--P01 theo tháng: tỉnh xuất bán: HCM , theo tháng, hình thức HM: PTM
+SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025@coevnpt
+         where mo_key=202409
+            and GEO_STATE_KEY_STOCK=35 --HCM đã test lấy data thang 9,10 --> Khớp
+            and GEO_STATE_KEY_DTCP = 35
+            and ACTV_TYPE = 'PTM' ;
+--theo ngày
+     select * fROM ocdm_stage.VNP_DOANHTHU_CHIPHI_TT_2025_D@coevnpt
+ where GEO_STATE_KEY_STOCK = 35
+    and GEO_STATE_KEY_DTCP = 35
+       and ACTV_TYPE ='PTM'
+    and day_key = 20241123;
+--PL4 ngay - ptm trong thang phuc vu cho bao cao bris
+     select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D@coevnpt where LOAI_TB_THANG ='PTM' and DAY_KEY=20241125 and GEO_STATE_CD='HCM' and LOAIHINH_TB='TT';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------84914145993
+select  *from ocdm_sys.dwb_acct_actvtn@coevnpt a
+where  day_key = 20241109 and ACTV_TYPE ='NEW_ACTV'
+--   and SIM_STATE_CD ='HCM'
+--     and GEO_STATE_KEY_DK = 35;
+--     or GEO_STATE_KEY_STOCK = 35;
+--   and SIM_GEO_STATE_KEY = 35;
+  and ACCS_MTHD_KEY='84847743006' ;
+select  *from ocdm_sys.dwb_acct_actvtn@coevnpt a
+where  day_key = 20241123 and ACTV_TYPE ='NEW_ACTV'
+--   and SIM_STATE_CD ='HCM'
+--     and GEO_STATE_KEY_DK = 35
+--     or GEO_STATE_KEY_STOCK = 35;
+--   and SIM_GEO_STATE_KEY = 35;
+  and ACCS_MTHD_KEY='84945796163' ; SIM_GEO_STATE_KEY = province init
+--GEO_STATE_KEY_DK = null ->> ko co thong tin
 select * FROM ocdm_Stage.VNP_SLDT_NHANVIEN_P0501@coevnpt;
 SELECT * fROM OCDM_STAGE.DWB_DATA_DIGISHOP_SIM_NEW@coevnpt;
 --test digishop web
-select * from manpn.BSCC_DIGI where thang = 202410
+select STB from manpn.BSCC_DIGI where thang = 202410
    minus select to_char(sdt_mua) from OCDM_STAGE.DWB_DATA_DIGISHOP_WEB_SIM@coevnpt
 ;
+84886035684
 
 --DIGISHOPAPP =
 select * from dgia_tndn_simso where thang = 202410 and ma_tb ='84945535143';
 SELECT * fROM OCDM_STAGE.DWB_DATA_DIGISHOP_SIM_NEW@coevnpt where day_key  >= 20241000 and day_key <= 20241031 and ttkd ='TTKD VNPT-TP Hồ Chí Minh';
 --DIGISHOPWEB
-SELECT *fROM OCDM_STAGE.DWB_DATA_DIGISHOP_WEB_coevnptSIM@ where mo_key = 202410 and sdt_mua ='84828002911'; MA_DON_HANG ='202410312836550';and ghi_chu ='Success'; ='84822177511';
+SELECT *fROM OCDM_STAGE.DWB_DATA_DIGISHOP_WEB_SIM@coevnpt where mo_key = 202410 and sdt_mua ='84828002911'; MA_DON_HANG ='202410312836550';and ghi_chu ='Success'; ='84822177511';
 SELECT distinct SAN_PHAM,CHU_KY_GOI FROM OCDM_STAGE.DWB_DATA_DIGISHOP_WEB_PACK@coevnpt p where p.mo_key = 202410;
 select * from manpn.BSCC_DIGI where thang = 202410; --2823
 --TONG HOP 2 BANG TREN THANH BANG:
@@ -48,3 +99,4 @@ minus
 select ma_tb from ONE_LINE_202410;
  select * from ocdm_sys.dwb_acct_actvtn@coevnpt; where mo_key = 202410 and PROVINCE_INIT ='HCM' ; --ACTV_TYPE='NEW_ACTV' GEO_STATE_KEY=20, ACCOUNT_DK
 
+SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025@coevnpt where mo_key=202410  and GEO_STATE_KEY_STOCK=35 and GEO_STATE_KEY_DTCP = 35 and ACTV_TYPE = 'PTM' ;
