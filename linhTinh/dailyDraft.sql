@@ -31,4 +31,5 @@ select * from hoahong_imp_cntt;
 
 select * from ocdm_sys.dwb_accs_mthd_hist@coevnpt where GEO_STATE_KEY=35 and PROD_LN_CD=2 and exists( select 1 from x_P_ts where ACCS_MTHD_KEY = SOMAY)
      and day_key >= 20240401 and ACCS_MTHD_KEY =84812253650
--test chảnge
+
+sao ko commit duoc ?
