@@ -38,3 +38,14 @@ union all
     on a.MA_pb = b.MA_pb 
     and b.ma_vtcv ='VNP-HNHCM_BHKV_2'
 ;
+
+
+-- xoa nhung manv nay -
+select *  from ttkd_bsc.bangluong_kpi where thang = 202411 and ma_kpi like '%_060' and ma_vtcv = 'VNP-HNHCM_BHKV_2'
+and ma_nv not in (
+        (select MA_NV from ttkd_Bsc.blkpi_dm_to_pgd x
+        where thang = 202410
+            and x.dichvu  in  ('VNP tra truoc','VNP tra sau')
+            and x.ma_to in (select distinct ma_to from ttkd_bsc.dm_to where ten_to ='Tổ Kinh Doanh Di Động Trả Trước' and hieuluc = 1)
+            )
+    )
