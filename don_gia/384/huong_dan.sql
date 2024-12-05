@@ -89,11 +89,10 @@ select * from DONGIA_DTHU_HIENHUU_202410 where loai_gd ='DANGKY' and ma_tb in (s
                                                                                      from OB_CKD_ct
                                                                                      where thang = 202410
                                                                                      union all
-                                                                                     select '84' || so_tb
+                                                                                     select '84' || so_tb ma_tb
                                                                                      from OB_CKN_ct
                                                                                      where thang = 202410
-                                                                                  ));
-
+                                                                                  )where ma_tb='84843409496');
 
 
 
@@ -128,6 +127,25 @@ where LOAI_TB_THANG ='HH' and thang = 202410
         and USER_CODE NOT IN ('SYSTEM','SMS','sms','ccbs_vnp','crosssell_vnp','4G-SPR','1543|TDL_CTNET','1543|TELESALE')
         and P2_CHUKY is not null --bỏ các gói ngày,se~ con` sót lại nhưững gói ngày như MI_YT10k nhưng ct để là ck tháng!
 ;
+--  84853545129 trong P04 2 goi giong nhau dangky,giahan PL04 de dangky het
+MERGE INTO DONGIA_DTHU_HIENHUU_202410 tgt
+USING (
+    SELECT
+        t1.ma_tb,
+        t1.ngay_kh,
+        t2.ngay_kh AS ngay_kh_muon
+    FROM DONGIA_DTHU_HIENHUU_202410 t1
+    JOIN DONGIA_DTHU_HIENHUU_202410 t2
+        ON t1.ten_goi = t2.ten_goi
+        AND t1.ma_tb=t2.ma_tb
+        AND t1.DTHU_GOI = t2.DTHU_GOI
+        AND t1.nguon = 'BRIS_P04'
+        AND t2.nguon = 'BRIS_P04'
+        AND t1.ngay_kh < t2.ngay_kh -- chỉ lấy các bản ghi có ngày_kh muộn hơn
+) src
+ON (tgt.ma_tb = src.ma_tb AND tgt.nguon = 'BRIS_P04' and src.ngay_kh_muon = tgt.ngay_kh)
+WHEN MATCHED THEN
+    UPDATE SET tgt.loai_gd = 'GIAHAN';
 --INSERT Ghi nhận doanh thu nâng chu kỳ các thuê bao trả sau cho các Phòng thực hiện tháng 10, 11 mà trên P04 Bris đang ghi nhận loại GD là "Hạ chu kỳ".
 INSERT INTO DONGIA_DTHU_HIENHUU_202410
      select ACCS_MTHD_KEY ma_tb
@@ -155,22 +173,16 @@ where LOAI_TB_THANG ='HH' and thang = 202410
 ;
 
 
-select * FROM DONGIA_DTHU_HIENHUU_202410 where nguon='CKN_CKD' and  ma_tb ='84912662327';
-
-
-
-select to_date(THOIGIAN_THUCHIEN_OB,'dd/mm/yyyy hh24:mi:Ss') change_date
-from ob_hvc_ct;
 -- 4/12 da comment --> sua thanh not exist cho gon tai PL chi thieu, chu ko sai nen insert vo lun
 delete DONGIA_DTHU_HIENHUU_202410
 where
      ma_tb in (select ma_tb
                from (
-                     select '84' || so_thue_bao ma_tb,THOI_GIAN_THUC_HIEN ngay_kh
+                     select '84' || so_thue_bao ma_tb,NGAY_MO_DICH_VU ngay_kh
                      from ob_bangoi_ct
                      where thang = 202410
                      union all
-                     select '84' || MA_TB,to_date(THOIGIAN_THUCHIEN_OB,'dd/mm/yyyy hh24:mi:Ss') change_date
+                     select '84' || MA_TB,to_date(NGAY_KH,'dd/mm/yyyy hh24:mi:Ss') change_date
                      from ob_hvc_ct
                      where thang = 202410)
                  WHERE TRUNC(ngay_kh) = TRUNC(DONGIA_DTHU_HIENHUU_202410.ngay_kh)
@@ -255,6 +267,7 @@ FROM (
             case
                 when magoi_truoc_ob like '%_0K' and DOANHTHU_TRUOC_GIAHAN = 0 then 'GIAHAN'
                 when DOANH_THU_DK > DOANHTHU_TRUOC_GIAHAN then 'NANG_GOI'
+                when DOANH_THU_DK < DOANHTHU_TRUOC_GIAHAN then 'HA_CHUKY' -- test
                 else 'GIAHAN' end as loai_gd,
         ma_tb,USER_DTV,
         MAGOI_TRUOC_OB,
@@ -452,7 +465,30 @@ WHEN MATCHED THEN
 update S_DONGIA_DTHU_HIENHUU_202410_test
     set (ten_nv,TEN_PB,ma_to,ten_to, MA_VTCV, MA_PB) = (select x.ten_nv,x.TEN_PB,x.ma_to,x.ten_to ,x.MA_VTCV, x.MA_PB from ttkd_bsc.nhanvien x where ma_hrm =ma_nv and thang = 202410)
 ;
-
+--2 cai trung nhau dang gGIAHAN --> update ma_tb co ngay_kh min = dangky
+UPDATE S_DONGIA_DTHU_HIENHUU_202410_test a
+SET loai_gd = 'DANGKY'
+WHERE a.ma_tb IN (
+    SELECT a.ma_tb
+    FROM S_DONGIA_DTHU_HIENHUU_202410_test a
+    JOIN S_DONGIA_DTHU_HIENHUU_202410_test b
+      ON a.ma_tb = b.ma_tb
+     AND a.ten_goi = b.ten_goi
+     AND a.DTHU_GOI = b.DTHU_GOI
+     AND b.NGAY_KH < a.NGAY_KH
+     AND TRUNC(a.NGAY_KH) - TRUNC(b.NGAY_KH) > 25
+     AND a.LOAI_GD = 'GIAHAN'
+     AND b.LOAI_GD = 'GIAHAN'
+) and rnk = 1;
+AND a.NGAY_KH = (
+    SELECT MIN(c.NGAY_KH)
+    FROM S_DONGIA_DTHU_HIENHUU_202410_test c
+    WHERE c.ma_tb = a.ma_tb
+      AND c.ten_goi = a.ten_goi
+      AND c.DTHU_GOI = a.DTHU_GOI
+      AND c.LOAI_GD = 'GIAHAN'
+      AND TRUNC(a.NGAY_KH) - TRUNC(c.NGAY_KH) > 25
+);
 ---Tinh tiennnnnn noVat./1.1
 update S_DONGIA_DTHU_HIENHUU_202410_test
 set heso = 0
@@ -472,6 +508,56 @@ update S_DONGIA_DTHU_HIENHUU_202410_test
 set TIEN_THULAO = round((DTHU_TLDG/1.1)*heso/100*IS_TBHH)
 ,DTHU_KPI = round((DTHU_TLDG/1.1)*heso/100*IS_TBHH/0.8)
 ;
-  select * from S_DONGIA_DTHU_HIENHUU_202410_test a;
+
+delete
+from S_DONGIA_DTHU_HIENHUU_202410_test
+where ma_tb in (select a.ma_tb from S_DONGIA_DTHU_HIENHUU_202410_test a
+   , S_DONGIA_DTHU_HIENHUU_202410_test b
+   where a.ten_goi =b.ten_goi and  b.NGAY_KH < a.NGAY_KH
+      AND  trunc(a.NGAY_KH )- trunc(b.NGAY_KH) >25 and a.ma_tb =b.ma_tb and a.DTHU_GOI=b.DTHU_GOI)
+and nguon = 'CKN_CKD'
+
+;
+select * from S_DONGIA_DTHU_HIENHUU_202410_test a;
+
+
+
+
+
+-----------------=================END_-----------=============================
 5/12: da fix rank o nhanvien yeucau kich gium
+  OK: 84815995876 true = DKY,nma dang la GIAHAN --> lydo: tai goi truoc OB co duoi la 0K dang loi doanh thu =0 nen de la gianhan het
+  -> update tu code nay
+       select * from S_DONGIA_DTHU_HIENHUU_202410_test where ma_tb in (
+   select a.ma_tb from S_DONGIA_DTHU_HIENHUU_202410_test a
+   , S_DONGIA_DTHU_HIENHUU_202410_test b
+   where a.ten_goi =b.ten_goi and  b.NGAY_KH < a.NGAY_KH
+      AND  trunc(a.NGAY_KH )- trunc(b.NGAY_KH) >20 and a.ma_tb =b.ma_tb and a.DTHU_GOI=b.DTHU_GOI )
+  84816573646
+  - OK 843409496 lay THOI_GIAN_TH_OB thay vi NGAY_MO_DICHVU thi moi loc duoc bangoi (GIAHAN_DK_THANHCONG)
+  => del    select * from S_DONGIA_DTHU_HIENHUU_202410_test where ma_tb in (
+   select a.ma_tb from S_DONGIA_DTHU_HIENHUU_202410_test a
+   , S_DONGIA_DTHU_HIENHUU_202410_test b
+   where a.ten_goi =b.ten_goi and  a.NGAY_KH < b.NGAY_KH
+      AND  trunc(b.NGAY_KH )- trunc(a.NGAY_KH) = 1 and a.ma_tb =b.ma_tb and a.DTHU_GOI=b.DTHU_GOI and a.USER_BAN_GOI = b.USER_BAN_GOI)
+   ;
+
+  MERGE INTO DONGIA_DTHU_HIENHUU_202410 tgt
+USING (
+    SELECT
+        t1.ma_tb,
+        t1.ngay_kh,
+        t2.ngay_kh AS ngay_kh_muon
+    FROM DONGIA_DTHU_HIENHUU_202410 t1
+    JOIN DONGIA_DTHU_HIENHUU_202410 t2
+        ON t1.ten_goi = t2.ten_goi
+        AND t1.DTHU_GOI = t2.DTHU_GOI
+        AND t1.nguon = 'BRIS_P04'
+        AND t2.nguon = 'BRIS_P04'
+        AND t1.ngay_kh < t2.ngay_kh -- chỉ lấy các bản ghi có ngày_kh muộn hơn
+) src
+ON (tgt.ma_tb = src.ma_tb AND tgt.nguon = 'BRIS_P04')
+WHEN MATCHED THEN
+    UPDATE SET tgt.loai_gd = 'giahan';
+
 -- thang 11 co pl4 chay luon, thay cac tham so va ten bang
