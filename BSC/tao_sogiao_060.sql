@@ -49,3 +49,5 @@ and ma_nv not in (
             and x.ma_to in (select distinct ma_to from ttkd_bsc.dm_to where ten_to ='Tổ Kinh Doanh Di Động Trả Trước' and hieuluc = 1)
             )
     )
+;
+select *  from ttkd_bsc.bangluong_kpi where thang = 202410 and ma_kpi like '%_060'

@@ -1,5 +1,5 @@
 drop table dongia_DTHH;
-select * from vietanhvh.dongia_DTHH ;where LYDO_KHONGTINH is not null;
+select * from vietanhvh.dongia_DTHH where ma_tb ='84829367162';is not null;
 
 select ma_pb,sum(TIEN_THULAO) from dongia_DTHH
 group by ma_pb;

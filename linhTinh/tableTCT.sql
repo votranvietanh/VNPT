@@ -2,19 +2,30 @@
 
 
 --P01 theo tháng: tỉnh xuất bán: HCM , theo tháng, hình thức HM: PTM
-SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025@coevnpt
-         where mo_key=202409
+SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025
+         where mo_key=202410
             and GEO_STATE_KEY_STOCK=35 --HCM đã test lấy data thang 9,10 --> Khớp
             and GEO_STATE_KEY_DTCP = 35
             and ACTV_TYPE = 'PTM' ;
 --theo ngày
-     select * fROM ocdm_stage.VNP_DOANHTHU_CHIPHI_TT_2025_D@coevnpt
+     select count(*) fROM ocdm_stage.VNP_DOANHTHU_CHIPHI_TT_2025_D@coevnpt
  where GEO_STATE_KEY_STOCK = 35
     and GEO_STATE_KEY_DTCP = 35
        and ACTV_TYPE ='PTM'
-    and day_key = 20241123;
+    and day_key = 20241129;
 --PL4 ngay - ptm trong thang phuc vu cho bao cao bris
-     select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D@coevnpt where LOAI_TB_THANG ='PTM' and DAY_KEY=20241125 and GEO_STATE_CD='HCM' and LOAIHINH_TB='TT';
+     select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D where LOAI_TB_THANG ='PTM' and DAY_KEY=20241125 and GEO_STATE_CD='HCM' and LOAIHINH_TB='TT';
+
+select *from manpn.bscc_import_goi_bris_p04 a
+        left join (select ACCS_MTHD_KEY from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW@coevnpt where mo_key = 202410 and LOAI_TB_THANG ='HH' and GEO_STATE_CD='HCM' or ( GEO_STATE_CD ='VNP' and GEO_STATE_CD_PSC ='HCM')) b
+        on a.ACCS_MTHD_KEY = to_char(b.ACCS_MTHD_KEY)
+        where a.thang = 202410 and a.LOAI_TB_THANG = 'HH'
+            and b.ACCS_MTHD_KEY is null;
+--P04 thang:
+
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202410 and LOAI_TB_THANG ='PTM' and GEO_STATE_CD='HCM' ;
+;
+select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where ACCS_MTHD_KEY = 84815082625
 
 
 
@@ -30,16 +41,14 @@ SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025@coevnpt
 
 
 
-
-
-------------84914145993
-select  *from ocdm_sys.dwb_acct_actvtn@coevnpt a
-where  day_key = 20241109 and ACTV_TYPE ='NEW_ACTV'
+------------84914145993 -STAT_CD = 2 	Ðã duyệt đăng ký,
+select  *from ocdm_sys.dwb_acct_actvtn a
+where  day_key = 20241009 and ACTV_TYPE ='NEW_ACTV'
 --   and SIM_STATE_CD ='HCM'
 --     and GEO_STATE_KEY_DK = 35;
 --     or GEO_STATE_KEY_STOCK = 35;
 --   and SIM_GEO_STATE_KEY = 35;
-  and ACCS_MTHD_KEY='84847743006' ;
+  and ACCS_MTHD_KEY='84813439700' ;
 select  *from ocdm_sys.dwb_acct_actvtn@coevnpt a
 where  day_key = 20241123 and ACTV_TYPE ='NEW_ACTV'
 --   and SIM_STATE_CD ='HCM'
