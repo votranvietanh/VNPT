@@ -1,12 +1,14 @@
-
+84822691883
 
 
 --P01 theo tháng: tỉnh xuất bán: HCM , theo tháng, hình thức HM: PTM
 SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025
-         where mo_key=202410
-            and GEO_STATE_KEY_STOCK=35 --HCM đã test lấy data thang 9,10 --> Khớp
+         where mo_key=202411
+--             and GEO_STATE_KEY_STOCK is not null  --HCM đã test lấy data thang 9,10,11 --> Khớp
             and GEO_STATE_KEY_DTCP = 35
-            and ACTV_TYPE = 'PTM' ;
+and ACCS_MTHD_KEY = 84942840696
+--             and ACTV_TYPE = 'PTM'
+;
 --theo ngày
      select count(*) fROM ocdm_stage.VNP_DOANHTHU_CHIPHI_TT_2025_D@coevnpt
  where GEO_STATE_KEY_STOCK = 35
@@ -16,16 +18,27 @@ SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025
 --PL4 ngay - ptm trong thang phuc vu cho bao cao bris
      select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D where LOAI_TB_THANG ='PTM' and DAY_KEY=20241125 and GEO_STATE_CD='HCM' and LOAIHINH_TB='TT';
 
-select *from manpn.bscc_import_goi_bris_p04 a
-        left join (select ACCS_MTHD_KEY from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW@coevnpt where mo_key = 202410 and LOAI_TB_THANG ='HH' and GEO_STATE_CD='HCM' or ( GEO_STATE_CD ='VNP' and GEO_STATE_CD_PSC ='HCM')) b
-        on a.ACCS_MTHD_KEY = to_char(b.ACCS_MTHD_KEY)
-        where a.thang = 202410 and a.LOAI_TB_THANG = 'HH'
+select a.*,b.HRM_CODE from manpn.bscc_import_goi_bris_p04 a
+        left join (select ACCS_MTHD_KEY,SERVICE_CODE,HRM_CODE from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW@coevnpt where mo_key = 202411 and LOAI_TB_THANG ='HH' and GEO_STATE_CD='HCM' ) b
+        on a.ACCS_MTHD_KEY = to_char(b.ACCS_MTHD_KEY) and a.SERVICE_CODE= b.SERVICE_CODE and nvl(a.HRM_CODE,0)=nvl(b.HRM_CODE,0)
+        where a.thang = 202411 and a.LOAI_TB_THANG = 'HH'
             and b.ACCS_MTHD_KEY is null;
 --P04 thang:
-
-select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202410 and LOAI_TB_THANG ='PTM' and GEO_STATE_CD='HCM' ;
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411  and GEO_STATE_CD='HCM';
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411 and ACCS_MTHD_KEY in (84919171713) ;
+select * from  BRIS.STG_OCS_REGIS_PACKAGE_MO where accs_mthd_key =84847738496;
 ;
-select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where ACCS_MTHD_KEY = 84815082625
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW  where ACCS_MTHD_KEY = 84845482902;
+;
+select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where ACCS_MTHD_KEY = 84914266681;
+
+ngay 6/12 tai P04 thang 11: 2303028 rec
+ngay 7/12 tai P04 thang 11: 2303139 rec ,ngay 7/12 tai P04 thang 10: 2361394 rec
+ngay 12/12 tai P04 thang 11: 2288205
+    select * from  BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where accs_mthd_key ='84845416112';
+SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TS_2025 where mo_key=202411; and ma_tb =84845416112;
+
+                                                ;
 
 
 
@@ -40,6 +53,11 @@ select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where ACCS_MTHD_KEY = 84815082625
 
 
 
+
+--lich su thuebao
+select *
+from subadmin.lich_su_tb;
+    
 
 ------------84914145993 -STAT_CD = 2 	Ðã duyệt đăng ký,
 select  *from ocdm_sys.dwb_acct_actvtn a

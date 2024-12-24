@@ -1,5 +1,4 @@
---QUAN TRỌNG tháng 11 nhớ lọc 2 nv select * from ttkd_bsc.bangluong_kpi where thang = 202410 and ma_nv in('VNP016799',
-'VNP017843'); -- vì là CHSB ko tính chỉ tiêu này
+select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
 -- INSERT TRẢ TRƯỚC: 62.179
         insert into VA_ct_BSC_DTHU_DTRI_NAM(THANG,thang_ptm, DICH_VU, MA_TB, MANV_PTM, MA_VTCV, TEN_NV,  MA_PB, TEN_PB,MA_TO, TEN_TO, DTHU_THUC_HIEN)
 
@@ -11,17 +10,17 @@
                         TTKD_BSC.CT_BSC_PTM a
                     WHERE
                         a.dich_vu = 'VNPTT'
-                        AND a.THANG_PTM in (202407, 202408, 202409)
+                        AND a.THANG_PTM in (202410, 202408, 202409)
                         AND a.TENKIEU_LD in ('ptm','Hòa mạng mới di động')
                      )
         SELECT
-            202410 AS thang,a.thang_ptm,'VNPTT' AS dich_vu,a.MA_TB,a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB, a.TEN_PB, a.MA_TO, a.TEN_TO,
+            202411 AS thang,a.thang_ptm,'VNPTT' AS dich_vu,a.MA_TB,a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB, a.TEN_PB, a.MA_TO, a.TEN_TO,
             NVL(b.total_tkc, 0) AS dthu_thuc_hien
         FROM
             DS_PTM a
-        LEFT JOIN cuocvina.tieudung_bts_202409@ttkddbbk2 b ON '84' || b.subscriber_id = a.ma_tb
+        LEFT JOIN cuocvina.tieudung_bts_202411@ttkddbbk2 b ON '84' || b.subscriber_id = a.ma_tb
         LEFT JOIN ttkd_bsc.nhanvien c
-        ON a.manv_ptm = c.ma_nv AND c.thang = 2024010
+        ON a.manv_ptm = c.ma_nv AND c.thang = 2024011
         WHERE
             a.rn = 1
             AND a.manv_ptm IS NOT NULL
@@ -38,10 +37,10 @@
             SELECT a.*,
                    ROW_NUMBER() OVER (PARTITION BY a.MA_TB ORDER BY a.thang_ptm DESC) AS rn
             FROM ttkd_bsc.ct_bsc_ptm a
-            WHERE a.thang_ptm IN (202407, 202408, 202409)
+            WHERE a.thang_ptm IN (202410, 202408, 202409)
               AND a.loaitb_id = 20
         )
-        SELECT 202410 thang,
+        SELECT 202411 thang,
                 ranked_data.thang_ptm,
                'VNPTS' dich_vu,
                ranked_data.MA_TB,
@@ -63,7 +62,7 @@
         ) b ON ranked_data.MA_TB = b.MA_TB
         LEFT JOIN ttkd_bsc.nhanvien c
                ON ranked_data.MANV_PTM = c.ma_nv
-               AND c.thang = 202410
+               AND c.thang = 202411
         WHERE ranked_data.rn = 1 -- Select only the first row for each MA_TB
         GROUP BY ranked_data.MA_TB,  ranked_data.thang_ptm,
                  ranked_data.MANV_PTM,
@@ -76,70 +75,70 @@
                  ;
 
     ---Bảng Chi tiết:
-            select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202410 ;
+            select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411 ;
                  and ma_tb in (select ma_tb from  one_line_202409 where manv_goc is not null );
     --update lại các thuê bao bundle về cho chị Thắng:
             update VA_ct_BSC_DTHU_DTRI_NAM a
             set manv_ptm = (select b.manv_goc from one_line_202409 b where a.ma_tb =b.ma_tb)
-            where a.thang = 202410 
+            where a.thang = 202411
             and a.ma_tb in (select ma_tb from one_line_202409 where manv_goc ='VNP016957')
             and a.thang_ptm = 202409;
-            
+
         --
             update VA_ct_BSC_DTHU_DTRI_NAM a
             set manv_ptm = 'VNP016957'
-            where a.thang = 202410 
+            where a.thang = 202411
             and a.ma_tb in (select ma_tb from manpn.manpn_goi_tonghop_202408 where LOAI_TB='ptm' and MAPB_DKTT='thangptv1_hcm')
             and a.thang_ptm = 202408;
-            
+
             update VA_ct_BSC_DTHU_DTRI_NAM a
-            set ma_vtcv = (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202410 and x.ma_nv = a.manv_ptm)
-            where thang = 202410 and manv_ptm = 'VNP016957'
+            set ma_vtcv = (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202411 and x.ma_nv = a.manv_ptm)
+            where thang = 202411 and manv_ptm = 'VNP016957'
             ;
         CTV079492
 create table tao_sogiao_060 as
-with rawdata as ( 
-    select manv_ptm, ma_vtcv, ma_to, ma_pb, count(ma_tb) as SL_TB 
-    from VA_ct_BSC_DTHU_DTRI_NAM 
-    where thang = 202410
+with rawdata as (
+    select manv_ptm, ma_vtcv, ma_to, ma_pb, count(ma_tb) as SL_TB
+    from VA_ct_BSC_DTHU_DTRI_NAM
+    where thang = 202411
           and ma_vtcv in ('VNP-HNHCM_BHKV_17','VNP-HNHCM_BHKV_15','VNP-HNHCM_BHKV_2')
     group by manv_ptm, ma_vtcv, ma_to, ma_pb
 )
 
-select a.*, 'KPI_NV' as loai_kpi 
+select a.*, 'KPI_NV' as loai_kpi
 from rawdata a
 where ma_vtcv = 'VNP-HNHCM_BHKV_15'
 
 union all
 
-select b.MA_NV, 'VNP-HNHCM_BHKV_17' as ma_vtcv, a.MA_TO, b.MA_PB, a.SL_TB, 'KPI_TO' as loai_kpi 
+select b.MA_NV, 'VNP-HNHCM_BHKV_17' as ma_vtcv, a.MA_TO, b.MA_PB, a.SL_TB, 'KPI_TO' as loai_kpi
 from (
         select MA_TO, sum(SL_TB) as SL_TB
         from rawdata
         group by MA_TO
      ) a
-left join ttkd_bsc.nhanvien b 
-on a.ma_to = b.ma_to 
-and b.thang = 202410 and b.ma_vtcv ='VNP-HNHCM_BHKV_17'
+left join ttkd_bsc.nhanvien b
+on a.ma_to = b.ma_to
+and b.thang = 202411 and b.ma_vtcv ='VNP-HNHCM_BHKV_17'
 union all
-        select b.MA_NV, 'VNP-HNHCM_BHKV_2' as ma_vtcv,null, b.MA_PB, a.SL_TB, 'KPI_PB' as loai_kpi 
+        select b.MA_NV, 'VNP-HNHCM_BHKV_2' as ma_vtcv,null, b.MA_PB, a.SL_TB, 'KPI_PB' as loai_kpi
     from (
             select MA_pb, sum(SL_TB) as SL_TB
             from rawdata
             group by MA_pb
          ) a
-    left join 
-            (select * from ttkd_Bsc.blkpi_dm_to_pgd x where thang = 202410 and x.dichvu  in  ('VNP tra truoc','VNP tra sau') 
+    left join
+            (select * from ttkd_Bsc.blkpi_dm_to_pgd x where thang = 202411 and x.dichvu  in  ('VNP tra truoc','VNP tra sau')
             and x.ma_to in (select distinct ma_to from rawdata)
         )
-    b 
-    on a.MA_pb = b.MA_pb 
+    b
+    on a.MA_pb = b.MA_pb
     and b.ma_vtcv ='VNP-HNHCM_BHKV_2'
 ;
 
     ;
 
--- b.MA_NV, 'VNP-HNHCM_BHKV_17' as ma_vtcv, a.MA_TO, b.MA_PB, sum(a.SL_TB) as KPI_TO, 'KPI_TO' as loai_kpi 
+-- b.MA_NV, 'VNP-HNHCM_BHKV_17' as ma_vtcv, a.MA_TO, b.MA_PB, sum(a.SL_TB) as KPI_TO, 'KPI_TO' as loai_kpi
 
             select* from  HCM_DT_PTMOI_060;
             with J as (select THANG, MANV_PTM , TEN_NV,ma_vtcv,ma_to,ma_pb,ten_to,ten_pb, count(*) SL_TB_DAT
@@ -325,7 +324,7 @@ GROUP BY
    ;
    select * from ttkd_bsc.nhanvien where ma_nv = 'VNP019529' and thang =202409
    ;
-   select * from  ttkd_Bsc.blkpi_dm_to_pgd where thang =202410
+   select * from  ttkd_Bsc.blkpi_dm_to_pgd where thang =202411
    ;
 
 UPDATE TTKD_BSC.bangluong_kpi a
@@ -343,24 +342,14 @@ SET TYLE_THUCHIEN = (
 WHERE a.thang = 202409
   AND a.ma_KPI = 'HCM_DT_PTMOI_060';
 
-UPDATE TTKD_BSC.bangluong_kpi a
-SET chitieu_giao = 50
-where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and TYLE_THUCHIEN is not null
-;
-UPDATE TTKD_BSC.bangluong_kpi a
-SET THUCHIEN = null
 
-where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060';
 -- UPDATE TTKD_BSC.bangluong_kpi a
 -- SET TYLE_THUCHIEN = round((thuchien/chitieu_giao)*100,2)
 -- where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060' and thuchien is not null
--- ;
-UPDATE bangluong_kpi a
-SET TYLE_THUCHIEN = 4561
-where thang = 202409 and MA_NV ='VNP030414'
+
 ;
 
-select * from ttkd_Bsc.blkpi_dm_to_pgd x where thang = 202410 and x.dichvu  in  ('VNP tra truoc','VNP tra sau') and x.ma_to in (
+select * from ttkd_Bsc.blkpi_dm_to_pgd x where thang = 202411 and x.dichvu  in  ('VNP tra truoc','VNP tra sau') and x.ma_to in (
     select distinct ma_to from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409
     )
 ;
@@ -377,14 +366,14 @@ where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060';
 select * from manpn.manpn_goi_tonghop_202408 where ma_tb in (select ma_tb from manpn.manpn_goi_tonghop_202408 group by ma_tb having count(ma_tb)>1);
 
 select * from one_line_202409;
-update 
+update
 one_line_202409
 set manv_goc = 'VNP017165'
 where ma_tb in (select * from manpn.manpn_goi_tonghop_202409 where MANV_DKTT ='halv_hcm' and loai_tb ='ptm' )
 --2724+2970
 
 ;
-update 
+update
 one_line_202409
 set manv_goc = null
 where manv_goc = 'VNP017165'
@@ -392,7 +381,7 @@ where manv_goc = 'VNP017165'
 
 select * from one_line_202409 where manv_goc ='VNP017165';
 select manv_ptm ,count(*) from tao_sogiao_060 group by manv_ptm;
-update a 
+update a
 set giao = (select x.SL_TB from tao_sogiao_060 x where a.ma_nv = x.manv_ptm)
-where thang = 202410 and  ma_kpi ='HCM_DT_PTMOI_060';
-select * from ttkd_bsc.bangluong_kpi where thang = 202410 and ma_kpi ='HCM_DT_PTMOI_060';
+where thang = 202411 and  ma_kpi ='HCM_DT_PTMOI_060';
+select * from ttkd_bsc.bangluong_kpi where thang = 202411 and ma_kpi ='HCM_DT_PTMOI_060';

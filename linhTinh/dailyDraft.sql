@@ -79,3 +79,131 @@ from OCDM_STAGE.dwb_digi_shop_pac
 order by day_Key;
 
 select * from manpn.BSCC_DIGI_DONLE where thang = 202411;
+
+select *
+from manpn.bscc_ptm_bris_P01_moi;
+-- bổ sung T11
+select *
+from bosung_T11;
+
+select *
+from manpn.BSCC_DIGI
+where  thang = 202410
+and stb ='84812058465';
+update bosung_T11 a
+set heso_hhbg = 0.25
+where ten_goi is not null
+;
+
+update bosung_T11
+set  DTHU_KPI = round(DTHU_DONGIA_GOI/1.1,2)
+where dthu_kpi =0
+;
+select * from t11_bs_384;
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW@coevnpt where mo_key = 202411 and accs_mthd_key in( 84914718764,84918086858);
+create table t11_bs_384 as
+ select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D@coevnpt where  GEO_STATE_CD='HCM' and LOAIHINH_TB='TT' and mo_key = 202411
+       and accs_mthd_key in ('84832541112',
+'84914718764',
+'84911522469',
+'84813447423',
+'84914266681',
+'84945331102',
+'84915345111',
+'84918086858',
+'84918773999'
+)
+;
+
+select * from DONGIA_DTHH  where thang = 202411 and  ma_tb in ('84919080372','84914511604')
+;
+select * from
+vietanhvh.one_line_202411
+where ma_tb in ('84814037546','84814056952',
+'84829153337' ,
+'84829111535',
+'84814010825',
+'84814011363'
+)
+;
+select *
+from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY;
+select *
+from manpn.BSCC_INSERT_DM_KIT_BUNDLE;
+
+                   select * from one_line_202411; --Bổ sung tháng T11
+
+
+select * from
+vietanhvh.one_line_202411 --where ten_goi ='Sim D_VinaXtra';
+where ma_tb in ('84914005861'
+)
+;;
+    insert into bosung_t11(THANG_PTM, NGUON, PHAN_LOAI_KENH,ma_tb,TEN_GOI,CK_GOI_TLDG,MANV_GOI, MATO_GOI, MAPB_GOI, TIEN_GOI, DTHU_DONGIA_GOI)
+        select 202410,'Bổ sung tháng 11',PHAN_LOAI_KENH,ma_tb,goi_cuoc,P2_CHUKY,  MANV_PTM, MA_TO_PTM, MAPB_PTM ,GIA_GOI,DOANHTHU_KPI_NVPTM from manpn.manpn_goi_tonghop_202411
+    where ma_tb in( '84813238173', '84813223775');
+
+        select * from one_line_202411   where ma_tb in( '84813238173', '84813223775');
+create table dm_goi_ck_ngay as;
+SELECT  goi_cuoc ten_goi,CHU_KY_THANG ck_thang,CHU_KY_NGAY ck_ngay,'TT' dich_vu,GIA_GOI FROM manpn.BSCC_INSERT_DM_GOICUOC_PHANKY WHERE chu_ky_thang = 'N' ;
+
+with had as(
+select ten_goi
+from dm_goi_ck_ngay group by ten_goi having  count(ten_goi)>1)
+
+select *
+from dm_goi_ck_ngay where ten_goi in (select ten_goi from had);
+
+DELETE FROM dm_goi_ck_ngay
+WHERE ROWID IN (
+    SELECT rid
+    FROM (
+        SELECT ROWID AS rid,
+               ROW_NUMBER() OVER (PARTITION BY TEN_GOI ORDER BY ROWID) AS rn
+        FROM dm_goi_ck_ngay
+
+    )
+    WHERE rn > 1
+);
+
+
+select * from dongia_dthh where thang = 202411
+                            and  ma_tb  in ('84845416112','84849994262','84842224191');
+update vietanhvh.one_line_202411
+set TIEN_THULAO_GOI = DTHU_DONGIA_GOI*0.25
+where nguon ='Đơn giá bổ sung T11';
+select * from vietanhvh.one_line_202411 where nguon ='Đơn giá bổ sung T11';
+;
+select * from  dongia_PTTT_202411 where  CONG_CU_BAN_GOI ='DIGISHOPWEB' and loai_gd ='GIAHAN';
+
+select * from ctv_pttt;
+alter table nhanvien_ctv_pttt
+add is_ipcc number;
+select * from nhanvien_ctv_pttt;
+
+ select * from vietanhvh.dongia_dthh  where thang = 202411 and LOAI_GD = 'DANGKY' and ma_nv in ('VNP019931',
+'CTV080819',
+'CTV085211');
+create table a_loai_sim_202208 tablespace COE_VNPT_TBS as
+    select '84913196667' ma_tb from dual ;
+
+select * from a_loai_sim_202208;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
