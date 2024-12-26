@@ -12,10 +12,10 @@ PL1 AS (
                     )
    where rnk = 1
 ),
-PL4 as ( select *
+PL4 as ( select count(*)
          from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D@coevnpt
          where LOAI_TB_THANG ='PTM'
-            and DAY_KEY>=20241201
+            and DAY_KEY>=20241101 and day_key <=20241130
             and GEO_STATE_CD='HCM'
             and LOAIHINH_TB='TT'
             and ACCS_MTHD_KEY in (84941120066,
@@ -333,6 +333,10 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
 
             update TBL_VNP_BRIS
             set dthu_tkc = (ROUND(dthu_goi/1.1/chuky_goi,0))
+            where thang = 202412
+            ;
+            update TBL_VNP_BRIS
+            set dthu_goi_novat = (ROUND(nvl(dthu_goi,0)/1.1,0))
             where thang = 202412
             ;
             update TBL_VNP_BRIS

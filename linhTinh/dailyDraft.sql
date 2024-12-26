@@ -189,7 +189,22 @@ create table a_loai_sim_202208 tablespace COE_VNPT_TBS as
 
 select * from a_loai_sim_202208;
 
+select *
+from ttkd_bct.hocnq_cp_nhancong_hoahong where thang_tldg = 202411 and ma_tb ='hcm_smartca_00404651'
+;
 
+
+        select * from hoahong_imp_cntt;
+
+CREATE TABLE Enrollment (
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    PRIMARY KEY (student_id, course_id)
+);
+SELECT *
+FROM Enrollment
+WHERE student_id = 101 ;
 
 
 
