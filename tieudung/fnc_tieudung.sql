@@ -4,15 +4,15 @@
                                     END;
                                     /    
                                       --exp_FTP
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Hoc Mon';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Tan Binh';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Cho Lon';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Sai Gon';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Thu Duc';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Binh Chanh';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Gia Dinh';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Nam Sai Gon';
-select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Cu Chi';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Hoc Mon'; --HMN
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Tan Binh'; --TBH
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Cho Lon';--CLN
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Sai Gon';--SGN
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Thu Duc';--TDC
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Binh Chanh';--BCH
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Gia Dinh';--GDH
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Nam Sai Gon';--NSG
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Cu Chi';--CCI
 
 
                 --script:
