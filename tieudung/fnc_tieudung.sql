@@ -3,6 +3,17 @@
                                         CREATE_TIEUDUNG_BTS_PBH_TABLES('202407');
                                     END;
                                     /    
+                                      --exp_FTP
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Hoc Mon';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Tan Binh';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Cho Lon';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Sai Gon';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Thu Duc';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Binh Chanh';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Gia Dinh';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Nam Sai Gon';
+select * from cuocvina.TIEUDUNG_BTS_202412_kieumoi_T where PBHKV ='Phong Ban Hang Khu Vuc Cu Chi';
+
 
                 --script:
 CREATE OR REPLACE PROCEDURE CREATE_TIEUDUNG_BTS_PBH_TABLES(p_month VARCHAR2) 
