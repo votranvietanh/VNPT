@@ -32,8 +32,8 @@ and exists (select 1 from ttkd_bsc.nhanvien a where thang = 202412 and tinh_bsc 
 --update tu bang tong hop KPI _060
     update ttkd_bsc.bangluong_kpi x
     set (giao,thuchien,TYLE_THUCHIEN) = (select a.GIAO, a.THUCHIEN,a.tyle from bsc_tonghop  a where a.ma_kpi ='HCM_DT_PTMOI_060' and a.MA_NV =x.ma_nv and a.ma_to=x.ma_to and a.thang = x.thang)
-    where x.thang = 202411 and x.ma_kpi like '%_060' and x.ma_vtcv in ('VNP-HNHCM_BHKV_15','VNP-HNHCM_BHKV_17')
-    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202411 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);
+    where x.thang = 202412 and x.ma_kpi like '%_060' and x.ma_vtcv in ('VNP-HNHCM_BHKV_15','VNP-HNHCM_BHKV_17')
+    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202412 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);
 
 
 select *  from ttkd_bsc.bangluong_kpi where thang = 202411 and ma_kpi like '%_060' and ma_vtcv = 'VNP-HNHCM_BHKV_2'

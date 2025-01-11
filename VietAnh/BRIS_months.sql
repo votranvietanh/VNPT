@@ -1,9 +1,9 @@
-select *
-from TBL_VNP_BRIS
+select count(*)
+from TBL_VNP_BRIS_mo
 where thang = 202412;
-
+rollback ;
 delete
-from TBL_VNP_BRIS where thang = 202411;
+from TBL_VNP_BRIS_mo where thang = 202412;
 select /*flashback*/* from TBL_VNP_BRIS;
 --
 INSERT INTO TBL_VNP_BRIS_mo  (
@@ -91,9 +91,9 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
                        WHERE b.ma_nv = COALESCE(b.HRM_CODE, a.MA_HRM_USER_QUAN_LYUSER_DANG_K )
                          AND b.thang = 202412)                         AS ten_pb_bangoi
 
-               FROM (SELECT a.*, row_number() OVER (PARTITION BY SO_TB ORDER BY NGAY_KICH_HOAT DESC) rnk  from manpn.bscc_ptm_bris_P01_moi a where thang = 202411) a
+               FROM (SELECT a.*, row_number() OVER (PARTITION BY SO_TB ORDER BY NGAY_KICH_HOAT DESC) rnk  from manpn.bscc_ptm_bris_P01_moi a where thang = 202412) a
                         LEFT JOIN (select * from manpn.bscc_import_goi_bris_p04 where LOAI_TB_THANG ='PTM'
-                                                            and LOAIHINH_TB='TT' and thang = 202411) b
+                                                            and LOAIHINH_TB='TT' and thang = 202412) b
                                   ON a.so_tb = b.ACCS_MTHD_KEY
                WHERE a.rnk = 1
                UNION ALL
@@ -155,10 +155,10 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
                          AND c.thang = 202412)           AS ten_pb_bangoi
 
                FROM ( ( select * from manpn.bscc_import_goi_bris_p04 where LOAI_TB_THANG ='PTM'
-                                                            and LOAIHINH_TB='TT' and thang = 202411) ) b
+                                                            and LOAIHINH_TB='TT' and thang = 202412) ) b
                         LEFT JOIN (SELECT a.*,
                                           row_number() OVER (PARTITION BY so_tb ORDER BY NGAY_KICH_HOAT DESC) rnk
-                                   FROM (select * from manpn.bscc_ptm_bris_P01_moi where thang = 202411) a
+                                   FROM (select * from manpn.bscc_ptm_bris_P01_moi where thang = 202412) a
                                 ) a
                                   ON a.so_tb = b.ACCS_MTHD_KEY
                WHERE a.so_tb IS NULL)
@@ -166,55 +166,62 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
      ;
             update TBL_VNP_BRIS_mo
             set dthu_goi_novat = (ROUND(nvl(dthu_goi,0)/1.1,0))
-            where thang = 202411
+            where thang = 202412
             ;
             update TBL_VNP_BRIS_mo
             set dthu_tkc = (ROUND(nvl(dthu_goi,0)/1.1/chuky_goi,0))
-            where thang = 202411
+            where thang = 202412
             ;
             update TBL_VNP_BRIS_mo
             set tong_dthu_ptm = (nvl(dthu_hmm,0) + nvl(dthu_goi_novat,0))
-            where thang = 202411
+            where thang = 202412
 
             ;
             UPDATE TBL_VNP_BRIS_mo
             SET TONG_DTHU_PTM_NGAY = (DTHU_HMM + DTHU_TKC_NGAY)
-            where thang = 202411
+            where thang = 202412
+            ;
+            UPDATE TBL_VNP_BRIS_mo
+            SET DTHU_TKC = (DTHU_HMM + DTHU_GOI_NOVAT)
+            where thang = 202412
 
             ;
-
+              update TBL_VNP_BRIS_MO
+            set PHANLOAI_NHOM = 'Mua gói'
+            where PHANLOAI_NHOM ='Chưa gói' and GOICUOC is not null
+            ;
 
 --DANGEROUS
 delete
-from TTKDHCM_KTNV.TBL_VNP_BRIS
-where thang = 202411;
 
+from TTKDHCM_KTNV.TBL_VNP_BRIS
+where thang = 202412;
 
 insert into TTKDHCM_KTNV.tbl_vnp_bris
 select *
-from TBL_VNP_BRIS_mo where thang = 202411;
+from TBL_VNP_BRIS_mo where thang = 202412;
 
             update TTKDHCM_KTNV.tbl_vnp_bris
             set dthu_goi_novat = (ROUND(nvl(dthu_goi,0)/1.1,0))
-            where thang = 202411
+            where thang = 202412
             ;
 
     -- check trung` ma_tb
     select*
     from ttkdhcm_ktnv.TBL_VNP_BRIS
-    where thang = 202411
+    where thang = 202412
         and ma_tb in ( select ma_tb
         from ttkdhcm_ktnv.TBL_VNP_BRIS
-        where thang = 202411 group by ma_tb having count(ma_tb)>1);
+        where thang = 202412 group by ma_tb having count(ma_tb)>1);
 
         -- del accghi nhan null --> ko map dc kenh ban
                 delete from ttkdhcm_ktnv.TBL_VNP_BRIS
-                where thang = 202411
+                where thang = 202412
                 and acc_ghinhan is null;
         -- del case trung ma_tb vi` nhieu goi_cuoc ->> chose the greatest one
                DELETE FROM ttkdhcm_ktnv.TBL_VNP_BRIS
                 WHERE
-                    thang = 202411
+                    thang = 202412
                     AND ROWID IN (
                         SELECT ROWID FROM (
                             SELECT
@@ -223,7 +230,7 @@ from TBL_VNP_BRIS_mo where thang = 202411;
                             FROM
                                 ttkdhcm_ktnv.TBL_VNP_BRIS
                             WHERE
-                                thang = 202411
+                                thang = 202412
                         )
                         WHERE rn > 1
                     );
@@ -233,7 +240,8 @@ from TBL_VNP_BRIS_mo where thang = 202411;
 --test ttkdhcm_ktnv.TBL_VNP_BRIS
 create table TBL_VNP_BRIS
 as select * from ttkdhcm_ktnv.TBL_VNP_BRIS where 1=0 ;
-select * from ttkdhcm_ktnv.TBL_VNP_BRIS where thang = 202411;
+select * from ttkdhcm_ktnv.TBL_VNP_BRIS where thang = 202412;
 select * from TBL_VNP_BRIS;
 
 ----------------------------------END---------------------------------
+

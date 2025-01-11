@@ -27,16 +27,15 @@ select a.*,b.HRM_CODE from manpn.bscc_import_goi_bris_p04 a
 select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411  and GEO_STATE_CD='HCM';
 select count(*)from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411  and GEO_STATE_CD='HCM' and LOAI_TB_THANG='PTM' and LOAIHINH_TB='TT';
 select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411  and GEO_STATE_CD='HCM' and LOAI_TB_THANG='PTM' and LOAIHINH_TB='TT' and accs_mthd_key =84812001681;
-select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411 and ACCS_MTHD_KEY in (84919171713) ;
-select * from  BRIS.STG_OCS_REGIS_PACKAGE_MO where accs_mthd_key =84847738496;
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411 and ACCS_MTHD_KEY in (84834973536) ;
+select * from  BRIS.STG_OCS_REGIS_PACKAGE_MO where accs_mthd_key =84834973536;
 ;
 select count(*)from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where mo_key = 202410  and GEO_STATE_CD='HCM' and LOAI_TB_THANG='PTM' and LOAIHINH_TB='TT';
 ;
-select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where ACCS_MTHD_KEY = 84812001681;
+select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where ACCS_MTHD_KEY = 84886921381;
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where  mo_key = 202412 and ACCS_MTHD_KEY = 84913581132;
 
-ngay 6/12 tai P04 thang 11: 2303028 rec
-ngay 7/12 tai P04 thang 11: 2303139 rec ,ngay 7/12 tai P04 thang 10: 2361394 rec
-ngay 12/12 tai P04 thang 11: 2288205
+
     select * from  BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where accs_mthd_key ='84845416112';
 SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TS_2025 where mo_key=202411; and ma_tb =84845416112;
 

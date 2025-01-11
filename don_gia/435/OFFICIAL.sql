@@ -191,7 +191,7 @@ LEFT JOIN prevent_data pd ON a.ma_tb = pd.SOMAY;
 
 
 merge into dongia_PTTT_202411 a
-using (select round(sum(DTHU_TLDG/1000000),0) dthu_nv,ma_nv from dongia_PTTT_202411 group by ma_nv ) b
+using (select round(sum(DTHU_TLDG/1000000/1.1),0) dthu_nv,ma_nv from dongia_PTTT_202411 group by ma_nv ) b
 on (a.ma_nv = b.ma_nv)
 when matched then
     update set tyle = round(b.dthu_nv/a.dinhmuc_giao*100,2)
@@ -533,3 +533,8 @@ where ma_tb ='84814698154';
 delete
 from dongia_dthh_pttt a
 where exists( SELECT 1 FROM manpn.BSCC_INSERT_DM_GOICUOC_PHANKY WHERE chu_ky_thang = 'N' AND goi_cuoc = a.ten_goi);
+
+;
+
+select count(*) from dongia_dthh where thang = 202412 and ma_pb ='VNP0700800' and TRANGTHAI='Hiện Hữu'; and CONG_CU_BAN_GOI='DIGISHOPWEB' and LOAI_GD='GIAHAN';
+select * from dongia_pttt_202411 ;

@@ -10,7 +10,7 @@ select THANG,  MA_TB,  TRANGTHAI,  TEN_GOI,  LOAI_GD,  LOAIHINH_TB,  USER_BAN_GO
 from vietanhvh.dongia_DTHH
 where trangthai = 'Hiện Hữu'
     and ma_to ='VNP0703004'
-and thang = 202411)
+and thang = 202412)
  -- and MA_VTCV = 'VNP-HNHCM_KDOL_3.1' ) -- THANG12: SE THAY DOI VTCV HNHCM_KDOL_17.1
 ;
 
@@ -19,17 +19,17 @@ delete
 from bsc_tonghop
 where ma_kpi ='HCM_DT_VNPTT_008';
 insert into bsc_tonghop
-select thang,'KPI_TO 'loai_kpi ,'HCM_DT_VNPTT_008' ma_kpi,'','CTV072956' ma_nv,'VNP-HNHCM_KDOL_3.1' MA_VTCV, ma_to,'VNP0703000' ma_pb,1,21,60,'' chitieu_giao,6400 giao,round(sum(DTHU_TLDG/1.1)/1000000,0) KQTH
+select thang,'KPI_TO 'loai_kpi ,'HCM_DT_VNPTT_008' ma_kpi,'', 'CTV072956'ma_nv,'VNP-HNHCM_KDOL_17.1'MA_VTCV,ma_to ma_to,'VNP0703000' ma_pb,1,21,60,'' chitieu_giao,7500 giao,round(sum(DTHU_TLDG/1.1)/1000000,0) KQTH
 ,
     CASE
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 6400) * 100, 2) >= 120 THEN 120
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 6400) * 100, 2) < 30 THEN 30
-        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 6400) * 100, 2)
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) >= 120 THEN 120
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) < 30 THEN 30
+        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2)
     END as TLTH
 ,CASE
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 6400) * 100, 2) >= 120 THEN 120
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 6400) * 100, 2) < 30 THEN 30
-        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 6400) * 100, 2)
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) >= 120 THEN 120
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) < 30 THEN 30
+        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2)
     END as MDHT,'',''
 from (
 select THANG, MA_TO, DTHU_TLDG
@@ -37,14 +37,36 @@ from vietanhvh.dongia_DTHH
 where
     trangthai = 'Hiện Hữu'
     and ma_to ='VNP0703004'
-and thang = 202411)
+and thang = 202412) -- and ma_vtcv in ('VNP-HNHCM_KDOL_17.1','VNP-HNHCM_KDOL_2')
 group by thang,ma_to;
+--chi Tuyet
+insert into bsc_tonghop
+select thang,'KPI_PB 'loai_kpi ,'HCM_DT_VNPTT_008' ma_kpi,'', 'VNP017740'ma_nv,'VNP-HNHCM_KDOL_2'MA_VTCV,'VNP0703050' ma_to,'VNP0703000' ma_pb,1,21,60,'' chitieu_giao,7500 giao,round(sum(DTHU_TLDG/1.1)/1000000,0) KQTH
+,
+    CASE
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) >= 120 THEN 120
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) < 30 THEN 30
+        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2)
+    END as TLTH
+,CASE
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) >= 120 THEN 120
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2) < 30 THEN 30
+        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 7500) * 100, 2)
+    END as MDHT,'',''
+from (
+select THANG,  DTHU_TLDG
+from vietanhvh.dongia_DTHH
+where
+    trangthai = 'Hiện Hữu'
+    and ma_to in ('VNP0703004','VNP0703020')
+and thang = 202412) -- and ma_vtcv in ('VNP-HNHCM_KDOL_17.1','VNP-HNHCM_KDOL_2')
+group by thang;
 
 
 
 select *
 from TTKD_BSC.bangluong_kpi
-where thang = 202411
+where thang = 202412
     and ma_kpi like '%_008';
 
 
@@ -59,7 +81,7 @@ select sum(DTHU_TLDG) from (select THANG, MA_TB, TRANGTHAI, TEN_GOI, LOAI_GD, LO
                             where trangthai = 'Hiện Hữu'
                               and MA_VTCV in ('VNP-HNHCM_KDOL_3')
                               and loai_gd in ('GIAHAN', 'NANG_GOI', 'NANG_CHUKY')
-                              and thang = 202411)
+                              and thang = 202412)
 ;
 delete
 from bsc_tonghop
@@ -70,30 +92,30 @@ insert into bsc_tonghop
 select thang,'KPI_NV 'loai_kpi ,'HCM_DT_VNPTT_009' ma_kpi,'',ma_nv, MA_VTCV, ma_to,ma_pb,(select x.tinh_bsc from ttkd_bsc.nhanvien x where x.thang =a.thang and a.ma_nv = x.ma_nv ) tinh_bsc,21,50,'' chitieu_giao,300 giao,round(sum(DTHU_TLDG/1.1)/1000000,0) KQTH
 ,
     CASE
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 300) * 100, 2) >= 120 THEN 120
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 300) * 100, 2) < 30 THEN 30
-        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 300) * 100, 2)
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 270) * 100, 2) >= 120 THEN 120
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 270) * 100, 2) < 30 THEN 30
+        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 270) * 100, 2)
     END as TLTH
 ,CASE
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 300) * 100, 2) >= 120 THEN 120
-        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 300) * 100, 2) < 30 THEN 30
-        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 300) * 100, 2)
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 270) * 100, 2) >= 120 THEN 120
+        WHEN ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 270) * 100, 2) < 30 THEN 30
+        ELSE ROUND((ROUND(SUM(DTHU_TLDG)/1000000, 0) / 270) * 100, 2)
     END as MDHT,'',''
 from (
                        select THANG, MA_TB, TRANGTHAI, TEN_GOI, LOAI_GD, LOAIHINH_TB, USER_BAN_GOI, MA_NV, TEN_NV, MA_VTCV, MA_TO, TEN_TO, MA_PB, TEN_PB, CONG_CU_BAN_GOI, DTHU_TLDG
                             from vietanhvh.dongia_DTHH
                             where
-                                 thang = 202411
+                                 thang = 202412
                                 and trangthai = 'Hiện Hữu'
                               and MA_VTCV in ('VNP-HNHCM_KDOL_3')
                               and loai_gd in ('GIAHAN', 'NANG_GOI', 'NANG_CHUKY')
-                              and thang = 202411) a
+                              and thang = 202412) a
 group by thang,MA_NV, MA_VTCV, ma_to,ma_pb;
 select distinct LOAI_GD
 from vietanhvh.dongia_DTHH;
 select * from (select THANG,MA_TB, TRANGTHAI, TEN_GOI, LOAI_GD, LOAIHINH_TB, USER_BAN_GOI, MA_NV, TEN_NV, MA_VTCV, MA_TO, TEN_TO, MA_PB, TEN_PB, CONG_CU_BAN_GOI, DTHU_TLDG
                             from vietanhvh.dongia_DTHH
-                            where trangthai = 'Hiện Hữu' and thang = 202411
+                            where trangthai = 'Hiện Hữu' and thang = 202412
                               and MA_VTCV in ('VNP-HNHCM_KDOL_3', 'VNP-HNHCM_KDOL_3')
                               and loai_gd in ('GIAHAN', 'NANG_GOI', 'NANG_CHUKY')
                               )
@@ -119,37 +141,37 @@ from (
                        select THANG, MA_TB, TRANGTHAI, TEN_GOI, LOAI_GD, LOAIHINH_TB, USER_BAN_GOI, MA_NV, TEN_NV, MA_VTCV, MA_TO, TEN_TO, MA_PB, TEN_PB, CONG_CU_BAN_GOI, DTHU_TLDG
                             from vietanhvh.dongia_DTHH
                             where
-                                 thang = 202411
+                                 thang = 202412
                                 and trangthai = 'Hiện Hữu'
                               and MA_VTCV in ('VNP-HNHCM_KDOL_3')
                               and loai_gd in ('DANGKY')
-                              and thang = 202411) a
+                              and thang = 202412) a
 group by thang,MA_NV, MA_VTCV, ma_to,ma_pb;
 
 select * from ttkd_bsc.nhanvien where ma_nv ='VNP016923';
-select * from ttkd_bsc.bangluong_kpi where thang = 202411 and ma_kpi like '%_008';
-select * from ttkd_bsc.bangluong_kpi where thang = 202411 and ma_kpi like '%_010';
+select * from ttkd_bsc.bangluong_kpi where thang = 202412 and ma_kpi like '%_008';
+select * from ttkd_bsc.bangluong_kpi where thang = 202412 and ma_kpi like '%_010';
 
-select * from ttkd_bsc.bangluong_kpi where thang = 202411 and ma_kpi like '%_009';
+select * from ttkd_bsc.bangluong_kpi where thang = 202412 and ma_kpi like '%_009';
 
-select * from bsc_tonghop where thang = 202411 and ma_kpi like '%_008';
+select * from bsc_tonghop where thang = 202412 and ma_kpi like '%_008';
 
 --008
     update ttkd_bsc.bangluong_kpi x
     set (thuchien,TYLE_THUCHIEN) = (select  a.THUCHIEN,a.tyle from bsc_tonghop  a where a.ma_kpi ='HCM_DT_VNPTT_008' and a.MA_NV =x.ma_nv and a.ma_to=x.ma_to and a.thang = x.thang)
 
-where x.thang = 202411 and x.ma_kpi = 'HCM_DT_VNPTT_008' and x.ma_vtcv in ('VNP-HNHCM_KDOL_3.1')
-    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202411 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);
+where x.thang = 202412 and x.ma_kpi = 'HCM_DT_VNPTT_008'
+    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202412 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);
 
 --009
   update ttkd_bsc.bangluong_kpi x
     set (thuchien,TYLE_THUCHIEN) = (select  a.THUCHIEN,a.tyle from bsc_tonghop  a where a.ma_kpi ='HCM_DT_VNPTT_009' and a.MA_NV =x.ma_nv and a.ma_to=x.ma_to and a.thang = x.thang)
 
-where x.thang = 202411 and x.ma_kpi = 'HCM_DT_VNPTT_009' and x.ma_vtcv in ('VNP-HNHCM_KDOL_3')
-    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202411 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);
+where x.thang = 202412 and x.ma_kpi = 'HCM_DT_VNPTT_009' and x.ma_vtcv in ('VNP-HNHCM_KDOL_3')
+    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202412 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);
 --010
   update ttkd_bsc.bangluong_kpi x
     set (thuchien,TYLE_THUCHIEN) = (select  a.THUCHIEN,a.tyle from bsc_tonghop  a where a.ma_kpi ='HCM_DT_VNPTT_010' and a.MA_NV =x.ma_nv and a.ma_to=x.ma_to and a.thang = x.thang)
 
-where x.thang = 202411 and x.ma_kpi = 'HCM_DT_VNPTT_010' and x.ma_vtcv in ('VNP-HNHCM_KDOL_3')
-    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202411 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);
+where x.thang = 202412 and x.ma_kpi = 'HCM_DT_VNPTT_010' and x.ma_vtcv in ('VNP-HNHCM_KDOL_3')
+    and exists (select 1 from ttkd_bsc.nhanvien a where a.thang = 202412 and a.tinh_bsc = 1 and x.ma_nv =a.ma_nv);

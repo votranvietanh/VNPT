@@ -169,7 +169,7 @@ from (select MA_TB                                               ma_thue_bao
                  , a.nguon
             FROM KHKT_BC_HOAHONG_2 a) a
 
-      WHERE thang_ptm = 202411
+      WHERE thang_ptm = 202412
      );
 
      select * from ttkd_bsc.ct_bsc_ptm where ma_tb = 'hcm_hddt_00024220' ;and thang_ptm = 202410;

@@ -154,7 +154,8 @@ PL4 as ( select count(*)
 -------------------------------------------BEGIN-------------------------------------------
 select *
 from TBL_VNP_BRIS
-where thang = 202412;
+where thang = 202412
+order by ngay_init;
 
 delete
 from TBL_VNP_BRIS where thang = 202412;
@@ -347,7 +348,15 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
             UPDATE TBL_VNP_BRIS
             SET TONG_DTHU_PTM_NGAY = (DTHU_HMM + DTHU_TKC_NGAY)
             where thang = 202412
+            ;
+            UPDATE TBL_VNP_BRIS
+            SET DTHU_TKC = (DTHU_HMM + DTHU_GOI_NOVAT)
+            where thang = 202412
 
+            ;
+            update TBL_VNP_BRIS
+            set PHANLOAI_NHOM = 'Mua gói'
+            where PHANLOAI_NHOM ='Chưa gói' and GOICUOC is not null
             ;
 
 

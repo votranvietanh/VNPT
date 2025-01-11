@@ -5,7 +5,7 @@ select * from dongia_DTHH_202411 ;
 select *
 from manpn.bscc_import_goi_bris_p04 where accs_mthd_key in ('84914005861') and thang = 202411;
 
-select * from vietanhvh.dongia_DTHH where ma_vtcv in ('VNP-HNHCM_PTTT_1'
+select count() from vietanhvh.dongia_DTHH where thang = 202412;
 
     );37.503.407
       ;
@@ -25,8 +25,8 @@ select ma_pb,sum(TIEN_THULAO) from dongia_DTHH
 group by ma_pb;
 select * from dongia_DTHH where TIEN_THULAO>DTHU_TLDG ;
 select * from TTKD_BSC.nhanvien where ma_nv ='CTV087563';
-insert into dongia_DTHH;
-create table dongia_DTHH_202411 as
+insert into dongia_DTHH
+-- create table dongia_DTHH_202412 as
 select *
 from (select THANG
            , MA_TB
@@ -57,7 +57,7 @@ from (select THANG
            , NGUON
            , lydo_khongtinh
       from (select *
-            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202411_test --50.998
+            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202412_test --50.998
 
            ))
 
