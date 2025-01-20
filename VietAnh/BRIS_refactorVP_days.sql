@@ -8,7 +8,7 @@ PL1 AS (
                         WHERE GEO_STATE_KEY_STOCK = 35
                           AND GEO_STATE_KEY_DTCP = 35
                           AND ACTV_TYPE = 'PTM'
-                          AND DAY_KEY >= 20241201
+                          AND DAY_KEY >= 20250101
                     )
    where rnk = 1
 ),
@@ -50,16 +50,16 @@ PL4 as ( select count(*)
                        COALESCE(a.TOTAL_TKC_GOI_ALL, b.TOT_RVN_PACKAGE)                 AS dthu_goi,
                        (SELECT b.ma_to
                         FROM ttkd_bsc.nhanvien b
-                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202412) AS ma_to_TTTB,
+                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202501) AS ma_to_TTTB,
                        (SELECT b.TEN_TO
                         FROM ttkd_bsc.nhanvien b
-                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202412) AS ten_to_TTTB,
+                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202501) AS ten_to_TTTB,
                        (SELECT b.MA_PB
                         FROM ttkd_bsc.nhanvien b
-                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202412) AS ma_pb_TTTB,
+                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202501) AS ma_pb_TTTB,
                        (SELECT b.TEN_PB
                         FROM ttkd_bsc.nhanvien b
-                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202412) AS ten_pb_TTTB,
+                        WHERE b.ma_nv = a.HRM_USER_DK AND b.thang = 202501) AS ten_pb_TTTB,
 
                        a.ACCOUNT_DK,
                        CASE
@@ -73,19 +73,19 @@ PL4 as ( select count(*)
                        (SELECT b.ma_to
                         FROM ttkd_bsc.nhanvien b
                         WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                          AND b.thang = 202412)                                  AS ma_to_bangoi,
+                          AND b.thang = 202501)                                  AS ma_to_bangoi,
                        (SELECT b.TEN_TO
                         FROM ttkd_bsc.nhanvien b
                         WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                          AND b.thang = 202412)                                  AS ten_to_bangoi,
+                          AND b.thang = 202501)                                  AS ten_to_bangoi,
                        (SELECT b.MA_PB
                         FROM ttkd_bsc.nhanvien b
                         WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                          AND b.thang = 202412)                                  AS ma_pb_bangoi,
+                          AND b.thang = 202501)                                  AS ma_pb_bangoi,
                        (SELECT b.TEN_PB
                         FROM ttkd_bsc.nhanvien b
                         WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                          AND b.thang = 202412)                                  AS ten_pb_bangoi
+                          AND b.thang = 202501)                                  AS ten_pb_bangoi
 
                 FROM PL1 a
                          LEFT JOIN PL4 b ON a.ACCS_MTHD_KEY = b.ACCS_MTHD_KEY
@@ -133,16 +133,16 @@ PL4 as ( select count(*)
                            END                                                                  AS phanloai_nhom,
                        (SELECT c.ma_to
                         FROM ttkd_bsc.nhanvien c
-                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202412) AS ma_to_bangoi,
+                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202501) AS ma_to_bangoi,
                        (SELECT c.TEN_TO
                         FROM ttkd_bsc.nhanvien c
-                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202412) AS ten_to_bangoi,
+                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202501) AS ten_to_bangoi,
                        (SELECT c.MA_PB
                         FROM ttkd_bsc.nhanvien c
-                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202412) AS ma_pb_bangoi,
+                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202501) AS ma_pb_bangoi,
                        (SELECT c.TEN_PB
                         FROM ttkd_bsc.nhanvien c
-                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202412) AS ten_pb_bangoi
+                        WHERE c.ma_nv = b.HRM_CODE AND c.thang = 202501) AS ten_pb_bangoi
 
                 FROM PL4 b
                          LEFT JOIN PL1 a ON a.ACCS_MTHD_KEY = b.ACCS_MTHD_KEY
@@ -154,11 +154,11 @@ PL4 as ( select count(*)
 -------------------------------------------BEGIN-------------------------------------------
 select *
 from TBL_VNP_BRIS
-where thang = 202412
+where thang = 202501
 order by ngay_init;
 
 delete
-from TBL_VNP_BRIS where thang = 202412;
+from TBL_VNP_BRIS where thang = 202501;
 select /*flashback*/* from TBL_VNP_BRIS;
 --
 INSERT INTO TBL_VNP_BRIS  (
@@ -207,19 +207,19 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
                       (SELECT b.ma_to
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = a.HRM_USER_DK
-                         AND b.thang = 202412)                         AS ma_to_TTTB,
+                         AND b.thang = 202501)                         AS ma_to_TTTB,
                       (SELECT b.TEN_TO
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = a.HRM_USER_DK
-                         AND b.thang = 202412)                         AS ten_to_TTTB,
+                         AND b.thang = 202501)                         AS ten_to_TTTB,
                       (SELECT b.MA_PB
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = a.HRM_USER_DK
-                         AND b.thang = 202412)                         AS ma_pb_TTTB,
+                         AND b.thang = 202501)                         AS ma_pb_TTTB,
                       (SELECT b.TEN_PB
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = a.HRM_USER_DK
-                         AND b.thang = 202412)                         AS ten_pb_TTTB,
+                         AND b.thang = 202501)                         AS ten_pb_TTTB,
                       a.ACCOUNT_DK,
                       CASE
                           WHEN a.LOAI_SIM = 'KIT_BUNDLE' THEN 'Bundle'
@@ -232,28 +232,28 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
                       (SELECT b.ma_to
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                         AND b.thang = 202412)                         AS ma_to_bangoi,
+                         AND b.thang = 202501)                         AS ma_to_bangoi,
                       (SELECT b.TEN_TO
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                         AND b.thang = 202412)                         AS ten_to_bangoi,
+                         AND b.thang = 202501)                         AS ten_to_bangoi,
                       (SELECT b.MA_PB
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                         AND b.thang = 202412)                         AS ma_pb_bangoi,
+                         AND b.thang = 202501)                         AS ma_pb_bangoi,
                       (SELECT b.TEN_PB
                        FROM ttkd_bsc.nhanvien b
                        WHERE b.ma_nv = COALESCE(b.HRM_CODE, A.HRM_USER_DK)
-                         AND b.thang = 202412)                         AS ten_pb_bangoi
+                         AND b.thang = 202501)                         AS ten_pb_bangoi
 
                FROM (SELECT a.*, row_number() OVER (PARTITION BY ACCS_MTHD_KEY ORDER BY ACTVTN_DT DESC) rnk
                      FROM ocdm_stage.VNP_DOANHTHU_CHIPHI_TT_2025_D@coevnpt a
                      WHERE GEO_STATE_KEY_STOCK = 35
                        AND GEO_STATE_KEY_DTCP = 35
                        AND ACTV_TYPE = 'PTM'
-                       AND DAY_KEY >= 20241201) a
+                       AND DAY_KEY >= 20250101) a
                         LEFT JOIN ( select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D@coevnpt  where LOAI_TB_THANG ='PTM'
-                                                            and DAY_KEY>=20241201
+                                                            and DAY_KEY>=20250101
                                                             and GEO_STATE_CD='HCM'
                                                             and LOAIHINH_TB='TT') b
                                   ON a.ACCS_MTHD_KEY = b.ACCS_MTHD_KEY
@@ -302,22 +302,22 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
                       (SELECT c.ma_to
                        FROM ttkd_bsc.nhanvien c
                        WHERE c.ma_nv = b.HRM_CODE
-                         AND c.thang = 202412)           AS ma_to_bangoi,
+                         AND c.thang = 202501)           AS ma_to_bangoi,
                       (SELECT c.TEN_TO
                        FROM ttkd_bsc.nhanvien c
                        WHERE c.ma_nv = b.HRM_CODE
-                         AND c.thang = 202412)           AS ten_to_bangoi,
+                         AND c.thang = 202501)           AS ten_to_bangoi,
                       (SELECT c.MA_PB
                        FROM ttkd_bsc.nhanvien c
                        WHERE c.ma_nv = b.HRM_CODE
-                         AND c.thang = 202412)           AS ma_pb_bangoi,
+                         AND c.thang = 202501)           AS ma_pb_bangoi,
                       (SELECT c.TEN_PB
                        FROM ttkd_bsc.nhanvien c
                        WHERE c.ma_nv = b.HRM_CODE
-                         AND c.thang = 202412)           AS ten_pb_bangoi
+                         AND c.thang = 202501)           AS ten_pb_bangoi
 
                FROM ( select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D@coevnpt  where LOAI_TB_THANG ='PTM'
-                                                            and DAY_KEY>=20241201
+                                                            and DAY_KEY>=20250101
                                                             and GEO_STATE_CD='HCM'
                                                             and LOAIHINH_TB='TT') b
                         LEFT JOIN (SELECT a.*,
@@ -326,7 +326,7 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
                                    WHERE GEO_STATE_KEY_STOCK = 35
                                      AND GEO_STATE_KEY_DTCP = 35
                                      AND ACTV_TYPE = 'PTM'
-                                     AND DAY_KEY >= 20241201) a
+                                     AND DAY_KEY >= 20250101) a
                                   ON a.ACCS_MTHD_KEY = b.ACCS_MTHD_KEY
                WHERE a.ACCS_MTHD_KEY IS NULL)
       
@@ -334,24 +334,24 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
 
             update TBL_VNP_BRIS
             set dthu_tkc = (ROUND(dthu_goi/1.1/chuky_goi,0))
-            where thang = 202412
+            where thang = 202501
             ;
             update TBL_VNP_BRIS
             set dthu_goi_novat = (ROUND(nvl(dthu_goi,0)/1.1,0))
-            where thang = 202412
+            where thang = 202501
             ;
             update TBL_VNP_BRIS
             set tong_dthu_ptm = (nvl(dthu_hmm,0) + nvl(dthu_tkc,0))
-            where thang = 202412
+            where thang = 202501
 
             ;
             UPDATE TBL_VNP_BRIS
             SET TONG_DTHU_PTM_NGAY = (DTHU_HMM + DTHU_TKC_NGAY)
-            where thang = 202412
+            where thang = 202501
             ;
             UPDATE TBL_VNP_BRIS
             SET DTHU_TKC = (DTHU_HMM + DTHU_GOI_NOVAT)
-            where thang = 202412
+            where thang = 202501
 
             ;
             update TBL_VNP_BRIS
@@ -363,34 +363,34 @@ SELECT MA_TB, NGAY_KICH_HOAT, LOAI_KENH, MA_HRM_USER_DKTT, HOTEN_USER_DKTT, USER
 --DANGEROUS
 delete
 from TTKDHCM_KTNV.TBL_VNP_BRIS
-where thang = 202412;
+where thang = 202501;
 
 
 insert into TTKDHCM_KTNV.tbl_vnp_bris
 select *
-from TBL_VNP_BRIS where thang = 202412;
+from TBL_VNP_BRIS where thang = 202501;
 
 insert into ttkdhcm_ktnv.TBL_VNP_BRIS(MA_TB, PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_DK_TTTB, MANV_DK_TTTB, TENNV_DK_TTTB, MATO_DK_TTTB, TENTO_DK_TTTB, MAPB_DK_TTTB, TENPB_DK_TTTB, GOICUOC, CHUKY_GOI, DTHU_GOI, ACC_INIT, KENH_BANGOI, ACC_BANGOI, LOAIKENH_DK_BANGOI, MANV_DK_BANGOI, TENNV_DK_BANGOI, MATO_DK_BANGOI, TENTO_DK_BANGOI, MAPB_DK_BANGOI, TENPB_DK_BANGOI, DTHU_HMM, DTHU_TKC, TONG_DTHU_PTM, ACC_GHINHAN, LOAIKENH_GHINHAN, NGUON, NGAY_INS,  DTHU_TKC_NGAY, TONG_DTHU_PTM_NGAY, GEO_STATE_KEY, THANG)
     select to_char(MA_TB), PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_DK_TTTB, MANV_DK_TTTB, TENNV_DK_TTTB, MATO_DK_TTTB, TENTO_DK_TTTB, MAPB_DK_TTTB, TENPB_DK_TTTB, GOICUOC, CHUKY_GOI, DTHU_GOI, ACC_INIT, KENH_BANGOI, ACC_BANGOI, LOAIKENH_DK_BANGOI, MANV_DK_BANGOI, TENNV_DK_BANGOI, MATO_DK_BANGOI, TENTO_DK_BANGOI, MAPB_DK_BANGOI, TENPB_DK_BANGOI, DTHU_HMM, DTHU_TKC, TONG_DTHU_PTM, ACC_GHINHAN, LOAIKENH_GHINHAN,  ploai, NGAY_INS, DTHU_TKC_NGAY, TONG_DTHU_PTM_NGAY, GEO_STATE_KEY, THANG
     from PL5--ttkd_bct.va_ct_vnp_bris
-    where  to_number(TO_CHAR(ngay_init, 'yyyymm')) = 202412;
+    where  to_number(TO_CHAR(ngay_init, 'yyyymm')) = 202501;
 
     -- check trung` ma_tb
     select*
     from ttkdhcm_ktnv.TBL_VNP_BRIS
-    where thang = 202412
+    where thang = 202501
         and ma_tb in ( select ma_tb
         from ttkdhcm_ktnv.TBL_VNP_BRIS
-        where thang = 202412 group by ma_tb having count(ma_tb)>1);
+        where thang = 202501 group by ma_tb having count(ma_tb)>1);
 
         -- del accghi nhan null --> ko map dc kenh ban
                 delete from ttkdhcm_ktnv.TBL_VNP_BRIS
-                where thang = 202412
+                where thang = 202501
                 and acc_ghinhan is null;
         -- del case trung ma_tb vi` nhieu goi_cuoc ->> chose the greatest one
                DELETE FROM ttkdhcm_ktnv.TBL_VNP_BRIS
                 WHERE
-                    thang = 202412
+                    thang = 202501
                     AND ROWID IN (
                         SELECT ROWID FROM (
                             SELECT
@@ -399,7 +399,7 @@ insert into ttkdhcm_ktnv.TBL_VNP_BRIS(MA_TB, PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_
                             FROM
                                 ttkdhcm_ktnv.TBL_VNP_BRIS
                             WHERE
-                                thang = 202412
+                                thang = 202501
                         )
                         WHERE rn > 1
                     );
@@ -409,7 +409,7 @@ insert into ttkdhcm_ktnv.TBL_VNP_BRIS(MA_TB, PHANLOAI_NHOM, NGAY_INIT, LOAIKENH_
 --test ttkdhcm_ktnv.TBL_VNP_BRIS
 create table TBL_VNP_BRIS
 as select * from ttkdhcm_ktnv.TBL_VNP_BRIS where 1=0 ;
-select * from ttkdhcm_ktnv.TBL_VNP_BRIS where thang = 202412;
+select * from ttkdhcm_ktnv.TBL_VNP_BRIS where thang = 202501;
 select * from TBL_VNP_BRIS;
 
 ----------------------------------END---------------------------------
