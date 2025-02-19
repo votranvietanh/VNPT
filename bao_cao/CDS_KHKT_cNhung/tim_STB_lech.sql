@@ -20,8 +20,8 @@ WITH raw_data AS (
            nhom_tiepthi,
            NVL(luong_dongia_nvptm, 0) AS luong_dongia_nvptm,
            NVL(luong_dongia_nvhotro, 0) AS luong_dongia_nvhotro
-    FROM TTKD_BCT.khkt_bc_hoahong a
-    WHERE thang_ptm = 202407
+    FROM khkt_bc_hoahong_2 a
+    WHERE thang_ptm = 202412
 )
 
 -- Tìm các ma_tb có trong cả hai kênh
@@ -35,5 +35,5 @@ FROM (
 
     SELECT a.ma_tb, 'kenh_ngoai' AS kenh
     FROM raw_data a
-    WHERE a.nhom_tiepthi NOT IN (1,2,3,11)
+    WHERE a.nhom_tiepthi NOT IN (1,2,3,11) or  a.nhom_tiepthi is null
 );

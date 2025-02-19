@@ -4,26 +4,27 @@ select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
 
                WITH DS_PTM AS (
                     SELECT
-                        a.MA_TB, a.MANV_PTM, (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202412 and a.MANV_PTM =x.ma_nv) MA_VTCV, a.MA_PB,  a.TEN_PB,  a.MA_TO,  a.TEN_TO, a.THANG_PTM as thang_ptm,
+                        a.MA_TB, a.MANV_PTM,a.goi_cuoc, (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202501 and a.MANV_PTM =x.ma_nv) MA_VTCV, a.MA_PB,  a.TEN_PB,  a.MA_TO,  a.TEN_TO, a.THANG_PTM as thang_ptm,
                         ROW_NUMBER() OVER (PARTITION BY a.MA_TB ORDER BY a.THANG_PTM DESC) AS rn
                     FROM
                         TTKD_BSC.CT_BSC_PTM a
                     WHERE
                         a.dich_vu = 'VNPTT'
-                        AND a.THANG_PTM in (202410, 202408, 202409)
+                        AND a.THANG_PTM in (202410, 202411, 202412)
                         AND a.TENKIEU_LD in ('ptm','Hòa mạng mới di động')
                      )
         SELECT
-            202411 AS thang,a.thang_ptm,'VNPTT' AS dich_vu,a.MA_TB,a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB, a.TEN_PB, a.MA_TO, a.TEN_TO,
-            NVL(b.total_tkc, 0) AS dthu_thuc_hien
+            202501 AS thang,a.thang_ptm,'VNPTT' AS dich_vu,a.MA_TB,a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB, a.TEN_PB, a.MA_TO, a.TEN_TO,
+            (b.total_tkc) AS dthu_thuc_hien
         FROM
             DS_PTM a
-        LEFT JOIN cuocvina.tieudung_bts_202411@ttkddbbk2 b ON '84' || b.subscriber_id = a.ma_tb
+        LEFT JOIN cuocvina.tieudung_bts_202501@ttkddbbk2 b ON '84' || b.subscriber_id = a.ma_tb
         LEFT JOIN ttkd_bsc.nhanvien c
-        ON a.manv_ptm = c.ma_nv AND c.thang = 2024011
+        ON a.manv_ptm = c.ma_nv AND c.thang = 202501
         WHERE
             a.rn = 1
             AND a.manv_ptm IS NOT NULL
+--             AND (GOI_CUOC not in ('TR80D','TR60D') or goi_cuoc is null)
 --            AND NVL(b.total_tkc, 0) >0
         GROUP BY
             a.thang_ptm,  a.MA_TB, a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB,a.TEN_PB,a.MA_TO,a.TEN_TO,b.total_tkc
@@ -37,10 +38,10 @@ select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
             SELECT a.*,
                    ROW_NUMBER() OVER (PARTITION BY a.MA_TB ORDER BY a.thang_ptm DESC) AS rn
             FROM ttkd_bsc.ct_bsc_ptm a
-            WHERE a.thang_ptm IN (202410, 202408, 202409)
+            WHERE a.thang_ptm IN (202412, 202411, 202410)
               AND a.loaitb_id = 20
         )
-        SELECT 202411 thang,
+        SELECT 202501 thang,
                 ranked_data.thang_ptm,
                'VNPTS' dich_vu,
                ranked_data.MA_TB,
@@ -62,7 +63,7 @@ select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
         ) b ON ranked_data.MA_TB = b.MA_TB
         LEFT JOIN ttkd_bsc.nhanvien c
                ON ranked_data.MANV_PTM = c.ma_nv
-               AND c.thang = 202411
+               AND c.thang = 202501
         WHERE ranked_data.rn = 1 -- Select only the first row for each MA_TB
         GROUP BY ranked_data.MA_TB,  ranked_data.thang_ptm,
                  ranked_data.MANV_PTM,
@@ -75,8 +76,8 @@ select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
                  ;
 --do ma_vtcv bi theiu insert xog thi update them cai nay
   update VA_ct_BSC_DTHU_DTRI_NAM a
-            set ma_vtcv = (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202412 and x.ma_nv = a.manv_ptm)
-            where thang = 202412 and ma_vtcv is null
+            set ma_vtcv = (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202501 and x.ma_nv = a.manv_ptm)
+            where thang = 202501 and ma_vtcv is null
             ;
     ---Bảng Chi tiết:
             select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411 ;
@@ -168,11 +169,11 @@ AND thang = 202409;
             AND ma_kpi = 'HCM_DT_PTMOI_060' );
 
               insert into va_TL_bsc_dthu_dtri_nam(THANG, LOAI_TINH, MA_KPI, MA_NV, MA_VTCV, MA_TO, MA_PB,SL_GIAO, DTHU_THUC_HIEN)
-
+;
                 WITH mnv_tt AS (
     SELECT ma_nv, MA_VTCV, ten_vtcv, ma_to
     FROM ttkd_bsc.nhanvien nv
-    WHERE thang = 202409
+    WHERE thang = 202501
     AND EXISTS (
         SELECT *
         FROM TTKD_BSC.blkpi_danhmuc_kpi_vtcv kpi
@@ -293,7 +294,7 @@ GROUP BY
    select * from  ttkd_Bsc.blkpi_dm_to_pgd where thang =202411
    ;
 
-UPDATE TTKD_BSC.bangluong_kpi a
+UPDATE TTKD_BSC. a
 SET TYLE_THUCHIEN = (
     SELECT x.TLTH
     FROM (
@@ -324,7 +325,7 @@ select * from vietanhvh.va_TL_bsc_dthu_dtri_nam where thang = 202409 and ma_to =
 select * from ttkd_Bsc.nhanvien  where thang = 202409 and ma_vtcv ='VNP-HNHCM_BHKV_1';
 
 select * from TTKD_BSC.bangluong_kpi
-where thang = 202409 and ma_kpi = 'HCM_DT_PTMOI_060';
+where thang = 202412 and ma_kpi = 'HCM_DT_PTMOI_060';
 
 (select * from manpn.manpn_goi_tonghop_202409 where ghi_chu ='Mail yêu cầu đổi đơn giá cho Trương Thị Thanh Trúc không ghi bsc. BSC ghi cho tổ trưởng')
 

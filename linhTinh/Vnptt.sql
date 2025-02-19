@@ -468,3 +468,9 @@ and so_tb in    ('84842230332','84812334454','84812115071','84835118786') ;
 
 --Danh muc goi co trong prepay - 208 gói
 select * from bris.v_service_code_prepay;
+select * from bris.stg_billing_package_prepay ;
+
+select * from admin_v2.package_config@dbl_2_main; --error
+
+SELECT * FROM BRIS.STG_KMCB_EMPLOYEE_SUB_GOI_MO WHERE mo_key=202501 and isdn in ('943017436','822755645','886150647','833207335','813997978','812081308', '813308689') ;
+SELECT * FROM BRIS.STG_DATA_EMPLOYEE_SUB_GOI_MO WHERE  mo_key=202501 and ACCS_MTHD_KEY in ('84943017436','84822755645','84886150647','84833207335','84813997978','84812081308','84813308689') ;

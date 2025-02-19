@@ -1,11 +1,10 @@
 drop table dongia_DTHH_202411;
-delete from dongia_DTHH where thang = 202411;
+delete from dongia_DTHH where thang = 202501;
 insert into dongia_DTHH
 select * from dongia_DTHH_202411 ;
 select *
 from manpn.bscc_import_goi_bris_p04 where accs_mthd_key in ('84914005861') and thang = 202411;
 
-select count() from vietanhvh.dongia_DTHH where thang = 202412;
 
     );37.503.407
       ;
@@ -25,6 +24,7 @@ select ma_pb,sum(TIEN_THULAO) from dongia_DTHH
 group by ma_pb;
 select * from dongia_DTHH where TIEN_THULAO>DTHU_TLDG ;
 select * from TTKD_BSC.nhanvien where ma_nv ='CTV087563';
+
 insert into dongia_DTHH
 -- create table dongia_DTHH_202412 as
 select *
@@ -56,8 +56,9 @@ from (select THANG
            , TIEN_THULAO
            , NGUON
            , lydo_khongtinh
+            ,202501 THANG_TLDG
       from (select *
-            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202412_test --50.998
+            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202501_TEST --50.998
 
            ))
 
@@ -114,3 +115,10 @@ select * from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY;
 select * from dongia_dthh where
                              ma_tb  in ('84845416112','84849994262','84842224191');
 delete from dongia_dthh where thang is null;
+
+select sum(TIEN_THULAO) from vietanhvh.dongia_DTHH where ma_nv ='CTV087434' and LOAI_GD='DANGKY';
+
+select * from vietanhvh.dongia_DTHH where thang = 202412 and ma_tb in ('84842475189','84849400608',	'84847044948'	);
+update dongia_dthh a
+set (TEN_NV, MA_VTCV, MA_TO, TEN_TO, MA_PB, TEN_PB) = (select x.TEN_NV, x.MA_VTCV, x.MA_TO, x.TEN_TO, x.MA_PB, x.TEN_PB from ttkd_bsc.nhanvien x  where x.thang = 202412 and a.ma_nv=x.ma_nv)
+where thang = 202412 and ma_tb in ('84842475189','84849400608',	'84847044948'	);

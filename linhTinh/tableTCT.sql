@@ -3,10 +3,13 @@
 
 --P01 theo tháng: tỉnh xuất bán: HCM , theo tháng, hình thức HM: PTM
 SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025
-         where mo_key=202411
+         where mo_key=202501
 --             and GEO_STATE_KEY_STOCK is not null  --HCM đã test lấy data thang 9,10,11 --> Khớp
-            and GEO_STATE_KEY_DTCP = 35
-and ACCS_MTHD_KEY = 84942840696
+--             and GEO_STATE_KEY_DTCP = 35
+and ACCS_MTHD_KEY in (
+     '84888646577','84853013091','84888872605'
+
+             )
 --             and ACTV_TYPE = 'PTM'
 ;
 --theo ngày
@@ -24,19 +27,22 @@ select a.*,b.HRM_CODE from manpn.bscc_import_goi_bris_p04 a
         where a.thang = 202411 and a.LOAI_TB_THANG = 'HH'
             and b.ACCS_MTHD_KEY is null;
 --P04 thang:
-select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411  and GEO_STATE_CD='HCM';
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202501  and GEO_STATE_CD='HCM';
 select count(*)from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411  and GEO_STATE_CD='HCM' and LOAI_TB_THANG='PTM' and LOAIHINH_TB='TT';
 select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411  and GEO_STATE_CD='HCM' and LOAI_TB_THANG='PTM' and LOAIHINH_TB='TT' and accs_mthd_key =84812001681;
-select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where mo_key = 202411 and ACCS_MTHD_KEY in (84834973536) ;
+select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where  ACCS_MTHD_KEY in (84813044568) ;
 select * from  BRIS.STG_OCS_REGIS_PACKAGE_MO where accs_mthd_key =84834973536;
 ;
 select count(*)from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where mo_key = 202410  and GEO_STATE_CD='HCM' and LOAI_TB_THANG='PTM' and LOAIHINH_TB='TT';
 ;
 select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_D  where ACCS_MTHD_KEY = 84886921381;
-select *from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where  mo_key = 202412 and ACCS_MTHD_KEY = 84913581132;
+select * from BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where  ACCS_MTHD_KEY in( 84835811647
 
 
-    select * from  BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where accs_mthd_key ='84845416112';
+)  and mo_key = 202412 and SUB_PARTITION_KEY = mod(ACCS_MTHD_KEY,50)+1;
+
+
+    select * from  BRIS.V_DWB_REGIS_PACKAGE_SYNC_NEW where accs_mthd_key ='84914016078';
 SELECT * FROM OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TS_2025 where mo_key=202411; and ma_tb =84845416112;
 
                                                 ;

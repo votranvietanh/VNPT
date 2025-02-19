@@ -39,11 +39,12 @@ SELECT
     nvl(SUM(CASE WHEN dichvuvt_id in (14,15,16) and loaitb_id not in (290, 116) THEN NVL(a.LUONG_DONGIA_NVPTM, 0) + NVL(a.LUONG_DONGIA_NVHOTRO, 0) END),0) AS "Dịch vụ CNTT Khác  - Thu lao HH"
 
 FROM
-    ttkd_bct.khkt_bc_hoahong a
+
+    khkt_bc_hoahong_2 a
 WHERE
     a.nhom_tiepthi is not null
-    and ( a.NGAY_BBBG BETWEEN TO_DATE('01/06/2024 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
-                            AND TO_DATE('30/06/2024 23:59:59', 'DD/MM/YYYY HH24:MI:SS')
+    and ( a.NGAY_BBBG BETWEEN TO_DATE('01/11/2024 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
+                            AND TO_DATE('01/11/2024 23:59:59', 'DD/MM/YYYY HH24:MI:SS')
                             AND a.nguon in ('man_VNPTT_HHBG',
                                             'va_tgdd',
                                             'va_DLPL_PTTT',
@@ -51,7 +52,7 @@ WHERE
                                             'va_ct_bsc_ptm',
                                             'KHANH CTVXHH',
                                             'imp_CNTT')
-            OR  (a.NGAY_BBBG is null and a.thang_ptm = 202406)
+            OR  (a.NGAY_BBBG is null and a.thang_ptm = 202411)
         )
 GROUP BY
     case when a.nhom_tiepthi in (2,11) then 'CNVT'
