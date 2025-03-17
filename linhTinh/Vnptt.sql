@@ -41,6 +41,8 @@ SELECT * fROM QLKD3.DWD_DATA_DDTT_DETAIL@COE_QLKD3
 ;
 ---—> doanh thu mua goi --field gl_rvn —> bang price_evt —> doanh thu mua gói
                         select * from ocdm_sys.dwb_price_evt;
+
+-> query select /*+parallel(32)*/MTR_COMMENT,p2_chuky,GL_RVN ,e.* from ocdm_sys.dwb_price_evt e where day_key >= '20230801' and SUB_PARTITION_KEY = '10' and ACCS_MTHD_KEY in ('84833954909') order by day_key desc;
                        --replace field dthu goi FEE_RVN
                        select * from OCDM_SYS.DWB_PROD_SBRP_HIST;
                        ----> kenh dang ky mua goi, dthu goi cot TKC
@@ -324,29 +326,14 @@ SELECT * FROM ttkd_bct.db_thuebao_ttkd@BI_SGN;
 
 LIFE_CYCLE_STAT_CD
 1 active
-
-
 2 -> khóa 1 chieu
-
-
 3 -> khóa 2 chieu
-
-
-4 huy
-
-
+4 huy --> CCOS hien trang thai ko co thong tin
 10 -> phát trien moi
-
-
-7 -> lock
-
-
+7 -> lock --> KHOA kem OC
 0 -> trang thái cho wait kích hoat
-
-
 -1 -> thuê bao MNP, huy chu dong
-
-
+null --> huy
 SMO là tin nhan di
 
 
@@ -469,8 +456,52 @@ and so_tb in    ('84842230332','84812334454','84812115071','84835118786') ;
 --Danh muc goi co trong prepay - 208 gói
 select * from bris.v_service_code_prepay;
 select * from bris.stg_billing_package_prepay ;
+select * from bris.v_stg_vsb_list_packages;
 
+select *
+from OCDM_stage.KMCB_config_package;
+--
 select * from admin_v2.package_config@dbl_2_main; --error
 
 SELECT * FROM BRIS.STG_KMCB_EMPLOYEE_SUB_GOI_MO WHERE mo_key=202501 and isdn in ('943017436','822755645','886150647','833207335','813997978','812081308', '813308689') ;
 SELECT * FROM BRIS.STG_DATA_EMPLOYEE_SUB_GOI_MO WHERE  mo_key=202501 and ACCS_MTHD_KEY in ('84943017436','84822755645','84886150647','84833207335','84813997978','84812081308','84813308689') ;
+
+
+select DAY_KEY, SUB_PARTITION_KEY, ACCS_MTHD_KEY, ACTVTN_DT, SL_CHNL_RPRSTV_NAME, SRC_PROD_OFR_GRP_CD, SRC_PROD_OFR_CD, SRC_PROD_OFR_KEY, MAIN_ACCT_BAL_AMT
+      , SIM_STATE_CD, SIM_GEO_STATE_KEY, MOST_USED_GEO_STATE_KEY_DAY, LAST_ACTVTY_GEO_STATE_KEY
+from ocdm_Sys.dwb_accs_mthd_hist@coevnpt
+where SIM_GEO_STATE_KEY = 35 and day_key = 20240930 and ACCS_MTHD_KEY = '84813799781';
+
+select * from ocdm_Sys.dwa_vnp_cust_dna_mo;
+select /*+parallel(32)*/ACTVTN_DT from ocdm_Sys.dwb_accs_mthd_hist where accs_mthd_key =84812918500 and DAY_KEY= 20250215 and SUB_PARTITION_KEY =  mod(accs_mthd_key,50)+1;
+select * from ocdm_sys.dwd_acc_unique_sub_cnt_mo where acc ='2520080377'
+;
+select * from ocdm_sys.dwd_vnp_unique_sub_cnt_mtd;
+select * from BRIS.dwd_vnp_unique_sub_cnt_GTL;
+select * from BRIS.std_vnp_unique_sub_cnt_GTL;
+select *
+from OCDM_STAGE.cv5917_chitiet_thuebao where accs_mthd_key = 84822417481;
+select * from locdh.tb_thang_5917_T202502 where isdn ='84812833864';
+
+
+select  /*+ parallel(a,8)*/ *--count(accs_mthd_key)
+from bris.stg_ocs_price_evt_last partition(mo_202502)  where  accs_mthd_key = 84853050901 and SUB_PARTITION_KEY=mod(accs_mthd_key,50)+1 and DAY_KEY = 20250228;
+
+select distinct PROD_SPEC_GRP_CD
+from OCDM_SYS.V_DWR_PROD_SPEC_PREPAY_CODE;
+
+
+
+-- get_otp_login_123
+SELECT OTP
+FROM ttkdhcm_ktnv.user_login
+WHERE ma_nv = 'anhvtv.hcm'
+ORDER BY login_time DESC
+FETCH FIRST 1 ROW ONLY;
+
+--oTP xem luong
+SELECT OTP
+FROM ttkdhcm_ktnv.tbl_otp
+where MANV_HRM = 'CTV085863'
+ORDER BY DATE_INSERT DESC
+FETCH FIRST 1 ROW ONLY;

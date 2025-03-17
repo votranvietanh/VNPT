@@ -370,5 +370,3 @@ WHERE thang_tldg = 202411
     HAVING SUM(nogoc + thue) > 0)
 ;
 
-select *
-from dongia_pttt_202412;

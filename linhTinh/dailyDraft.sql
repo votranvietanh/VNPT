@@ -128,7 +128,7 @@ where ma_tb in ('84814037546','84814056952',
 ;
 select *
 from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY;
-select* from  manpn.BSCC_INSERT_DM_GOICUOC_PHANKY where goi_cuoc like'TR%';
+select* from  manpn.BSCC_INSERT_DM_GOICUOC_PHANKY where goi_cuoc like'12TK50G';
 select *
 from manpn.BSCC_INSERT_DM_KIT_BUNDLE where ten_goi ='VIP199';
                 select * from ttkd_bct.va_dm_loaikenh_bh where thang = 202501 and ma_nd ='84886773419';
@@ -393,11 +393,10 @@ on a.tb = b.ma_tb
            B.tb IN (SELECT A.MA_TB FROM SSS_dgia_202412 A WHERE tenkieu_ld='ptm')
 ;
 select * from ttkd_bsc.ct_bsc_ptm where ma_tb ='baochi_net2';
-select * from manpn.bscc_import_goi_bris_p04 where accs_mthd_key ='84913581132';
+select * from manpn.bscc_import_goi_bris_p04 where accs_mthd_key ='84918906090';
 
 select* from manpn.BSCC_INSERT_DM_GOICUOC_PHANKY
-where goi_cuoc in ('VIP199',
-'R3')
+where goi_cuoc in ('MI_YOLO35')
 ;
 , case when LOAI_GD in('Gia hạn CKD','Gia hạn CKN') then 'GIAHAN'
                                                 when LOAI_GD='Bán gói tập không gói' then 'DANGKY'end
@@ -405,13 +404,16 @@ where goi_cuoc in ('VIP199',
 select TENNV_PTM,count(ma_tb) from one_line_202412 where ma_tb in (select ma_tb from x_nv_hotro)
 group by TENNV_PTM
 ;
-select *
-from DONGIA_DTHH where thang = 202412 and ma_tb in ('84914632325');
+update DONGIA_DTHH
+set thang_tldg = null
+where LYDO_KHONGTINH is not null and thang = 202502;
 
-select * from dongia_dthh where thang = 202412 and TIEN_THULAO >0  and DTHU_KPI =0 and  ma_tb in (
-select ma_tb
-            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202412_test where ma_vtcv in ('VNP-HNHCM_KDOL_17','VNP-HNHCM_BHKV_52','VNP-HNHCM_BHKV_53')
-            )
+
+select count(ma_tb) from dongia_dthh where LYDO_KHONGTINH is not null and thang = 202502;
+select * from dongia_dthh where ma_tb = '84912723806';
+
+select * from dongia_dthh where thang = 202501 and LYDO_KHONGTINH like '%Chưa thanh toán đủ%' and ma_pb ='VNP0703000'
+and ma_tb in (select '84'||ma_tb from v_ct_no_202502 where NO_GOC<=999)
 ;
 select * from dongia_dthh
 where thang = 202412 and LYDO_KHONGTINH ='G.TIEN' and ma_tb in (select ma_tb from x_update_loaigdt11 where TRANS_TYPE='DANGKY' );
@@ -445,6 +447,8 @@ update dongia_dthh a
 set (TEN_NV, MA_VTCV, MA_TO, TEN_TO, MA_PB, TEN_PB) = (select x.TEN_NV, x.MA_VTCV, x.MA_TO, x.TEN_TO, x.MA_PB, x.TEN_PB from ttkd_bsc.nhanvien x  where x.thang = 202412 and a.ma_nv=x.ma_nv)
 where thang = 202412 and thang_tldg is null;
 
+select *
+from SSS_DGIA_202502 where ma_tb ='84918906090';
 
 
  MERGE INTO dongia_dthh a
@@ -479,9 +483,14 @@ from one_line_202412 where ma_tb in('84814091076',
 '84814076812')
 ;
 select *
-from MANPN.manpn_goi_tonghop_202412 where ma_tb ='84941138316';
+from MANPN.manpn_goi_tonghop_202502
+where ma_tb ='84918906090';
+select *
+from manpn.BUNDLE_XUATKHO_PDH where ma_tb ='84816252485' and thang_kh = 202502;
 
-
+select *-- MA_TB,  MANV_PTM manv_goc, TENNV_PTM, TEN_GOI,'' manv_thaythe,TIEN_THULAO_DNHM,tien_goi,TIEN_THULAO_GOI
+            from one_line_202502 where  mapb_ptm ='VNP0701600' and ten_goi in ('TR60D','TR80D')
+        and ma_tb ='84886170070'
   ;
 select * from vietanhvh.dongia_pttt_202412 where ma_tb in (
 select a.ma_tb
@@ -785,15 +794,19 @@ select '84' ||ma_tb ma1_tb from ob_hvc2_ct a where thang = 202501 and DTHU_TRUOC
 
 
 select *
-from manpn.manpn_goi_tonghop_202501 where ma_tb in (
-'84888646577',
-'84853013091',
-'84815657583',--
-'84888497033',--
-'84817474398',--
-'84888872605'
+from manpn.manpn_goi_tonghop_202502 where ma_tb in (
+84889910338,
+84942473280,
+84944137515,
+84945826158,
+84945131827,
+84835799104,
+84845556373,
+84942669905,
+84846740486
 
-);
+
+) ;
 select *
 from ttkd_bsc.va_ct_bsc_ptm_vnptt where MANV_GOI  ='CTV089064';--CTV086242 CTV080458
 MI_YT50G_3M
@@ -809,3 +822,233 @@ group by TEN_PBH_DTCP;
 select * from ONE_LINE_202501 where nguon like'%smrs%';
 select *
 from P01_202501 where ACCS_MTHD_KEY=84812137262;
+
+ select * from hoahong_imp_cntt;
+----
+
+SELECT 'TSL0A1VNTVNT007' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID=9
+	AND c.LOAITB_ID NOT IN (134,107,123,306)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (7,8,17,18,19,20,21,22,23,24,25,11)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+SELECT 'TSL0A1VNTVNT008' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID=9
+	AND c.LOAITB_ID NOT IN (134,107,123)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (1,2,3,4,5,16)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+SELECT 'TSL0A1VNTVNT009' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID=9
+	AND c.LOAITB_ID NOT IN (134,107,123)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (9)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+SELECT 'TSL0A1VNTVNT021' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID=8
+	AND c.LOAITB_ID NOT IN (134,107,123,306,259)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (7,8,17,18,19,20,21,22,23,24,25,11)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+SELECT 'TSL0A1VNTVNT022' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID=7
+	AND c.LOAITB_ID NOT IN (134,107,123,306,259)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (1,2,3,4,5,16)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+SELECT 'TSL0A1VNTVNT023' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID=7
+	AND c.LOAITB_ID NOT IN (134,107,123)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (7,8,17,18,19,20,21,22,23,24,25,11)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+SELECT 'TSL0A1VNTVNT024' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID=7
+	AND c.LOAITB_ID NOT IN (134,107,123)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (1,2,3,4,5,16)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+SELECT 'TSL0A1VNTVNT025' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+JOIN TINHCUOC.dbtb SUBPARTITION FOR (21, 20241201) c ON c.thuebao_id = b.thuebao_id
+left join css.chuquan t on t.chuquan_id=c.chuquan_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.DICHVUVT_ID IN (7,8,9)
+	AND c.LOAITB_ID NOT IN (134,107,123,306,259)
+	AND b.loaitb_id = c.loaitb_id
+	AND c.loaikenh_id in (10)
+        AND (t.ten_tat='TTKD-HNI')
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+
+UNION ALL
+
+SELECT 'TSL0A1VNTVNT026' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.dichvuvt_id IN (4) and b.loaitb_id =305
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+    and EXISTS (SELECT 1 FROM tinhcuoc.dbtb SUBPARTITION FOR (21, 20241201) c left join css.chuquan t on t.chuquan_id=c.chuquan_id
+                    WHERE c.thuebao_id = b.thuebao_id and (t.ten_tat='TTKD-HNI'))
+UNION ALL
+
+SELECT 'TSL0A1VNTVNT027' kpi_name,sum(tien)
+FROM css.ct_tienhd PARTITION FOR (21) a
+JOIN css.hd_thuebao PARTITION FOR (21) b ON a.hdtb_id = b.hdtb_id
+WHERE a.khoanmuctt_id IN (1,2,3,4,6,7,8,9,13,14,17,18,23,32,33,46,49,51, 56,57,59,142,167,8804,15,19,28,50,143,144,1000,8801,8802,8803)
+	AND b.dichvuvt_id IN (8) and b.loaitb_id =306
+	AND to_char(b.ngay_ht,'yyyymm')='202412'
+    and EXISTS (SELECT 1 FROM tinhcuoc.dbtb SUBPARTITION FOR (21, 20241201) c left join css.chuquan t on t.chuquan_id=c.chuquan_id
+                    WHERE c.thuebao_id = b.thuebao_id and (t.ten_tat='TTKD-HNI'))
+;
+                select * from ttkd_bsc.ct_bsc_ptm where ma_tb ='dpquang_e91';
+select /*+parallel(32)*/* from OCDM_STAGE.VNP_DOANHTHU_CHIPHI_TT_2025@coevnpt where  ACCS_MTHD_KEY in (select ma_tb
+                                                                         from one_line_202502
+                                                                         where mapb_ptm = 'VNP0702100'
+                                                                           and ten_goi in ('TR60D', 'TR80D'))
+    and mo_key = 202502;
+
+select *
+from share_pbhhm where thang = 202502;
+
+
+ select * from (
+           select thang_ptm thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG,
+             MANV_GOI ma_nv,b.ten_nv, MATO_GOI ma_to,b.ten_to, MAPB_GOI ma_pb,b.ten_pb,'mua_goi' tenkieu_ld,case when heso_kk =0.05 then 'Co' else null end as Khuyen_khich  ,TIEN_GOI,  TIEN_THULAO_GOI,
+              LYDO_KHONGTINH_DONGIA,
+              MANV_GOI_KPI manv_kpi, MATO_GOI_KPI mato_kpi, MAPB_GOI_KPI mapb_kpi, DTHU_GOI_KPI,DTHU_KPI_TO,DTHU_KPI_LDP, LYDO_KHONGTINH_KPI
+         from ttkd_bsc.va_ct_bsc_ptm_vnptt  a
+         join ttkd_bsc.nhanvien b on b.thang = a.thang_ptm and a.manv_goi = b.ma_nv
+         where a.thang_ptm = 202502
+            union all
+         select 202502 thang, NGUON, PHAN_LOAI_KENH, MA_TB, TEN_GOI, CK_GOI_TLDG, MANV_PTM ma_nv, TENNV_PTM,
+            MATO_PTM ma_to, TENTO_PTM, MAPB_PTM ma_pb, TENPB_PTM,'ptm' tenkieu_ld,''khuyen_khich, TIEN_DNHM, TIEN_THULAO_DNHM
+            ,LYDO_KHONGTINH_DONGIA
+--         MANV_GOI, MATO_GOI, MAPB_GOI, TIEN_GOI, DTHU_DONGIA_GOI, TIEN_THULAO_GOI,
+         , MANV_DNHM_KPI, MATO_DNHM_KPI, MAPB_DNHM_KPI, DTHU_DNHM_KPI,DTHU_KPI_TO,DTHU_KPI_LDP, LYDO_KHONGTINH_KPI
+         from ttkd_bsc.va_ct_bsc_ptm_vnptt where thang_ptm = 202502
+         );
+
+ -- #check bangluong_dongia HCM004899
+select *
+from ttkd_bsc.va_ct_bsc_ptm_vnptt where thang_ptm = 202502 and ma_tb ='84911387475';
+
+                   select 'bangluong' nguon,sum(luong_dongia_dnhm_vnptt+luong_dongia_goi_vnptt) luong_344--,sum(luong_dongia_nghiepvu_vnp) ho_tro_nghiep_vu,sum(luong_dongia_vnphh) luong_384
+                        from ttkd_bsc.bangluong_dongia_202502
+                   union select'vietanh',sum(TIEN_THULAO_DNHM+tien_thulao_goi) vnptt--,'',''
+                               from  ttkd_bsc.va_ct_bsc_ptm_vnptt where thang_ptm=202502
+                                                and (manv_ptm in
+                                                     (select ma_nv from ttkd_bsc.bangluong_dongia_202502) or manv_goi in (select ma_nv from ttkd_bsc.bangluong_dongia_202502)
+                           )
+                   ;
+
+  select ma_nv,sum(luong_dongia_dnhm_vnptt+luong_dongia_goi_vnptt) luong_344,sum(TIEN_THULAO_DNHM+tien_thulao_goi) vnptt--,sum(luong_dongia_nghiepvu_vnp) ho_tro_nghiep_vu,sum(luong_dongia_vnphh) luong_384
+                        from ttkd_bsc.bangluong_dongia_202502 a
+
+                        left join  ttkd_bsc.va_ct_bsc_ptm_vnptt  b on b.thang_ptm=202502 and b.manv_ptm = a.ma_nv
+  group by ma_nv
+                                                                          ;
+                                                and (manv_ptm in
+                                                     (select ma_nv from ttkd_bsc.bangluong_dongia_202502) or manv_goi in (select ma_nv from ttkd_bsc.bangluong_dongia_202502)
+                           )
+                                                    ;
+--VNP020745
+select LUONG_DONGIA_VNPHH
+from ttkd_bsc.bangluong_dongia_202502 where ma_nv='VNP017395';
+select*
+   from ttkd_bsc.bangluong_dongia_202502 a
+   left join ttkd_bsc.tonghop_ct_dongia_ptm b on a.ma_nv =b.ma_nv
+where a.ma_nv='VNP020745'
+group by a.ma_nv;
+
+
+--check bangluong_dongia 344
+with bang1 as (select manv_ptm,sum(tien_thulao_dnhm) tien ,'bckh' nguon
+            from ttkd_bsc.va_ct_bsc_ptm_vnptt
+            where thang_ptm = 202502
+              group by manv_ptm
+            union all
+            select manv_goi,sum(tien_thulao_goi) ,'goi'
+            from ttkd_bsc.va_ct_bsc_ptm_vnptt
+            where thang_ptm = 202502
+              group by manv_goi)
+select a.manv_ptm,sum(tien) vietanh,sum(tien_b),sum(tien) - sum(tien_b)
+from ( select manv_ptm,sum(tien) tien from bang1 group by manv_ptm
+            ) a
+right join ( select ma_nv,sum(nvl(LUONG_DONGIA_GOI_VNPTT,0)+nvl(LUONG_DONGIA_DNHM_VNPTT,0)) tien_b
+             from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202502 group by ma_nv) b
+on a.manv_ptm=b.ma_nv
+        group by a.manv_ptm
+order by sum(tien) - sum(tien_b) desc;
+
+--dongia 384
+        with orgn as ( select ma_nv,ten_pb,sum(TIEN_THULAO) tien_thulao from ttkd_bsc.va_ct_bsc_vnphh where thang = 202502
+                    group by ma_nv,ten_pb )
+
+select a.ma_nv,a.tien_thulao,b.LUONG_DONGIA_VNPHH
+        ,a.tien_thulao- b.LUONG_DONGIA_VNPHH CL
+from orgn a
+right join ttkd_bsc.bangluong_dongia_202502 b
+    on a.ma_nv =b.ma_Nv
+order by a.tien_thulao - b.LUONG_DONGIA_VNPHH asc;
+select * from ttkd_bsc.tonghop_ct_dongia_ptm where thang = 202502 and ma_tb ='84911387475' and loaitb_id = 21;
+
+select *
+from  one_line_202502 where ma_tb in('84918906090');

@@ -1,30 +1,31 @@
-select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
+select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202502 and manv_ptm ='CTV087578';
+delete from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202502 and DICH_VU='VNPTT';
 -- INSERT TRẢ TRƯỚC: 62.179
-        insert into VA_ct_BSC_DTHU_DTRI_NAM(THANG,thang_ptm, DICH_VU, MA_TB, MANV_PTM, MA_VTCV, TEN_NV,  MA_PB, TEN_PB,MA_TO, TEN_TO, DTHU_THUC_HIEN)
+     insert into VA_ct_BSC_DTHU_DTRI_NAM(THANG,thang_ptm, DICH_VU, MA_TB, MANV_PTM, MA_VTCV, TEN_NV,  MA_PB, TEN_PB,MA_TO, TEN_TO, DTHU_THUC_HIEN)
 
                WITH DS_PTM AS (
                     SELECT
-                        a.MA_TB, a.MANV_PTM,a.goi_cuoc, (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202501 and a.MANV_PTM =x.ma_nv) MA_VTCV, a.MA_PB,  a.TEN_PB,  a.MA_TO,  a.TEN_TO, a.THANG_PTM as thang_ptm,
+                        a.MA_TB, a.MANV_PTM,a.goi_cuoc, (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202502 and a.MANV_PTM =x.ma_nv) MA_VTCV, a.MA_PB,  a.TEN_PB,  a.MA_TO,  a.TEN_TO, a.THANG_PTM as thang_ptm,
                         ROW_NUMBER() OVER (PARTITION BY a.MA_TB ORDER BY a.THANG_PTM DESC) AS rn
                     FROM
                         TTKD_BSC.CT_BSC_PTM a
                     WHERE
                         a.dich_vu = 'VNPTT'
-                        AND a.THANG_PTM in (202410, 202411, 202412)
+                        AND a.THANG_PTM in (202501, 202411, 202412)
                         AND a.TENKIEU_LD in ('ptm','Hòa mạng mới di động')
                      )
         SELECT
-            202501 AS thang,a.thang_ptm,'VNPTT' AS dich_vu,a.MA_TB,a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB, a.TEN_PB, a.MA_TO, a.TEN_TO,
+            202502 AS thang,a.thang_ptm,'VNPTT' AS dich_vu,a.MA_TB,a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB, a.TEN_PB, a.MA_TO, a.TEN_TO,
             (b.total_tkc) AS dthu_thuc_hien
         FROM
             DS_PTM a
-        LEFT JOIN cuocvina.tieudung_bts_202501@ttkddbbk2 b ON '84' || b.subscriber_id = a.ma_tb
+        LEFT JOIN cuocvina.tieudung_bts_202502@ttkddbbk2  b ON '84' || b.subscriber_id = a.ma_tb
         LEFT JOIN ttkd_bsc.nhanvien c
-        ON a.manv_ptm = c.ma_nv AND c.thang = 202501
+        ON a.manv_ptm = c.ma_nv AND c.thang = 202502
         WHERE
             a.rn = 1
             AND a.manv_ptm IS NOT NULL
---             AND (GOI_CUOC not in ('TR80D','TR60D') or goi_cuoc is null)
+             AND (GOI_CUOC not like 'TR%' or goi_cuoc is null)
 --            AND NVL(b.total_tkc, 0) >0
         GROUP BY
             a.thang_ptm,  a.MA_TB, a.MANV_PTM,a.MA_VTCV,c.ten_nv,a.MA_PB,a.TEN_PB,a.MA_TO,a.TEN_TO,b.total_tkc
@@ -38,10 +39,10 @@ select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
             SELECT a.*,
                    ROW_NUMBER() OVER (PARTITION BY a.MA_TB ORDER BY a.thang_ptm DESC) AS rn
             FROM ttkd_bsc.ct_bsc_ptm a
-            WHERE a.thang_ptm IN (202412, 202411, 202410)
+            WHERE a.thang_ptm IN (202412, 202411, 202501)
               AND a.loaitb_id = 20
         )
-        SELECT 202501 thang,
+        SELECT 202502 thang,
                 ranked_data.thang_ptm,
                'VNPTS' dich_vu,
                ranked_data.MA_TB,
@@ -63,7 +64,7 @@ select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
         ) b ON ranked_data.MA_TB = b.MA_TB
         LEFT JOIN ttkd_bsc.nhanvien c
                ON ranked_data.MANV_PTM = c.ma_nv
-               AND c.thang = 202501
+               AND c.thang = 202502
         WHERE ranked_data.rn = 1 -- Select only the first row for each MA_TB
         GROUP BY ranked_data.MA_TB,  ranked_data.thang_ptm,
                  ranked_data.MANV_PTM,
@@ -76,8 +77,8 @@ select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411;
                  ;
 --do ma_vtcv bi theiu insert xog thi update them cai nay
   update VA_ct_BSC_DTHU_DTRI_NAM a
-            set ma_vtcv = (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202501 and x.ma_nv = a.manv_ptm)
-            where thang = 202501 and ma_vtcv is null
+            set ma_vtcv = (select x.ma_vtcv from ttkd_bsc.nhanvien x where x.thang = 202502 and x.ma_nv = a.manv_ptm)
+            where thang = 202502 and ma_vtcv is null
             ;
     ---Bảng Chi tiết:
             select * from VA_ct_BSC_DTHU_DTRI_NAM where thang = 202411 ;
@@ -173,7 +174,7 @@ AND thang = 202409;
                 WITH mnv_tt AS (
     SELECT ma_nv, MA_VTCV, ten_vtcv, ma_to
     FROM ttkd_bsc.nhanvien nv
-    WHERE thang = 202501
+    WHERE thang = 202502
     AND EXISTS (
         SELECT *
         FROM TTKD_BSC.blkpi_danhmuc_kpi_vtcv kpi
@@ -327,24 +328,7 @@ select * from ttkd_Bsc.nhanvien  where thang = 202409 and ma_vtcv ='VNP-HNHCM_BH
 select * from TTKD_BSC.bangluong_kpi
 where thang = 202412 and ma_kpi = 'HCM_DT_PTMOI_060';
 
-(select * from manpn.manpn_goi_tonghop_202409 where ghi_chu ='Mail yêu cầu đổi đơn giá cho Trương Thị Thanh Trúc không ghi bsc. BSC ghi cho tổ trưởng')
 
-;
-select * from manpn.manpn_goi_tonghop_202408 where ma_tb in (select ma_tb from manpn.manpn_goi_tonghop_202408 group by ma_tb having count(ma_tb)>1);
-
-select * from one_line_202409;
-update
-one_line_202409
-set manv_goc = 'VNP017165'
-where ma_tb in (select * from manpn.manpn_goi_tonghop_202409 where MANV_DKTT ='halv_hcm' and loai_tb ='ptm' )
---2724+2970
-
-;
-update
-one_line_202409
-set manv_goc = null
-where manv_goc = 'VNP017165'
-;
 
 select * from one_line_202409 where manv_goc ='VNP017165';
 select manv_ptm ,count(*) from tao_sogiao_060 group by manv_ptm;
@@ -352,3 +336,234 @@ update a
 set giao = (select x.SL_TB from tao_sogiao_060 x where a.ma_nv = x.manv_ptm)
 where thang = 202411 and  ma_kpi ='HCM_DT_PTMOI_060';
 select * from ttkd_bsc.bangluong_kpi where thang = 202411 and ma_kpi ='HCM_DT_PTMOI_060';
+
+--
+insert into BSC_TONGHOP(THANG,  MA_NV,MA_KPI, MA_VTCV, MA_TO, MA_PB,GIAO, THUCHIEN,  TYLE,LOAI_KPI)
+
+with rawdata as (
+    select thang,manv_ptm,'HCM_DT_PTMOI_060' ma_kpi ,ma_vtcv, ma_to, ma_pb, count(ma_tb) as SL_giao,COUNT(CASE WHEN dthu_thuc_hien >= 0 THEN ma_tb END) SL_TB,
+    round((COUNT(CASE WHEN dthu_thuc_hien >= 0 THEN ma_tb END)/count(ma_tb))*100,2) tyle
+   from va_ct_BSC_DTHU_DTRI_NAM
+    where thang = 202502-- and manv_ptm ='VNP020754'
+        and ma_tb not in (select ma_tb from ds_loaitru_T10)
+                            --union all
+                          --select ma_tb from ttkd_bsc.ct_bsc_ptm where loaitb_id =21 and goi_cuoc in('TR60D','TR80D')and thang_ptm = 202412)
+          and ma_vtcv in ('VNP-HNHCM_BHKV_17','VNP-HNHCM_BHKV_15','VNP-HNHCM_BHKV_2')
+    group by manv_ptm, ma_vtcv, ma_to, ma_pb,thang
+)
+
+select a.*, 'KPI_NV' as loai_kpi
+from rawdata a
+where ma_vtcv = 'VNP-HNHCM_BHKV_15'
+
+union all
+
+select thang,b.MA_NV,'HCM_DT_PTMOI_060' ma_kpi, 'VNP-HNHCM_BHKV_17' as ma_vtcv, a.MA_TO, b.MA_PB,a.sl_giao, a.SL_TB,round((a.SL_TB/a.sl_giao)*100,2) tyle, 'KPI_TO' as loai_kpi
+from (
+        select MA_TO,sum(SL_giao)SL_GIAO, sum(SL_TB) as SL_TB
+        from rawdata
+        group by MA_TO
+     ) a
+left join ttkd_bsc.nhanvien b
+on a.ma_to = b.ma_to
+and b.thang = 202502 and b.ma_vtcv ='VNP-HNHCM_BHKV_17'
+union all
+        select thang,b.MA_NV,'HCM_DT_PTMOI_060', 'VNP-HNHCM_BHKV_2' as ma_vtcv,null, b.MA_PB,a.sl_giao, a.SL_TB,round((a.SL_TB/a.sl_giao)*100,2) tyle, 'KPI_PB' as loai_kpi
+    from (
+            select MA_pb,sum(SL_giao)SL_GIAO, sum(SL_TB) as SL_TB
+            from rawdata
+            group by MA_pb
+         ) a
+    left join
+            (select * from ttkd_Bsc.blkpi_dm_to_pgd x where thang = 202502 and x.ma_kpi =  'HCM_DT_PTMOI_060'
+            and x.ma_to in (select distinct ma_to from rawdata)
+        )
+    b
+    on a.MA_pb = b.MA_pb
+    and b.ma_vtcv ='VNP-HNHCM_BHKV_2'
+union all
+        select thang,b.MA_NV,'HCM_DT_PTMOI_060', 'VNP-HNHCM_BHKV_1' as ma_vtcv,null, b.MA_PB,a.sl_giao, a.SL_TB,round((a.SL_TB/a.sl_giao)*100,2) tyle, 'KPI_PB' as loai_kpi
+    from (
+            select MA_pb,sum(SL_giao)SL_GIAO, sum(SL_TB) as SL_TB
+            from rawdata
+            group by MA_pb
+         ) a
+    left join
+            (select * from ttkd_Bsc.blkpi_dm_to_pgd x where thang = 202502 and x.ma_kpi =  'HCM_DT_PTMOI_060'
+            and x.ma_to in (select distinct ma_to from rawdata)
+        )
+    b
+    on a.MA_pb = b.MA_pb
+    and b.ma_vtcv ='VNP-HNHCM_BHKV_1'
+;
+--ngTran --> Nhien
+
+update  VA_ct_BSC_DTHU_DTRI_NAM
+set MANV_PTM ='VNP020754',  TEN_NV ='Trần Huỳnh Ánh Nhiên'
+where thang = 202502 and ma_tb in
+(
+
+'84836222239',
+'84857777551',
+'84837550033',
+'84857775477',
+'84857772577',
+'84857770772',
+'84857773577',
+'84946660008',
+'84857777055',
+'84947774539',
+'84857776177',
+'84857775177',
+'84857772778',
+'84947774000',
+'84837550011',
+'84917774449',
+'84857773772',
+'84917116622',
+'84857777739',
+'84857777232',
+'84857777331',
+'84857776669',
+'84814687939',
+'84857776877',
+'84857771177',
+'84857778277',
+'84941984939',
+'84857779899',
+'84857777439',
+'84858779966',
+'84837550088',
+'84857770477',
+'84941233277',
+'84858779899',
+'84857774555',
+'84949234012',
+'84837550022',
+'84857774433',
+'84857771772',
+'84946662223',
+'84917774567',
+'84916222579',
+'84857777313',
+'84857776668',
+'84917787839',
+'84947772229',
+'84857771778',
+'84857775277',
+'84857777869',
+'84944116511',
+'84947771000',
+'84857777040',
+'84854493939',
+'84857771122',
+'84857772121',
+'84947771970',
+'84857777580',
+'84946662229',
+'84946660033',
+'84857777237',
+'84857777078',
+'84857774499',
+'84857779966',
+'84857774466',
+'84947774466',
+'84917788111',
+'84857779797',
+'84915646465',
+'84857777689',
+'84857771188',
+'84946662277',
+'84911246833',
+'84915567823',
+'84819900222',
+'84941984339',
+'84857771555',
+'84857777677',
+'84852345868',
+'84857772233',
+'84857777688',
+'84917774445',
+'84857771277',
+'84857771477',
+'84857779995',
+'84852345558',
+'84917345620',
+'84857770377',
+'84857773838',
+'84944116638',
+'84947771144',
+'84941985123',
+'84857777224',
+'84857777679',
+'84944117439',
+'84947774422',
+'84857777368',
+'84857777445',
+'84833158159',
+'84857775566',
+'84857777068',
+'84857777138',
+'84857777866',
+'84857777662',
+'84857778775',
+'84857772299',
+'84946662639',
+'84857772288',
+'84857772939',
+'84857779968',
+'84946660001',
+'84857777992',
+'84853168169',
+'84857773434',
+'84944118039',
+'84857776767',
+'84941234766',
+'84857778444',
+'84857779989',
+'84857775778',
+'84947772288',
+'84857771774',
+'84814664669',
+'84917788539',
+'84857771877',
+'84819900099',
+'84911742743',
+'84857771166',
+'84917707711',
+'84837550066',
+'84941998990',
+'84853168668',
+'84946660939',
+'84857773344',
+'84855588345',
+'84946660505',
+'84857774488',
+'84857772555',
+'84857777278',
+'84857779292',
+'84857776622',
+'84947771971',
+'84947771972',
+'84918765499',
+'84857776633',
+'84944116711',
+'84857770111',
+'84949052168',
+'84857770099',
+'84913374448',
+'84836222722',
+'84857772000',
+'84814667779',
+'84857773776',
+'84857778333',
+'84857771773',
+'84917788239',
+'84917787766',
+'84941234155',
+'84852345680',
+'84857773366',
+'84941992688',
+'84837192939'
+)
+;

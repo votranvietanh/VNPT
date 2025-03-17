@@ -67,7 +67,7 @@ from (select MA_TB                                               ma_thue_bao
                        when a.nhom_tiepthi = 4 then (nvl(a.LUONG_DONGIA_NVPTM, 0) + nvl(a.LUONG_DONGIA_NVHOTRO, 0))
                        else 0 end as DLCN
                  , case
-                       when a.nhom_tiepthi = 5 then (nvl(a.LUONG_DONGIA_NVPTM, 0) + nvl(a.LUONG_DONGIA_NVHOTRO, 0))
+                       when a.nhom_tiepthi = 5 or manv_ptm like 'BCKD%' then (nvl(a.LUONG_DONGIA_NVPTM, 0) + nvl(a.LUONG_DONGIA_NVHOTRO, 0))
                        else 0 end as DLPN
                  , case
                        when a.nhom_tiepthi = 6 then (nvl(a.LUONG_DONGIA_NVPTM, 0) + nvl(a.LUONG_DONGIA_NVHOTRO, 0))

@@ -1,5 +1,5 @@
 drop table dongia_DTHH_202411;
-delete from dongia_DTHH where thang = 202501;
+delete from dongia_DTHH where thang = 202502;
 insert into dongia_DTHH
 select * from dongia_DTHH_202411 ;
 select *
@@ -22,8 +22,11 @@ from dongia_DTHH_202411;
 
 select ma_pb,sum(TIEN_THULAO) from dongia_DTHH
 group by ma_pb;
-select * from dongia_DTHH where TIEN_THULAO>DTHU_TLDG ;
+select * from dongia_DTHH where  ;
 select * from TTKD_BSC.nhanvien where ma_nv ='CTV087563';
+
+delete from dongia_DTHH where thang = 202502;
+
 
 insert into dongia_DTHH
 -- create table dongia_DTHH_202412 as
@@ -56,9 +59,9 @@ from (select THANG
            , TIEN_THULAO
            , NGUON
            , lydo_khongtinh
-            ,202501 THANG_TLDG
+            ,202502 THANG_TLDG
       from (select *
-            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202501_TEST --50.998
+            from vietanhvh.S_DONGIA_DTHU_HIENHUU_202502_TEST --50.998
 
            ))
 
